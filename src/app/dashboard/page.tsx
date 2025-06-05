@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 // Placeholder data - substitua com seus dados reais
 const studentData = {
   name: "Estudante Dedicado",
-  avatarUrl: "https://placehold.co/100x100.png",
+  avatarUrl: "https://lh3.googleusercontent.com/a/ACg8ocJ8H_x94SYW29u_K1jP3xhkO_0U0_q1dJ6SgGjY0w=s100", // URL do avatar do Google
   progress: [
     { area: "Cirúrgica", completed: 7, total: 15 },
     { area: "Clínica Médica", completed: 12, total: 20 },
@@ -51,7 +51,7 @@ export default function DashboardPage() {
               <CardDescription>Bem-vindo(a) de volta, {studentData.name}!</CardDescription>
             </div>
             <Avatar className="h-[100px] w-[100px]">
-              <AvatarImage src={studentData.avatarUrl} alt={studentData.name} data-ai-hint="profile person" />
+              <AvatarImage src={studentData.avatarUrl} alt={studentData.name} data-ai-hint="google avatar profile" />
               <AvatarFallback>{studentData.name.substring(0,2).toUpperCase()}</AvatarFallback>
             </Avatar>
           </CardHeader>
