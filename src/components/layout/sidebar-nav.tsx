@@ -134,11 +134,10 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
               <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
             </NavAccordionItem>
 
+            <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
             <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
-            <NavItem href="/dashboard" icon={UserCircle} label={"Área do estudante"} isCollapsed={isCollapsed} />
-            
             <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
-            <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed}/>
+            <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed}/>
             <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
             <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
@@ -219,11 +218,10 @@ export function SidebarNav() {
                     <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
 
+                  <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
                   <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
-                  <NavItem href="/dashboard" icon={UserCircle} label={"Área do estudante"} isCollapsed={isCollapsed} />
-                  
                   <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
-                  <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed} />
+                  <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed} />
                   <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
                   <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
