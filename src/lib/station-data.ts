@@ -75,59 +75,68 @@ export const allStations: ChecklistData[] = [
         <p>Queimadura na perna direita por água viva há cerca de 15 minutos, com dor intensa.</p>
         <br />
         <h4>HISTÓRIA DA DOENÇA ATUAL (HDA)</h4>
-        <p><strong>Dor na Perna Direita:</strong></p>
+        <p><strong>Dor na Perna Direita (Queimadura por Água Viva):</strong></p>
         <ul>
-          <li><strong>Início e Causa:</strong> Súbito, há aproximadamente 15 minutos, enquanto estava na água do mar. Sentiu um contato e uma dor aguda imediata, percebendo que era uma água viva.</li>
-          <li><strong>Localização:</strong> Principalmente na face anterior da coxa direita, mas com algumas marcas que se estendem um pouco para a lateral.</li>
-          <li><strong>Irradiação:</strong> A dor é mais forte no local do contato, mas sente um desconforto que se espalha um pouco pela coxa.</li>
-          <li><strong>Qualidade/Tipo:</strong> "É uma queimação muito forte, como se estivessem colocando agulhas quentes na minha perna."</li>
-          <li><strong>Intensidade:</strong> "Agora está em 8 de 10. Quando aconteceu era 10 de 10."</li>
-          <li><strong>Duração e Evolução:</strong> A dor tem sido contínua desde o incidente. Parece que a intensidade diminuiu um pouco depois que saiu da água, mas ainda está muito forte.</li>
-          <li><strong>Fatores de Melhora/Piora:</strong> "Não tentei nada ainda, só saí da água. Movimentar a perna piora um pouco."</li>
-          <li><strong>Sintomas Associados Locais:</strong> "A pele está vermelha, inchada e com umas marcas esquisitas, como se fossem os tentáculos." Prurido leve no local.</li>
-          <li><strong>Sintomas Associados Sistêmicos:</strong> Nega febre, calafrios, náuseas, vômitos, tontura, palpitações, falta de ar ou qualquer outro sintoma geral.</li>
+          <li><strong>Início e Causa:</strong> Súbito, há aproximadamente 15 minutos. O paciente estava na água do mar quando sentiu um contato seguido de dor aguda imediata. Ele identificou o contato como sendo de uma água viva.</li>
+          <li><strong>Localização:</strong> Principalmente na face anterior da coxa direita, com algumas marcas lineares que se estendem para a face lateral da coxa.</li>
+          <li><strong>Irradiação:</strong> A dor é mais intensa no local das marcas, mas há uma sensação de desconforto que se espalha por toda a coxa direita.</li>
+          <li><strong>Qualidade/Tipo:</strong> Descrita como uma "queimação muito forte", "agulhadas quentes" ou "ardência intensa".</li>
+          <li><strong>Intensidade (Escala de 0-10):</strong> No momento do incidente, refere dor 10/10. Ao chegar para atendimento, a dor está em 8/10.</li>
+          <li><strong>Duração e Evolução:</strong> A dor tem sido contínua desde o início. Houve uma leve diminuição da intensidade após sair da água, mas permanece forte.</li>
+          <li><strong>Fatores de Melhora/Piora:</strong> Piora com a movimentação da perna. Nenhuma medida de alívio foi tentada até o momento, exceto sair da água.</li>
+          <li><strong>Sintomas Associados Locais:</strong> Vermelhidão (eritema), inchaço (edema) e presença de marcas lineares no local do contato. Refere também prurido (coceira) leve a moderado na área afetada.</li>
+          <li><strong>Sintomas Associados Sistêmicos:</strong> Nega febre, calafrios, náuseas, vômitos, tontura, palpitações, falta de ar, dor de cabeça, alterações visuais ou qualquer outro sintoma geral.</li>
         </ul>
         <br />
         <h4>INTERROGATÓRIO SISTEMÁTICO</h4>
-        <p>Além do já relatado na HDA, nega outros sintomas relevantes nos demais sistemas.</p>
+        <p>Além do já relatado na HDA, nega outros sintomas relevantes nos demais sistemas (cardiovascular, respiratório, gastrointestinal, neurológico, etc.).</p>
         <br />
         <h4>ANTECEDENTES</h4>
-        <p>Nega alergias conhecidas (medicamentos, alimentos, etc.).<br />Nega comorbidades (diabetes, hipertensão, asma, etc.).<br />Vacinação em dia, conforme calendário nacional.<br />Nega cirurgias prévias ou internações recentes.</p>
+        <ul>
+            <li><strong>Médicos:</strong> Nega comorbidades como diabetes, hipertensão, asma, doenças cardíacas ou reumatológicas. Nega internações prévias.</li>
+            <li><strong>Cirúrgicos:</strong> Nega cirurgias anteriores.</li>
+            <li><strong>Alergias:</strong> Nega alergias medicamentosas (dipirona, AAS, penicilina, etc.) ou alimentares conhecidas.</li>
+            <li><strong>Vacinação:</strong> Refere vacinação em dia, conforme calendário nacional (importante para tétano).</li>
+            <li><strong>Medicações em Uso:</strong> Nega uso de medicações contínuas.</li>
+        </ul>
         <br />
         <h4>HÁBITOS DE VIDA</h4>
-        <p>Pratica natação 3 vezes por semana na piscina do condomínio.<br />Nega tabagismo.<br />Consumo social de álcool (cerveja nos finais de semana, sem excessos).<br />Alimentação variada, sem restrições.</p>
+        <ul>
+            <li><strong>Atividade Física:</strong> Pratica natação 3 vezes por semana na piscina do condomínio.</li>
+            <li><strong>Alimentação:</strong> Refere alimentação variada, sem restrições.</li>
+            <li><strong>Sono:</strong> Refere sono regular e reparador.</li>
+            <li><strong>Tabagismo:</strong> Nega.</li>
+            <li><strong>Etilismo:</strong> Consumo social de álcool (cerveja nos finais de semana, 2-3 latas), sem história de abuso.</li>
+            <li><strong>Drogas Ilícitas:</strong> Nega.</li>
+        </ul>
         <br />
         <h4>COMPORTAMENTO ESPERADO</h4>
-        <p>Demonstrar dor e ansiedade, compatível com a intensidade referida. Responder às perguntas de forma clara, mas focado na sua dor e preocupação com a lesão. Seguir as instruções do médico durante o exame e tratamento.</p>
+        <p>Paciente deve demonstrar dor e ansiedade compatíveis com a intensidade referida (8/10). Deve cooperar com a anamnese e o exame físico, mas pode mostrar-se impaciente devido à dor. Seguir as instruções do médico durante a aplicação das condutas (lavagem, vinagre, compressas). Fazer perguntas sobre a gravidade da lesão e o tempo de recuperação, se o candidato der abertura.</p>
       `,
     },
-    printedMaterials: [
-      {
-        id: "pm1-agua-viva",
-        title: "Folder Informativo: Primeiros Socorros em Acidentes com Águas Vivas",
-        content: "<p><strong>O que fazer:</strong><br/>1. Saia da água imediatamente.<br/>2. Lave o local abundantemente com ÁGUA DO MAR (NÃO use água doce, pois pode piorar a liberação do veneno).<br/>3. Aplique VINAGRE (ácido acético a 5%) no local por 15 a 30 minutos. Isso ajuda a neutralizar o veneno ainda não descarregado.<br/>4. Remova tentáculos visíveis com cuidado, utilizando uma pinça ou luvas. Evite esfregar a área.<br/>5. Para alívio da dor, APÓS a aplicação do vinagre, compressas de água MORNA (temperatura suportável pela pele, entre 40-45°C) podem ser aplicadas por cerca de 20 minutos. Se não houver melhora significativa, analgésicos comuns (paracetamol, dipirona) podem ser considerados.<br/>6. NÃO urine no local, não aplique álcool ou outras substâncias não recomendadas.<br/>7. Procure atendimento médico se: a dor for muito intensa ou não melhorar com as medidas iniciais; a área afetada for extensa; ocorrerem sintomas sistêmicos como falta de ar, tontura, náuseas, vômitos, dor de cabeça intensa, confusão mental; ou se houver sinais de reação alérgica grave (inchaço de lábios/face, dificuldade para engolir/respirar, urticária generalizada).</p>",
-        imageSrc: "https://placehold.co/600x400.png",
-        imageAlt: "primeiros socorros agua viva",
-        isLocked: false,
-      },
-    ],
+    printedMaterials: [], // Removido o folder, pois o conteúdo será parte do PEP
     checklistItems: [
-      { id: "ci1-av", description: "<strong>Acolhimento e Biossegurança:</strong> Apresentou-se ao paciente, estabeleceu uma comunicação empática, verificou a segurança da cena (se aplicável em ambiente simulado) e utilizou Equipamentos de Proteção Individual (EPIs) básicos (ex: luvas).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ac" },
-      { id: "ci2-av", description: "<strong>Anamnese - Identificação e Queixa Principal:</strong> Coletou dados de identificação do paciente e registrou claramente a queixa principal e sua duração.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
-      { id: "ci3-av", description: "<strong>Anamnese - História da Doença Atual (HDA):</strong> Investigou detalhadamente o sintoma principal (dor), incluindo: início, causa/mecanismo do trauma, localização, irradiação, qualidade/tipo, intensidade (ex: escala de 0-10), duração/evolução, fatores de melhora/piora. Questionou sobre sintomas associados locais (eritema, edema, prurido, marcas) e sistêmicos (febre, náuseas, tontura, dispneia, etc.).", points: { inadequate: 0, partial: 1.5, adequate: 3 }, type: "an", observation: "Avaliar a completude da investigação da dor e sintomas associados." },
-      { id: "ci4-av", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou sobre alergias (especialmente a medicamentos ou frutos do mar, se relevante), comorbidades pré-existentes, medicações em uso contínuo, estado vacinal (antitetânica), e hábitos relevantes (ex: primeira vez na praia, atividades aquáticas).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
-      { id: "ci5-av", description: "<strong>Exame Físico - Geral e Sinais Vitais:</strong> Avaliou o estado geral do paciente, nível de consciência, e aferiu/verificou os sinais vitais (PA, FC, FR, SatO2, Temp.), se aplicável ao cenário.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ef" },
-      { id: "ci6-av", description: "<strong>Exame Físico - Inspeção da Lesão:</strong> Inspecionou cuidadosamente a área afetada, descrevendo as características da lesão (ex: lineares, eritematosas, edemaciadas, presença de tentáculos visíveis, extensão da lesão).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ef", observation: "Verificar se o estudante descreveu adequadamente os achados cutâneos." },
-      { id: "ci7-av", description: "<strong>Conduta Imediata - Lavagem e Neutralização:</strong> Orientou/realizou corretamente a lavagem inicial da área afetada com ÁGUA DO MAR (ou soro fisiológico, se disponível) e, em seguida, a aplicação de VINAGRE (ácido acético a 5%) por 15-30 minutos. Penalizar se indicou uso de água doce antes do vinagre.", points: { inadequate: 0, partial: 1, adequate: 2 }, type: "ct", observation: "CRÍTICO: O uso de água doce inicialmente pode piorar o quadro. A aplicação de vinagre é fundamental." },
-      { id: "ci8-av", description: "<strong>Conduta - Remoção de Tentáculos e Alívio da Dor:</strong> Orientou/realizou a remoção de tentáculos visíveis (com pinça ou proteção, sem esfregar). APÓS a neutralização com vinagre, considerou/orientou o uso de compressas mornas (40-45°C, tolerável à pele) por cerca de 20 minutos para alívio da dor e/ou analgesia sistêmica (ex: dipirona, paracetamol), se necessário e sem contraindicações.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct" },
-      { id: "ci9-av", description: "<strong>Orientação e Encaminhamento:</strong> Informou o paciente sobre os cuidados com a ferida, sinais de alerta para procurar reavaliação médica (piora da dor, sinais de infecção como pus ou febre, sintomas sistêmicos tardios), e a importância de evitar coçar o local. Considerou a necessidade de profilaxia antitetânica se não atualizada.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct" },
+      { id: "ci1-av-acolhimento", description: "<strong>Acolhimento e Biossegurança:</strong> Apresentou-se ao paciente, estabeleceu uma comunicação empática e utilizou Equipamentos de Proteção Individual (EPIs) básicos (ex: luvas) antes de iniciar o contato.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ac" },
+      { id: "ci2-av-anamnese-id-qp", description: "<strong>Anamnese - Identificação e Queixa Principal:</strong> Coletou dados de identificação do paciente e registrou claramente a queixa principal (dor/queimadura por água viva) e sua duração.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
+      { id: "ci3-av-anamnese-hda", description: "<strong>Anamnese - História da Doença Atual (HDA):</strong> Investigou detalhadamente o sintoma principal (dor), incluindo: início, causa/mecanismo do trauma (contato com água viva), localização, irradiação, qualidade/tipo, intensidade (escala de 0-10), duração/evolução, fatores de melhora/piora. Questionou sobre sintomas associados locais (eritema, edema, prurido, marcas) e sistêmicos (febre, náuseas, tontura, dispneia, etc.).", points: { inadequate: 0, partial: 1.5, adequate: 3 }, type: "an", observation: "Avaliar a completude da investigação da dor e sintomas associados, conforme detalhado nas instruções do ator." },
+      { id: "ci4-av-anamnese-antecedentes", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou sobre alergias, comorbidades, medicações em uso, estado vacinal (antitetânica), e hábitos relevantes.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
+      { id: "ci5-av-examefisico-geral", description: "<strong>Exame Físico - Geral e Sinais Vitais:</strong> Avaliou o estado geral do paciente, nível de consciência, e aferiu/verificou os sinais vitais (PA, FC, FR, SatO2, Temp.), se aplicável ao cenário.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ef" },
+      { id: "ci6-av-examefisico-lesao", description: "<strong>Exame Físico - Inspeção da Lesão:</strong> Inspecionou cuidadosamente a área afetada, descrevendo as características da lesão (ex: lineares, eritematosas, edemaciadas, presença de tentáculos visíveis, extensão da lesão).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ef", observation: "Verificar se o estudante descreveu adequadamente os achados cutâneos." },
+      { id: "ci7-av-conduta-lavagem", description: "<strong>Conduta - Lavagem Inicial:</strong> Orientou/realizou a lavagem imediata e abundante da área afetada com ÁGUA DO MAR (ou soro fisiológico), explicando a importância de NÃO usar água doce neste momento.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "CRÍTICO: O uso de água doce antes do vinagre pode piorar a liberação de toxinas. Verificar se o candidato mencionou a contraindicação da água doce." },
+      { id: "ci8-av-conduta-vinagre", description: "<strong>Conduta - Neutralização com Vinagre:</strong> Orientou/realizou a aplicação de VINAGRE comum (ácido acético a 5%) no local afetado por 15 a 30 minutos.", points: { inadequate: 0, partial: 1, adequate: 2 }, type: "ct", observation: "Fundamental para neutralizar cnidas não disparadas. Avaliar tempo de aplicação e se foi a medida subsequente à lavagem com água do mar." },
+      { id: "ci9-av-conduta-tentaculos", description: "<strong>Conduta - Remoção de Tentáculos:</strong> Orientou/realizou a remoção de tentáculos visíveis com cuidado, utilizando uma pinça ou luvas, e evitando esfregar a área.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ct", observation: "Verificar técnica de remoção (sem contato direto, sem esfregar)." },
+      { id: "ci10-av-conduta-aliviodor", description: "<strong>Conduta - Alívio da Dor (Pós-Vinagre):</strong> APÓS a aplicação do vinagre, orientou/realizou a aplicação de compressas de água MORNA (40-45°C, tolerável à pele) por cerca de 20 minutos. Considerou analgesia sistêmica (ex: dipirona, paracetamol), se necessário e ausentes contraindicações.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "Enfatizar que as compressas mornas são APÓS o vinagre. Avaliar se a analgesia sistêmica foi considerada." },
+      { id: "ci11-av-conduta-naofazer", description: "<strong>Conduta - Orientações sobre Práticas Incorretas:</strong> Orientou ativamente o paciente a NÃO utilizar/aplicar urina, álcool, ou outras substâncias não recomendadas na lesão.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ct", observation: "Verificar se o candidato abordou proativamente o que NÃO fazer." },
+      { id: "ci12-av-conduta-orientacoes", description: "<strong>Conduta - Orientações Finais e Sinais de Alerta:</strong> Orientou o paciente sobre cuidados posteriores com a lesão (ex: evitar coçar), e detalhou os sinais de alerta que necessitam reavaliação médica (piora significativa da dor não responsiva a analgésicos comuns, sinais de infecção como febre/pus, ou sintomas sistêmicos como dificuldade respiratória, tontura, náuseas/vômitos persistentes, reações alérgicas graves). Verificou/orientou sobre a necessidade de profilaxia antitetânica se não atualizada.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct" },
     ],
     references: [{ text: "Protocolos clínicos para acidentes com animais aquáticos (ex: Ministério da Saúde, Sociedades Médicas de Dermatologia ou Toxicologia).", url: "#" }],
     flashcards: [
       { id: "fc1-av", question: "Qual é o agente de escolha para a neutralização inicial do veneno de água viva (cnidários) na maioria das situações no Brasil?", answer: "Vinagre comum (solução de ácido acético a aproximadamente 5%), aplicado por 15 a 30 minutos.", tag: "Tratamento Crítico" },
       { id: "fc2-av", question: "Por que a lavagem inicial de uma queimadura por água viva NÃO deve ser feita com água doce?", answer: "A água doce, por diferença de osmolaridade, pode causar a ruptura dos nematocistos (células urticantes) ainda intactos na pele, liberando mais veneno e intensificando a dor e a lesão.", tag: "Conduta Crítica" },
-      { id: "fc3-av", question: "Quais são três sinais de alerta sistêmicos que indicariam a necessidade de procurar um serviço de emergência após uma queimadura por água viva?", answer: "Dificuldade respiratória ou chiado no peito; tontura, confusão mental ou desmaio; náuseas/vômitos persistentes (especialmente se acompanhados de dor abdominal intensa ou cãibras musculares). Reações alérgicas graves (edema de glote, anafilaxia) também são emergências.", tag: "Sinais de Alerta" },
+      { id: "fc3-av", question: "Quais são três sinais de alerta sistêmicos que indicariam a necessidade de procurar um serviço de emergência após uma queimadura por água viva?", answer: "Dificuldade respiratória ou chiado no peito; tontura, confusão mental ou desmaio; náuseas/vômitos persistentes. Reações alérgicas graves (edema de glote, anafilaxia) também são emergências.", tag: "Sinais de Alerta" },
       { id: "fc4-av", question: "Após a neutralização com vinagre, qual medida física pode ser utilizada para alívio da dor em queimaduras por água viva?", answer: "Imersão ou compressas de água morna (entre 40-45°C, temperatura que seja tolerável à pele sem causar queimadura térmica adicional), por cerca de 20 minutos. O calor ajuda a desnaturar as toxinas termolábeis.", tag: "Tratamento Adjuvante" },
+      { id: "fc5-av", question: "Quais são as duas principais ações do vinagre em uma queimadura por água-viva?", answer: "1. Inativa os nematocistos ainda não disparados, impedindo maior liberação de veneno. 2. Pode ajudar a diminuir a dor por mecanismos ainda não totalmente elucidados, mas não é um analgésico direto potente.", tag: "Mecanismo de Ação" },
+      { id: "fc6-av", question: "Ao remover tentáculos de água viva da pele do paciente, qual cuidado essencial o profissional deve ter?", answer: "Utilizar uma barreira de proteção (luvas) e um instrumento (pinça), evitando o contato direto com os próprios dedos e não esfregar a área para não disparar mais nematocistos.", tag: "Procedimento Seguro" }
     ],
   },
   {
@@ -190,3 +199,4 @@ export const allStations: ChecklistData[] = [
   },
 ];
 
+    
