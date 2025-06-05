@@ -7,7 +7,6 @@ import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import PerformancePieChartCard from "@/components/dashboard/performance-pie-chart-card"; // Ensure this is imported if used
 
 // Placeholder data - substitua com seus dados reais
 const studentData = {
@@ -31,13 +30,6 @@ const studentData = {
     { name: "Jun", score: 85 },
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
-  performanceByCategory: [
-    { name: "Acolhimento", value: 19, fill: "hsl(var(--chart-1))" },
-    { name: "Anamnese", value: 20, fill: "hsl(var(--chart-2))" },
-    { name: "Exame Físico", value: 21, fill: "hsl(var(--chart-3))" },
-    { name: "Laboratório", value: 17, fill: "hsl(var(--chart-4))" },
-    { name: "Diagnóstico", value: 23, fill: "hsl(var(--chart-5))" },
-  ],
 };
 
 export default function DashboardPage() {
@@ -57,14 +49,9 @@ export default function DashboardPage() {
           </CardHeader>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <ProgressOverviewCard progress={studentData.progress} />
           <PerformanceChartCard data={studentData.performanceData} />
-          <PerformancePieChartCard
-            data={studentData.performanceByCategory}
-            title="Desempenho por Categoria"
-            description="Sua performance detalhada por área de avaliação."
-          />
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
