@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import {
   Home,
   Activity,
-  Award, // Alterado de TrendingUp
+  Award,
   Search,
   MessageSquare,
   Sparkles,
   Lightbulb,
-  LightbulbOff, 
+  LightbulbOff,
   Bell
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -30,7 +30,8 @@ export function HeaderNav() {
       <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-primary to-[hsl(var(--chart-2))] text-primary-foreground">
         <div className="container flex h-16 items-center justify-between space-x-4">
           {/* Placeholder for Nav Items */}
-          <div className="flex items-center space-x-4 md:space-x-6">
+          <div className="flex flex-1 items-center justify-between">
+            <div className="flex items-center space-x-4 md:space-x-6">
               <div className="flex items-center space-x-1.5">
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-12 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Início */}
@@ -51,12 +52,14 @@ export function HeaderNav() {
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-10 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Chat */}
               </div>
-              <div className="flex items-center space-x-1.5">
-                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-14 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Gemini */}
-              </div>
+            </div>
+            {/* Gemini placeholder, separated */}
+            <div className="flex items-center space-x-1.5">
+              <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+              <div className="w-14 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+            </div>
           </div>
-          
+
           {/* Placeholder for Right side: Theme, Bell */}
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-primary-foreground/20 animate-pulse rounded-full"></div> {/* Theme toggle placeholder */}
@@ -66,7 +69,7 @@ export function HeaderNav() {
       </header>
     );
   }
-  
+
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
@@ -75,26 +78,28 @@ export function HeaderNav() {
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-primary to-[hsl(var(--chart-2))] text-primary-foreground">
       <div className="container flex h-16 items-center justify-between space-x-4">
         {/* Nav Items */}
-        <nav className="flex items-center space-x-3 lg:space-x-4 text-sm">
-          <Link href="/" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-            <Home className="h-5 w-5" />
-            <span>Início</span>
-          </Link>
-          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-            <Activity className="h-5 w-5" />
-            <span>Estatísticas</span>
-          </div>
-          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-            <Award className="h-5 w-5" /> {/* Ícone alterado */}
-            <span>Mentoria</span> {/* Texto alterado */}
-          </div>
-          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-            <Search className="h-5 w-5" />
-            <span>Recursos</span>
-          </div>
-          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-            <MessageSquare className="h-5 w-5" />
-            <span>Chat</span>
+        <nav className="flex flex-1 items-center justify-between text-sm">
+          <div className="flex items-center space-x-3 lg:space-x-4">
+            <Link href="/" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+              <Home className="h-5 w-5" />
+              <span>Início</span>
+            </Link>
+            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+              <Activity className="h-5 w-5" />
+              <span>Estatísticas</span>
+            </div>
+            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+              <Award className="h-5 w-5" />
+              <span>Mentoria</span>
+            </div>
+            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+              <Search className="h-5 w-5" />
+              <span>Recursos</span>
+            </div>
+            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+              <MessageSquare className="h-5 w-5" />
+              <span>Chat</span>
+            </div>
           </div>
           <Link
             href="https://gemini.google.com/"
@@ -106,7 +111,7 @@ export function HeaderNav() {
             <span>Gemini</span>
           </Link>
         </nav>
-        
+
         {/* Right side: Theme, Notifications */}
         <div className="flex items-center space-x-1">
           <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Alternar tema" className="hover:bg-primary-foreground/10 focus-visible:ring-primary-foreground/50 text-primary-foreground">
