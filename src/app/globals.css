@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -42,7 +43,8 @@ h1, h2, h3, h4, h5, h6 {
     --font-headline: 'Inter', sans-serif;
     --font-code: 'monospace';
 
-    --sidebar-background: 220 28% 94%; /* Ajustado para combinar com o novo background */
+    /* Sidebar variables are less relevant now for background if using gradient, but keep for potential component use */
+    --sidebar-background: 220 28% 94%; 
     --sidebar-foreground: 220 15% 20%;
     --sidebar-primary: 235 65% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -60,7 +62,7 @@ h1, h2, h3, h4, h5, h6 {
     --popover: 220 10% 18%;
     --popover-foreground: 220 20% 88%;
     --primary: 235 65% 70%; /* #9996FF */
-    --primary-foreground: 220 10% 10%;
+    --primary-foreground: 220 10% 10%; /* Adjusted for dark primary foreground consistency */
     --secondary: 235 20% 35%; /* #4A4A6B */
     --secondary-foreground: 220 20% 88%;
     --muted: 220 10% 22%; /* #2E333B */
@@ -74,7 +76,8 @@ h1, h2, h3, h4, h5, h6 {
     --ring: 235 65% 75%;
 
     --chart-2: 140 65% 55%; /* Verde mais vivo para dark mode também */
-
+    
+    /* Sidebar variables for dark mode */
     --sidebar-background: 220 10% 15%;
     --sidebar-foreground: 220 20% 85%;
     --sidebar-primary: 235 65% 70%;
@@ -98,3 +101,14 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-headline);
   }
 }
+
+@layer utilities {
+  .sidebar-gradient .sidebar-scroll-area [role="scrollbar"] > div {
+    @apply bg-primary-foreground/40;
+  }
+  .sidebar-gradient .sidebar-scroll-area [role="scrollbar"]:hover > div {
+    @apply bg-primary-foreground/60;
+  }
+}
+
+    

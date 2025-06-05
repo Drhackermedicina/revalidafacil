@@ -4,23 +4,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Archive, // Changed
-  BookMarked, // Changed
-  BarChart3,
+  Archive,
+  BookMarked,
   History, 
-  Clock, // Changed from ClockRewind
+  Clock,
   Moon,
   Sun,
   ChevronsLeft,
   ChevronsRight,
   Menu as MenuIcon,
-  ClipboardCheck, // New
-  FilePlus2, // New
-  Library, // New
-  UserCircle, // Changed
-  Laptop, // New
-  TrendingUp, // New
-  ListChecks, 
+  ClipboardCheck,
+  FilePlus2,
+  Library,
+  UserCircle,
+  Laptop,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -41,9 +39,10 @@ interface NavItemProps {
   icon: React.ElementType;
   label: string;
   isSubItem?: boolean;
+  isCollapsed?: boolean;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem }) => {
+const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed }) => {
   const pathname = usePathname();
   const isActive = pathname === href;
 
@@ -51,15 +50,18 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem })
     <li>
       <Link href={href} passHref>
         <Button
-          variant={isActive ? "secondary" : "ghost"}
+          variant={"ghost"}
           className={cn(
-            "w-full justify-start",
+            "w-full justify-start text-primary-foreground hover:bg-primary-foreground/10",
             isSubItem ? "pl-10" : "pl-6",
-            isActive && "bg-primary/10 text-primary hover:bg-primary/20"
+            isActive && "bg-primary-foreground/15 text-primary-foreground font-semibold hover:bg-primary-foreground/20",
+            isCollapsed && !isSubItem && "px-0 justify-center",
+            isCollapsed && isSubItem && "pl-6" // Keep some padding for sub-items when collapsed if label is shown
           )}
+          title={isCollapsed ? label : undefined}
         >
-          <Icon className="mr-2 h-5 w-5" />
-          {label}
+          <Icon className={cn("mr-2 h-5 w-5", isCollapsed && !isSubItem && "mr-0")} />
+          {(!isCollapsed || isSubItem) && label}
         </Button>
       </Link>
     </li>
@@ -71,46 +73,58 @@ const NavAccordionItem: React.FC<{
   label: string;
   children: React.ReactNode;
   value: string;
-}> = ({ icon: Icon, label, children, value }) => {
+  isCollapsed?: boolean;
+}> = ({ icon: Icon, label, children, value, isCollapsed }) => {
   return (
     <AccordionItem value={value} className="border-none">
-      <AccordionTrigger className="py-2 px-6 hover:bg-muted/50 hover:no-underline rounded-md text-foreground/80 data-[state=open]:text-primary">
-        <div className="flex items-center">
-          <Icon className="mr-2 h-5 w-5" />
-          {label}
+      <AccordionTrigger className={cn(
+        "py-2 px-6 hover:bg-primary-foreground/10 hover:no-underline rounded-md text-primary-foreground/80 data-[state=open]:text-primary-foreground data-[state=open]:font-semibold",
+        isCollapsed && "px-2 justify-center"
+        )}
+        title={isCollapsed ? label : undefined}
+        hideChevron={isCollapsed}
+        >
+        <div className={cn("flex items-center", isCollapsed && "w-full justify-center")}>
+          <Icon className={cn("mr-2 h-5 w-5", isCollapsed && "mr-0")} />
+          {!isCollapsed && label}
         </div>
       </AccordionTrigger>
-      <AccordionContent className="pb-0">
-        <ul className="space-y-1">{children}</ul>
-      </AccordionContent>
+      {!isCollapsed && (
+        <AccordionContent className="pb-0">
+          <ul className="space-y-1">{children}</ul>
+        </AccordionContent>
+      )}
     </AccordionItem>
   );
 };
 
-const SidebarNavContent = () => (
+const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = false}) => (
   <>
-    <div className="p-4 border-b border-border flex items-center justify-center">
+    <div className={cn("p-4 border-b border-primary-foreground/20 flex items-center", isCollapsed ? "justify-center" : "justify-center")}>
       <Link href="/">
-        <Logo width={36} height={36} className="h-9 w-9 text-primary" />
+        <Logo width={isCollapsed ? 28 : 36} height={isCollapsed ? 28 : 36} className={cn("text-primary-foreground", isCollapsed ? "h-7 w-7" : "h-9 w-9")} />
       </Link>
     </div>
-    <ScrollArea className="flex-grow">
+    <ScrollArea className="flex-grow sidebar-scroll-area">
       <nav className="py-4">
-        <ul className="space-y-1 px-2">
-          <NavItem href="/dashboard" icon={UserCircle} label="Área do estudante" />
-          
-          <NavAccordionItem icon={Archive} label="Estações" value="checklists">
-            <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem />
-            <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem />
-          </NavAccordionItem>
-          <NavItem href="/simulados" icon={Laptop} label="Simulados" />
-          <NavItem href="/performance" icon={TrendingUp} label="Meus Desempenhos" />
-          <NavItem href="/materiais-apoio" icon={Library} label="Materiais de apoio" />
-          <NavItem href="/modelos-checklists" icon={FilePlus2} label="Modelo de Checklists" />
-          <NavAccordionItem icon={Clock} label="Histórico" value="history">
-            <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem />
-          </NavAccordionItem>
-        </ul>
+        <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-1")}>
+          <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
+            <NavItem href="/dashboard" icon={UserCircle} label={"Área do estudante"} isCollapsed={isCollapsed} />
+            
+            <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
+              <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed} />
+              <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed}/>
+            </NavAccordionItem>
+            <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
+            
+            <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
+            <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed}/>
+            <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
+            <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
+              <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
+            </NavAccordionItem>
+          </ul>
+        </Accordion>
       </nav>
     </ScrollArea>
   </>
@@ -134,50 +148,50 @@ export function SidebarNav() {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden md:flex flex-col h-screen bg-card border-r border-border transition-all duration-300 ease-in-out",
+          "hidden md:flex flex-col h-screen border-r border-primary-foreground/20 transition-all duration-300 ease-in-out sidebar-gradient bg-gradient-to-b from-primary to-[hsl(var(--chart-2))] text-primary-foreground",
           isCollapsed ? "w-16" : "w-64"
         )}
       >
         <div className={cn(
-          "p-3 border-b border-border flex items-center",
+          "p-3 border-b border-primary-foreground/20 flex items-center",
           isCollapsed ? "flex-col gap-2 py-2.5 items-center" : "justify-between" 
         )}>
           <Link href="/" className={cn(isCollapsed && "flex justify-center w-full")}>
             <Logo 
               width={isCollapsed ? 28 : 32} 
               height={isCollapsed ? 28 : 32} 
-              className={cn(isCollapsed ? "h-7 w-7" : "h-8 w-8", "text-primary")}
+              className={cn(isCollapsed ? "h-7 w-7" : "h-8 w-8", "text-primary-foreground")}
             />
           </Link>
           
-          <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn(isCollapsed && "mt-1")}>
+          <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn("text-primary-foreground hover:bg-primary-foreground/10", isCollapsed && "mt-1")}>
             {isCollapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
           </Button>
         </div>
-        <ScrollArea className="flex-grow">
+        <ScrollArea className="flex-grow sidebar-scroll-area">
            <nav className="py-2">
-            <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-2")}>
+            <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-1")}>
               <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
-                 <NavItem href="/dashboard" icon={UserCircle} label={isCollapsed ? "" : "Área do estudante"} />
+                 <NavItem href="/dashboard" icon={UserCircle} label={"Área do estudante"} isCollapsed={isCollapsed} />
                  
-                  <NavAccordionItem icon={Archive} label={isCollapsed ? "" : "Estações"} value="checklists">
-                    <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem />
-                    <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem />
+                  <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
+                    <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed} />
+                    <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
-                  <NavItem href="/simulados" icon={Laptop} label={isCollapsed ? "" : "Simulados"} />
+                  <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
                   
-                  <NavItem href="/performance" icon={TrendingUp} label={isCollapsed ? "" : "Meus Desempenhos"} />
-                  <NavItem href="/materiais-apoio" icon={Library} label={isCollapsed ? "" : "Materiais de apoio"} />
-                  <NavItem href="/modelos-checklists" icon={FilePlus2} label={isCollapsed ? "" : "Modelo de Checklists"} />
-                  <NavAccordionItem icon={Clock} label={isCollapsed ? "" : "Histórico"} value="history">
-                    <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem />
+                  <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
+                  <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed} />
+                  <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
+                  <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
+                    <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
               </ul>
             </Accordion>
            </nav>
         </ScrollArea>
-        <div className="p-4 border-t border-border mt-auto">
-          <Button variant="ghost" onClick={toggleTheme} className={cn("w-full justify-start", isCollapsed && "justify-center")}>
+        <div className="p-4 border-t border-primary-foreground/20 mt-auto">
+          <Button variant="ghost" onClick={toggleTheme} className={cn("w-full justify-start text-primary-foreground hover:bg-primary-foreground/10", isCollapsed && "justify-center")}>
             {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             {!isCollapsed && <span className="ml-2">{theme === "light" ? "Dark Mode" : "Light Mode"}</span>}
           </Button>
@@ -191,10 +205,10 @@ export function SidebarNav() {
             <MenuIcon className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-72 bg-card">
+        <SheetContent side="left" className="p-0 w-72 sidebar-gradient bg-gradient-to-b from-primary to-[hsl(var(--chart-2))] text-primary-foreground border-r-0">
           <SidebarNavContent />
-           <div className="p-4 border-t border-border mt-auto absolute bottom-0 w-full">
-            <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start">
+           <div className="p-4 border-t border-primary-foreground/20 mt-auto absolute bottom-0 w-full">
+            <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start text-primary-foreground hover:bg-primary-foreground/10">
               {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               <span className="ml-2">{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
             </Button>
@@ -204,3 +218,5 @@ export function SidebarNav() {
     </>
   );
 }
+
+    
