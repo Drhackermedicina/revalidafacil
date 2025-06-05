@@ -42,7 +42,7 @@ export default function StudentDashboardPage() {
               <CardTitle className="text-2xl font-bold font-headline">Área do Estudante</CardTitle>
               <CardDescription>Bem-vindo(a) de volta, {studentData.name}!</CardDescription>
             </div>
-            <Avatar className="h-16 w-16 sm:h-20 sm:w-20">
+            <Avatar className="h-[100px] w-[100px]">
               <AvatarImage src={studentData.avatarUrl} alt={studentData.name} data-ai-hint="profile person" />
               <AvatarFallback>{studentData.name.substring(0,2).toUpperCase()}</AvatarFallback>
             </Avatar>
