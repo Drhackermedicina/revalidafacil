@@ -25,9 +25,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { FilePlus2 } from "lucide-react";
+import { FilePlus2, UserCog, FileText, ListChecks } from "lucide-react";
 
-// Zod schema for basic station fields
+// Zod schema for station fields
 const stationFormSchema = z.object({
   title: z.string().min(5, { message: "O título deve ter pelo menos 5 caracteres." }),
   area: z.enum(["Clínica Médica", "Cirurgia", "G.O", "Pediatria", "Preventiva"], {
@@ -37,6 +37,9 @@ const stationFormSchema = z.object({
     .regex(/^[a-z0-9-]+$/, { message: "O código deve conter apenas letras minúsculas, números e hífens." }),
   scenarioTitle: z.string().min(5, { message: "O título do cenário deve ter pelo menos 5 caracteres." }),
   scenarioDescription: z.string().min(20, { message: "A descrição do cenário deve ter pelo menos 20 caracteres." }),
+  actorInstructions: z.string().min(20, { message: "As instruções para o ator devem ter pelo menos 20 caracteres." }),
+  printedMaterialsDescription: z.string().optional().describe("Descrição textual dos materiais impressos, um por linha ou parágrafo."),
+  pepItemsDescription: z.string().min(30, { message: "A descrição dos itens do PEP deve ter pelo menos 30 caracteres." }),
 });
 
 type StationFormValues = z.infer<typeof stationFormSchema>;
@@ -55,18 +58,19 @@ export default function StationEditorPage() {
     resolver: zodResolver(stationFormSchema),
     defaultValues: {
       title: "",
-      area: undefined, // Or a default value like "Clínica Médica"
+      area: undefined,
       code: "",
       scenarioTitle: "",
       scenarioDescription: "",
+      actorInstructions: "",
+      printedMaterialsDescription: "",
+      pepItemsDescription: "",
     },
-    mode: "onChange", // Validate on change for better UX
+    mode: "onChange", 
   });
 
   function onSubmit(data: StationFormValues) {
     console.log("Dados da Estação:", data);
-    // Here, you would typically send the data to a backend API
-    // For now, we'll just log it and potentially reset the form or show a success message.
     alert("Estação 'salva' no console! Verifique o console do navegador.");
     // form.reset(); // Optionally reset the form
   }
@@ -82,7 +86,7 @@ export default function StationEditorPage() {
             </CardTitle>
             <CardDescription>
               Crie ou modifique estações para treinamento de habilidades clínicas.
-              Por enquanto, esta página permite apenas a criação dos campos básicos.
+              Preencha os campos abaixo para definir uma nova estação.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -91,9 +95,12 @@ export default function StationEditorPage() {
           <CardContent className="pt-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* Informações Gerais da Estação */}
-                <div className="space-y-4 p-4 border rounded-md">
-                  <h3 className="text-lg font-medium text-primary">Informações Gerais</h3>
+                
+                <div className="space-y-4 p-4 border rounded-md shadow-sm">
+                  <h3 className="text-lg font-medium text-primary flex items-center">
+                    <Info className="mr-2 h-5 w-5" />
+                    Informações Gerais da Estação
+                  </h3>
                   <FormField
                     control={form.control}
                     name="title"
@@ -150,9 +157,11 @@ export default function StationEditorPage() {
                   </div>
                 </div>
 
-                {/* Detalhes do Cenário */}
-                <div className="space-y-4 p-4 border rounded-md">
-                  <h3 className="text-lg font-medium text-primary">Cenário Clínico</h3>
+                <div className="space-y-4 p-4 border rounded-md shadow-sm">
+                  <h3 className="text-lg font-medium text-primary flex items-center">
+                    <FileText className="mr-2 h-5 w-5" />
+                    Cenário Clínico
+                  </h3>
                   <FormField
                     control={form.control}
                     name="scenarioTitle"
@@ -175,7 +184,7 @@ export default function StationEditorPage() {
                         <FormControl>
                           <Textarea
                             placeholder="Descreva a situação inicial do paciente, ambiente, queixas, etc."
-                            className="min-h-[100px]"
+                            className="min-h-[120px]"
                             {...field}
                           />
                         </FormControl>
@@ -185,10 +194,88 @@ export default function StationEditorPage() {
                     )}
                   />
                 </div>
+
+                <div className="space-y-4 p-4 border rounded-md shadow-sm">
+                  <h3 className="text-lg font-medium text-primary flex items-center">
+                    <UserCog className="mr-2 h-5 w-5" />
+                    Instruções para o Ator/Atriz
+                  </h3>
+                  <FormField
+                    control={form.control}
+                    name="actorInstructions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Orientações Detalhadas</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Descreva o comportamento esperado, falas específicas, história pregressa, etc."
+                            className="min-h-[150px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>Estas são as instruções completas para o paciente simulado.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 
-                {/* Placeholder para campos futuros (Tasks, ChecklistItems, etc.) */}
+                <div className="space-y-4 p-4 border rounded-md shadow-sm">
+                  <h3 className="text-lg font-medium text-primary flex items-center">
+                    <FileText className="mr-2 h-5 w-5" />
+                    Materiais Impressos Disponíveis
+                  </h3>
+                  <FormField
+                    control={form.control}
+                    name="printedMaterialsDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Descrição dos Materiais</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Descreva cada material impresso. Ex: 'Título: ECG do Paciente | Conteúdo: Ritmo sinusal... | Imagem: ecg_normal.png | Bloqueado: Sim'. Separe múltiplos materiais com uma linha em branco ou numeração."
+                            className="min-h-[120px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Liste e descreva os materiais que serão disponibilizados. No futuro, poderá anexar imagens diretamente.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-4 p-4 border rounded-md shadow-sm">
+                  <h3 className="text-lg font-medium text-primary flex items-center">
+                    <ListChecks className="mr-2 h-5 w-5" />
+                    Padrão Esperado de Procedimento (PEP) / Itens de Checklist
+                  </h3>
+                  <FormField
+                    control={form.control}
+                    name="pepItemsDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Itens do Checklist</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Liste cada item do checklist. Ex: 'Descrição: Realizou higiene das mãos | Pontos(I/P/A): 0/0.5/1 | Tipo: ac | Observação: (opcional)'. Separe múltiplos itens com uma linha em branco ou numeração."
+                            className="min-h-[200px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Detalhe cada item que será avaliado, incluindo descrição, critérios de pontuação (Inadequado/Parcial/Adequado) e o tipo de ação.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
                 <div className="p-4 border border-dashed rounded-md text-center text-muted-foreground">
-                  <p>Mais campos (Tarefas, Checklist, Materiais Impressos, Flashcards) serão adicionados aqui em futuras interações.</p>
+                  <p>Campos para Tarefas, Flashcards e Referências serão adicionados em futuras interações.</p>
                 </div>
 
                 <Button type="submit" className="w-full md:w-auto">Salvar Estação (Log no Console)</Button>
@@ -200,5 +287,5 @@ export default function StationEditorPage() {
     </AppLayout>
   );
 }
-
-    
+// Adicionei um ícone 'Info' que estava faltando na importação do lucide-react
+import { Info } from "lucide-react";
