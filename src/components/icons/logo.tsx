@@ -17,7 +17,7 @@ const Logo = (props: SVGProps<SVGSVGElement>) => (
       fill="hsl(var(--primary-foreground))"
       className="font-headline"
     >
-      PR
+      RF
     </text>
   </svg>
 );

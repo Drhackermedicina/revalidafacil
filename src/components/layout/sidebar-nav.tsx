@@ -95,7 +95,7 @@ const SidebarNavContent = () => (
     <div className="p-4 border-b border-border">
       <Link href="/" className="flex items-center gap-2">
         <Logo className="h-8 w-8" />
-        <h1 className="text-xl font-bold font-headline text-primary">Pense Revalida</h1>
+        <h1 className="text-xl font-bold font-headline text-primary">Revalida Fácil</h1>
       </Link>
     </div>
     <ScrollArea className="flex-grow">
@@ -108,7 +108,7 @@ const SidebarNavContent = () => (
             </span>
           </li>
           <NavAccordionItem icon={ListChecks} label="Banco de checklists" value="checklists">
-            <NavItem href="/checklists/pense" icon={Brain} label="Pense Revalida" isSubItem />
+            <NavItem href="/checklists/pense" icon={Brain} label="Revalida Fácil" isSubItem />
             <NavItem href="/checklists/partners" icon={Users} label="Parceiros / Clientes" isSubItem />
           </NavAccordionItem>
           <NavItem href="/training/enter" icon={LogIn} label="Entrar (Checklist)" />
@@ -178,7 +178,7 @@ export function SidebarNav() {
           {!isCollapsed && (
             <Link href="/" className="flex items-center gap-2">
               <Logo className="h-8 w-8" />
-              <h1 className="text-lg font-bold font-headline text-primary">Pense Revalida</h1>
+              <h1 className="text-lg font-bold font-headline text-primary">Revalida Fácil</h1>
             </Link>
           )}
           <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn(isCollapsed && "mx-auto")}>
@@ -196,7 +196,7 @@ export function SidebarNav() {
                     </span>
                   </li>}
                   <NavAccordionItem icon={ListChecks} label={isCollapsed ? "" : "Banco de checklists"} value="checklists">
-                    <NavItem href="/checklists/pense" icon={Brain} label="Pense Revalida" isSubItem />
+                    <NavItem href="/checklists/pense" icon={Brain} label="Revalida Fácil" isSubItem />
                     <NavItem href="/checklists/partners" icon={Users} label="Parceiros / Clientes" isSubItem />
                   </NavAccordionItem>
                   <NavItem href="/training/enter" icon={LogIn} label={isCollapsed ? "" : "Entrar (Checklist)"} />
