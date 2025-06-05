@@ -129,8 +129,8 @@ export const allStations: ChecklistData[] = [
     checklistItems: [
       { id: "ci1-av-acolhimento", description: "<strong>Acolhimento e Biossegurança:</strong> Apresentou-se, estabeleceu comunicação empática e utilizou EPIs (luvas).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ac" },
       { id: "ci2-av-anamnese-id-qp", description: "<strong>Anamnese - Identificação e Queixa Principal:</strong> Coletou dados e queixa principal (dor/queimadura por água viva) e duração.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
-      { id: "ci3-av-anamnese-hda", description: "<strong>Anamnese - HDA:</strong> Investigou dor (início, causa, localização, irradiação, qualidade, intensidade, duração, melhora/piora) e sintomas associados (locais/sistêmicos).", points: { inadequate: 0, partial: 1.5, adequate: 3 }, type: "an", observation: "Avaliar completude da investigação da dor." },
-      { id: "ci4-av-anamnese-antecedentes", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou alergias, comorbidades, medicações, vacinação (tétano), hábitos.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
+      { id: "ci3-av-anamnese-hda", description: "<strong>Anamnese - HDA (ALICIA-D da Dor):</strong> Investigou início/causa, localização, irradiação, qualidade/tipo, intensidade, duração/evolução, fatores de melhora/piora, sintomas associados (locais/sistêmicos).", points: { inadequate: 0, partial: 1.5, adequate: 3 }, type: "an", observation: "Avaliar completude da investigação da dor." },
+      { id: "ci4-av-anamnese-antecedentes", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou alergias, comorbidades, medicações, vacinação (tétano), hábitos relevantes.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
       { id: "ci5-av-examefisico-geral", description: "<strong>Exame Físico - Geral e Sinais Vitais:</strong> Avaliou estado geral, consciência, aferiu/verificou sinais vitais.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ef" },
       { id: "ci6-av-examefisico-lesao", description: "<strong>Exame Físico - Inspeção da Lesão:</strong> Inspecionou e descreveu características da lesão (lineares, eritematosas, etc.).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ef" },
       { id: "ci7-av-conduta-sairagua", description: "<strong>Conduta - Saída da Água:</strong> Orientou/garantiu que o paciente saísse da água imediatamente.", points: { inadequate: 0, partial: null, adequate: 0.25 }, type: "ct" },
@@ -300,7 +300,7 @@ export const allStations: ChecklistData[] = [
   },
   {
     title: "REVALIDA FÁCIL (VAGINOSE BACTERIANA)",
-    area: "Ginecologia e Obstetrícia",
+    area: "G.O", // Corrigido aqui
     code: "vaginose-bacteriana-rf",
     scenario: {
       title: "Cenário de Atendimento: Queixa de Corrimento com Odor Fétido",
@@ -333,10 +333,12 @@ export const allStations: ChecklistData[] = [
     actorInstructions: {
       title: "INSTRUÇÕES AO ATOR/ATRIZ (Sra. Carla)",
       content: `
-        <p><strong>Nome do Paciente (Simulado):</strong> Carla Mendes, 26 anos, casada, secretária.</p>
-        <p><strong>Humor/Comportamento do Paciente:</strong> Envergonhada e desconfortável devido ao odor, mas cooperativa e buscando solução.</p>
-        <p><strong>Resposta a outras perguntas não previstas no script:</strong> "Não consta no script" ou "Não sei informar".</p>
-        <p><strong>Perguntas do paciente (se conduta adequada ou em momento específico):</strong></p>
+        <h4>DADOS PESSOAIS</h4>
+        <p>Nome do Paciente (Simulado): Carla Mendes, 26 anos, casada, secretária.</p>
+        <p>Humor/Comportamento do Paciente: Envergonhada e desconfortável devido ao odor, mas cooperativa e buscando solução.</p>
+        <p>Resposta a outras perguntas não previstas no script: "Não consta no script" ou "Não sei informar".</p>
+        <br/>
+        <h4>PERGUNTAS DO PACIENTE (se conduta adequada ou em momento específico):</h4>
         <ul>
           <li>"Doutor(a), o que eu tenho exatamente?"</li>
           <li>"Isso é alguma Doença Sexualmente Transmissível (DST)?"</li>
@@ -344,8 +346,10 @@ export const allStations: ChecklistData[] = [
           <li>"Meu marido precisa se tratar também?"</li>
           <li>"Como eu posso evitar que isso volte?"</li>
         </ul>
+        <br/>
         <p><strong>Condução de Exames/Procedimentos Específicos (se houver):</strong> Não haverá exame físico real. O candidato deverá descrever.</p>
-        <p><strong>Informações Adicionais para o Ator:</strong></p>
+        <br/>
+        <h4>INFORMAÇÕES ADICIONAIS PARA O ATOR:</h4>
         <ul>
           <li>Relatar que já tentou usar sabonetes íntimos perfumados e fez duchas vaginais, mas o odor piorou.</li>
           <li>Manter contato visual e expressar preocupação com o odor.</li>
@@ -353,10 +357,10 @@ export const allStations: ChecklistData[] = [
         <br/>
         <h4>DADOS DO PACIENTE SIMULADO (Script para o Ator - Sra. Carla)</h4>
         <br/>
-        <p><strong>MOTIVO DE CONSULTA:</strong></p>
+        <h4>MOTIVO DE CONSULTA:</h4>
         <p>"[Doutor(a), estou aqui porque estou com um corrimento com um cheiro muito forte, que parece peixe podre. Isso já faz uma semana e piora depois da relação com meu marido e também quando estou menstruada. Estou muito incomodada.]"</p>
         <br/>
-        <p><strong>Detalhar cada sintoma/queixa principal:</strong></p>
+        <h4>Detalhar cada sintoma/queixa principal:</h4>
         <p><strong>Sintoma 1: Odor Vaginal Fétido</strong></p>
         <ul>
           <li><strong>Início:</strong> "Há cerca de uma semana."</li>
@@ -377,7 +381,7 @@ export const allStations: ChecklistData[] = [
           <li><strong>Quantidade:</strong> "Moderada, suja a calcinha, mas não muito."</li>
         </ul>
         <br/>
-        <p><strong>Sintomas Acompanhantes (Investigar ativamente ou responder se perguntado):</strong></p>
+        <h4>Sintomas Acompanhantes (Investigar ativamente ou responder se perguntado):</h4>
         <ul>
           <li><strong>Prurido vulvovaginal:</strong> "Não, coceira quase nenhuma. Às vezes uma irritação leve, mas nada demais."</li>
           <li><strong>Disúria:</strong> "Não, para urinar está normal."</li>
@@ -390,7 +394,7 @@ export const allStations: ChecklistData[] = [
         <br/>
         <p><strong>Medicações de Alívio Usadas:</strong> "Tentei usar sabonetes íntimos com cheiro e fiz duchas com água e vinagre que vi na internet, mas não adiantou, acho que até piorou o cheiro."</p>
         <br/>
-        <p><strong>ANTECEDENTES PESSOAIS:</strong></p>
+        <h4>ANTECEDENTES PESSOAIS:</h4>
         <ul>
           <li><strong>Doenças Prévias (Comorbidades):</strong> Nega DM, HAS, imunossupressão.</li>
           <li><strong>Medicamentos de Uso Contínuo/Vitaminas:</strong> "Uso pílula anticoncepcional (desogestrel isolado) há 2 anos."</li>
@@ -400,7 +404,7 @@ export const allStations: ChecklistData[] = [
           <li><strong>Vacinação:</strong> Completa, incluindo HPV.</li>
         </ul>
         <br/>
-        <p><strong>Ginecológicos/Obstétricos (para pacientes do sexo feminino):</strong></p>
+        <h4>Ginecológicos/Obstétricos (para pacientes do sexo feminino):</h4>
         <ul>
           <li><strong>DUM:</strong> "Terminou há 3 dias." (Ciclos regulares de 28/30 dias)</li>
           <li><strong>Gesta/Para/Aborto:</strong> G0P0A0.</li>
@@ -412,7 +416,7 @@ export const allStations: ChecklistData[] = [
           <li><strong>VB/Candidíase prévia:</strong> "Acho que já tive candidíase uma vez, mas era diferente, coçava muito. Esse cheiro é a primeira vez."</li>
         </ul>
         <br/>
-        <p><strong>HÁBITOS DE VIDA:</strong></p>
+        <h4>HÁBITOS DE VIDA:</h4>
         <ul>
           <li><strong>Alimentação:</strong> Refere dieta equilibrada.</li>
           <li><strong>Atividade Física:</strong> Caminhada 2 vezes por semana.</li>
@@ -422,13 +426,13 @@ export const allStations: ChecklistData[] = [
           <li><strong>Higiene íntima:</strong> "Tomo banho 2 vezes ao dia. Estava usando sabonetes íntimos perfumados e fazendo duchas vaginais por causa do cheiro."</li>
         </ul>
         <br/>
-        <p><strong>HISTÓRIA PSICOSSOCIAL E EPIDEMIOLÓGICA:</strong></p>
+        <h4>HISTÓRIA PSICOSSOCIAL E EPIDEMIOLÓGICA:</h4>
         <ul>
           <li><strong>Ocupação/Trabalho:</strong> Secretária.</li>
           <li><strong>Moradia/Saneamento:</strong> Apartamento com boas condições.</li>
         </ul>
         <br/>
-        <p><strong>HISTÓRIA FAMILIAR:</strong></p>
+        <h4>HISTÓRIA FAMILIAR:</h4>
         <p>Pais saudáveis. Nega história familiar relevante.</p>
       `,
     },
