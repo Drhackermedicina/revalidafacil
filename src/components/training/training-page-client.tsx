@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -34,7 +35,8 @@ import {
   Link as LinkIcon,
   Eye,
   EyeOff,
-  Menu
+  Menu,
+  ListChecks
 } from "lucide-react";
 import Image from "next/image";
 import { suggestQuestions, type SuggestQuestionsInput, type SuggestQuestionsOutput } from "@/ai/flows/suggest-questions";
@@ -151,6 +153,13 @@ export default function TrainingPageClient({ checklistData }: TrainingPageClient
   const [tasksCompleted, setTasksCompleted] = useState<boolean[]>(new Array(checklistData.tasks.items.length).fill(false));
 
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<"controls" | "actor" | "impressos">("controls");
+  const [shareableLink, setShareableLink] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setShareableLink(`${window.location.origin}/training?code=${checklistData.code}`);
+    }
+  }, [checklistData.code]);
 
   useEffect(() => {
     const maxScore = checklistItemsState.reduce((sum, item) => {
@@ -299,8 +308,8 @@ export default function TrainingPageClient({ checklistData }: TrainingPageClient
                         <Button onClick={() => copyToClipboard(checklistData.code, "Código")} size="icon"><Copy className="h-4 w-4"/></Button>
                       </div>
                        <div className="flex items-center space-x-2">
-                        <Input readOnly value={`${window.location.origin}/training?code=${checklistData.code}`} />
-                        <Button onClick={() => copyToClipboard(`${window.location.origin}/training?code=${checklistData.code}`, "Link")} size="icon"><LinkIcon className="h-4 w-4"/></Button>
+                        <Input readOnly value={shareableLink} />
+                        <Button onClick={() => copyToClipboard(shareableLink, "Link")} size="icon" disabled={!shareableLink}><LinkIcon className="h-4 w-4"/></Button>
                       </div>
                     </div>
                   </DialogContent>
@@ -631,3 +640,4 @@ export default function TrainingPageClient({ checklistData }: TrainingPageClient
     </div>
   );
 }
+
