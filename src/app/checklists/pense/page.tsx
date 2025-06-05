@@ -49,7 +49,7 @@ export default function PenseChecklistsPage() {
                       <Link href={`/training/${station.code}`} passHref key={station.code} className="block h-full rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none">
                         <Card className="flex flex-col hover:shadow-xl transition-shadow duration-200 ease-in-out rounded-lg overflow-hidden cursor-pointer h-full">
                           <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4 flex-grow">
-                            <CardTitle className="text-lg leading-tight flex items-center">
+                            <CardTitle className="text-base leading-tight flex items-center">
                               {stationCatDetails && (
                                 <span
                                   className={`mr-2 inline-flex items-center justify-center rounded-sm px-1.5 py-0.5 text-xs font-bold ${stationCatDetails.textColorClass} border border-current`}
