@@ -22,6 +22,7 @@ export interface PrintedMaterial {
   content: string;
   imageSrc?: string;
   imageAlt?: string;
+  dataAiHint?: string; // Added for AI image search hints
   isLocked: boolean;
 }
 
@@ -116,11 +117,12 @@ export const allStations: ChecklistData[] = [
     },
     printedMaterials: [
       {
-        id: "pm1-av",
+        id: "pm1-av-folder", // Changed ID to be more specific to avoid future conflicts if other stations have "pm1"
         title: "Folder Informativo: Primeiros Socorros em Acidentes com Águas Vivas",
-        content: "<p>Este material foi integrado ao checklist (PEP) do candidato.</p>",
-        imageSrc: "https://placehold.co/600x400.png",
-        imageAlt: "first aid jellyfish",
+        content: "<p>Este conteúdo foi integrado ao checklist (PEP) do candidato.</p>", // Content now part of checklist
+        imageSrc: "https://app.penserevalida.com/android-chrome-512x512.png", // Example image, as original folder is now in checklist.
+        imageAlt: "Jellyfish sting first aid information",
+        dataAiHint: "jellyfish firstaid",
         isLocked: false,
       }
     ],
@@ -131,13 +133,15 @@ export const allStations: ChecklistData[] = [
       { id: "ci4-av-anamnese-antecedentes", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou alergias, comorbidades, medicações, vacinação (tétano), hábitos.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
       { id: "ci5-av-examefisico-geral", description: "<strong>Exame Físico - Geral e Sinais Vitais:</strong> Avaliou estado geral, consciência, aferiu/verificou sinais vitais.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ef" },
       { id: "ci6-av-examefisico-lesao", description: "<strong>Exame Físico - Inspeção da Lesão:</strong> Inspecionou e descreveu características da lesão (lineares, eritematosas, etc.).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ef" },
+      
+      // Itens de Conduta baseados no "O que fazer":
       { id: "ci7-av-conduta-sairagua", description: "<strong>Conduta - Saída da Água:</strong> Orientou/garantiu que o paciente saísse da água imediatamente.", points: { inadequate: 0, partial: null, adequate: 0.25 }, type: "ct" },
       { id: "ci8-av-conduta-lavagemmar", description: "<strong>Conduta - Lavagem com ÁGUA DO MAR:</strong> Orientou/realizou lavagem abundante com ÁGUA DO MAR (ou soro fisiológico), explicando NÃO usar água doce.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "CRÍTICO: Não usar água doce." },
       { id: "ci9-av-conduta-vinagre", description: "<strong>Conduta - Aplicação de VINAGRE:</strong> Orientou/realizou aplicação de VINAGRE (ácido acético a 5%) por 15-30 minutos.", points: { inadequate: 0, partial: 1, adequate: 2 }, type: "ct", observation: "Fundamental para neutralizar cnidas." },
       { id: "ci10-av-conduta-tentaculos", description: "<strong>Conduta - Remoção de Tentáculos:</strong> Orientou/realizou remoção cuidadosa de tentáculos visíveis (pinça/luvas), SEM esfregar.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ct" },
-      { id: "ci11-av-conduta-aliviodor", description: "<strong>Conduta - Alívio da Dor (Pós-Vinagre):</strong> Orientou/realizou compressas MORNAS (40-45°C) por ~20 min. Considerou analgesia sistêmica.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "Compressas mornas APÓS vinagre." },
+      { id: "ci11-av-conduta-aliviodor", description: "<strong>Conduta - Alívio da Dor (Pós-Vinagre):</strong> Orientou/realizou compressas MORNAS (40-45°C) por ~20 min. Considerou analgesia sistêmica (paracetamol, dipirona).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "Compressas mornas APÓS vinagre." },
       { id: "ci12-av-conduta-naofazer", description: "<strong>Conduta - O que NÃO Fazer:</strong> Orientou ativamente a NÃO usar urina, álcool, etc.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ct" },
-      { id: "ci13-av-conduta-orientacoesfinais", description: "<strong>Conduta - Orientações Finais e Sinais de Alerta:</strong> Orientou cuidados posteriores e sinais de alerta para reavaliação médica (piora da dor, infecção, sintomas sistêmicos graves, reação alérgica). Verificou/orientou profilaxia antitetânica.", points: { inadequate: 0, partial: 0.75, adequate: 1.25 }, type: "ct" }
+      { id: "ci13-av-conduta-orientacoesfinais", description: "<strong>Conduta - Orientações Finais e Sinais de Alerta:</strong> Orientou sobre quando procurar atendimento médico novamente (piora da dor, infecção, sintomas sistêmicos, reação alérgica grave). Verificou/orientou profilaxia antitetânica.", points: { inadequate: 0, partial: 0.75, adequate: 1.25 }, type: "ct" }
     ],
     references: [{ text: "Protocolos clínicos para acidentes com animais aquáticos (ex: Ministério da Saúde, Sociedades Médicas de Dermatologia ou Toxicologia).", url: "#" }],
     flashcards: [
@@ -151,7 +155,7 @@ export const allStations: ChecklistData[] = [
   },
   {
     title: "Trauma Abdominal Fechado",
-    area: "Cirurgia", 
+    area: "Cirurgia",
     code: "trauma-abdominal",
     scenario: {
       title: "Cenário Clínico: Politraumatizado Pós-Colisão Automobilística",
@@ -177,15 +181,17 @@ export const allStations: ChecklistData[] = [
         title: "Resultado do FAST (Focus Assessment with Sonography for Trauma)",
         content: "<p><strong>FAST:</strong> Positivo - líquido livre em cavidade abdominal (espaço hepatorrenal e esplenorrenal).</p>",
         imageSrc: "https://placehold.co/600x400.png",
-        imageAlt: "resultado FAST ultrasound",
-        isLocked: true, 
+        imageAlt: "FAST ultrasound result",
+        dataAiHint: "ultrasound trauma",
+        isLocked: true,
       },
        {
         id: "pm2-trauma",
         title: "Raio-X Bacia AP e Perna Esquerda",
         content: "<p><strong>RX Bacia AP:</strong> Sem fraturas evidentes.<br/><strong>RX Fêmur Esquerdo:</strong> Fratura diafisária transversa do fêmur esquerdo.</p>",
         imageSrc: "https://placehold.co/600x400.png",
-        imageAlt: "raio x femur bacia",
+        imageAlt: "X-ray femur pelvis",
+        dataAiHint: "xray femur",
         isLocked: true,
       },
     ],
@@ -229,14 +235,14 @@ export const allStations: ChecklistData[] = [
       content: "<strong>DADOS PESSOAIS:</strong><br>- Anderson, 58 anos, motorista de ônibus.<br><br><strong>MOTIVO DE CONSULTA:</strong><br>- Não consigo movimentar o braço e a perna esquerda.<br><br><strong>INÍCIO DOS SINTOMAS:</strong><br>- Começou há pouco mais de uma hora.<br><br><strong>ANTECEDENTES PESSOAIS:</strong><br>-  Tenho diabetes, arritmia e colesterol alto.<br><br><strong>AO VERBALIZAR/ SOLICITAR A REALIZAÇÃO DA ESCALA NIHSS, LIBERAR TODOS OS IMPRESSOS DISPONÍVEIS.</strong><br><br><strong>SE PERGUNTADO A IDADE E MÊS QUE ESTAMOS:</strong><br>- Tenho 58 anos e estamos no mês de dezembro.<br><br><strong>SE SOLICITADO PARA FECHAR E ABRIR OS OLHOS E FECHAR E ABRIR A MÃO:</strong><br>- Feche e abra os olhos, feche e abra a mão direita.<br><br><strong>SE SOLICITADO PARA MOVIMENTAR OS OLHOS NA HORIZONTAL PARA OS 2 LADOS:</strong><br>- Movimente os olhos para os 2 lados.<br><br><strong>SE PERGUNTADO QUANTOS DEDOS O PACIENTE VÊ:</strong><br>- Responder adequadamente de acordo ao que for mostrado.<br><br><strong>SE SOLICITADO PARA ACOMPANHAR O MOVIMENTO DOS DEDOS DO PARTICIPANTE:</strong><br>- Acompanhar adequadamente e/ou responder que consegue.<br><br><strong>SE SOLICITADO MOSTRAR OS DENTES/ SORRIR E FECHAR OS OLHOS COM FORÇA:</strong><br>- Mostre os dentes/ sorria e feche os olhos com força.<br><br><strong>SE SOLICITADO PARA SUSTENTAR O BRAÇO DIREITO A 90° POR 10 SEGUNDOS:</strong><br>- Realize a ação corretamente.<br><br><strong>SE SOLICITADO PARA MOVER A PERNA ESQUERDA:</strong><br>- Simule e/ou verbalize que não consegue.<br><br><strong>SE SOLICITADO SUSTENTAR A PERNA DIREITA A 30° POR 5 SEGUNDOS:</strong><br>- Simule e/ou verbalize que consegue realizar a ação.<br><br><strong>SE SOLICITADO QUE O PACIENTE FAÇA O TESTE INDEX-NARIZ OU CALCANHAR-JOELHO:</strong><br>- Realizar adequadamente com o lado direito.<br><br><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO ESQUERDO:</strong><br>- Responder que não sentiu nada.<br><br><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO DIREITO:</strong><br>- Responder que consegue sentir o toque e a dor.<br><br><strong>SE SOLICITADO A DESCREVER O QUE ESTÁ ACONTECENDO NO QUADRO DO IMPRESSO 1:</strong><br>- Descreva adequadamente a cena.<br><br><strong>SE SOLICITADO A NOMEAR OS ITENS NA LISTA DE IDENTIFICAÇÃO DO IMPRESSO 2:</strong><br>- Nomear adequadamente.<br><br><strong>SE SOLICITADO A LER A LISTA DE SENTENÇA DO IMPRESSO 3:</strong><br>- Ler adequadamente.<br><br><strong>SE SOLICITADO A LER OU REPETIR AS PALAVRAS DA LISTA DO IMPRESSO 4:</strong><br>- Realizar a tarefa adequadamente.<br><br><strong>Se o candidato solicitar exame laboratorial ou de imagem de forma inespecífica, dizer:</strong><br>- Seja mais específico com o pedido.<br><br><strong>Se o candidato solicitar exames complementares laboratoriais e/ou de imagem de forma específica, dizer:</strong><br>- Considere solicitado.<br><br><strong>No decorrer da estação, caso o (a) participante concluir a aplicação da escala NIHSS e não verbalizar seu total, perguntar se o candidato concluiu a aplicação da escala e, após confirmar o término da aplicação, perguntar qual foi a pontuação.</strong>",
     },
     printedMaterials: [
-      { id: "pm1-avc-nihss", title: "Impresso 1 ( Imagem para descrever )", content: "<strong>Imagem:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "scene description task", isLocked: true },
-      { id: "pm2-avc-nihss", title: "Impresso 2 ( Itens para identificação )", content: "<strong>Imagem:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "item identification task", isLocked: true },
-      { id: "pm3-avc-nihss", title: "Impresso 3 ( Sentenças para leitura )", content: "<strong>Sentenças:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "sentence reading task", isLocked: true },
-      { id: "pm4-avc-nihss", title: "Impresso 4 ( Palavras para ler/repetir )", content: "<strong>Palavras:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "word reading task", isLocked: true },
-      { id: "pm5-avc-nihss", title: "Impresso 5 ( NIHSS 1/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 1", isLocked: true },
-      { id: "pm6-avc-nihss", title: "Impresso 6 ( NIHSS 2/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 2", isLocked: true },
-      { id: "pm7-avc-nihss", title: "Impresso 7 ( NIHSS 3/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 3", isLocked: true },
-      { id: "pm8-avc-nihss", title: "Impresso 8 ( NIHSS 4/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 4", isLocked: true },
+      { id: "pm1-avc-nihss", title: "Impresso 1 ( Imagem para descrever )", content: "<strong>Imagem:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736174755.jpeg", imageAlt: "Imagem para descrição NIHSS", dataAiHint: "scene description", isLocked: true },
+      { id: "pm2-avc-nihss", title: "Impresso 2 ( Itens para identificação )", content: "<strong>Imagem:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736174895.jpeg", imageAlt: "Itens para identificação NIHSS", dataAiHint: "object identification", isLocked: true },
+      { id: "pm3-avc-nihss", title: "Impresso 3 ( Sentenças para leitura )", content: "<strong>Sentenças:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736175002.jpeg", imageAlt: "Sentenças para leitura NIHSS", dataAiHint: "sentence reading", isLocked: true },
+      { id: "pm4-avc-nihss", title: "Impresso 4 ( Palavras para ler/repetir )", content: "<strong>Palavras:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736175158.jpeg", imageAlt: "Palavras para leitura/repetição NIHSS", dataAiHint: "word list", isLocked: true },
+      { id: "pm5-avc-nihss", title: "Impresso 5 ( NIHSS 1/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176406.jpeg", imageAlt: "Escala NIHSS parte 1", dataAiHint: "medical chart", isLocked: true },
+      { id: "pm6-avc-nihss", title: "Impresso 6 ( NIHSS 2/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176434.jpeg", imageAlt: "Escala NIHSS parte 2", dataAiHint: "medical chart", isLocked: true },
+      { id: "pm7-avc-nihss", title: "Impresso 7 ( NIHSS 3/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176461.jpeg", imageAlt: "Escala NIHSS parte 3", dataAiHint: "medical chart", isLocked: true },
+      { id: "pm8-avc-nihss", title: "Impresso 8 ( NIHSS 4/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176492.jpeg", imageAlt: "Escala NIHSS parte 4", dataAiHint: "medical chart", isLocked: true },
     ],
     checklistItems: [
       { id: "pep1-avc", description: "1. <strong>Apresentação:</strong><br>(1) identifica-se; e,<br>(2) cumprimenta o paciente simulado e pergunta seu nome.<br><br><strong>Adequado:</strong> realiza as duas ações.<br><strong>Parcialmente adequado:</strong> realiza uma ação.<br><strong>Inadequado:</strong> não realiza ação alguma.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ac" },
