@@ -4,14 +4,13 @@ import ProgressOverviewCard from "@/components/dashboard/progress-overview-card"
 import StrengthsWeaknessesCard from "@/components/dashboard/strengths-weaknesses-card";
 import PerformanceChartCard from "@/components/dashboard/performance-chart-card";
 import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
+import NextStepsCard from "@/components/dashboard/next-steps-card";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 
-// Placeholder data - substitua com seus dados reais
 const studentData = {
   name: "Estudante Dedicado",
-  avatarUrl: "https://lh3.googleusercontent.com/a/ACg8ocJ8H_x94SYW29u_K1jP3xhkO_0U0_q1dJ6SgGjY0w=s100", // URL do avatar do Google
+  avatarUrl: "https://lh3.googleusercontent.com/a/ACg8ocJ8H_x94SYW29u_K1jP3xhkO_0U0_q1dJ6SgGjY0w=s100",
   progress: [
     { area: "Cirúrgica", completed: 7, total: 15 },
     { area: "Clínica Médica", completed: 12, total: 20 },
@@ -30,6 +29,11 @@ const studentData = {
     { name: "Jun", score: 85 },
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
+  nextSteps: [
+    { id: "1", title: "Revisar Casos de Pediatria", type: "Revisão", due: "Em 2 dias" },
+    { id: "2", title: "Praticar Estação de Trauma", type: "Prática", due: "Amanhã" },
+    { id: "3", title: "Assistir Aula de ECG", type: "Aula", due: "Hoje" },
+  ],
 };
 
 export default function DashboardPage() {
@@ -59,6 +63,7 @@ export default function DashboardPage() {
             <DailyGoalsCard goals={studentData.dailyGoals} />
         </div>
         
+        <NextStepsCard steps={studentData.nextSteps} />
       </div>
     </AppLayout>
   );
