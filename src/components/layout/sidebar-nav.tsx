@@ -23,6 +23,7 @@ import {
   FileQuestion,
   Trophy,
   Youtube, // Ícone adicionado
+  Settings, // Ícone para Admin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -108,6 +109,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
   const getOpenAccordionValue = () => {
     if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
     if (pathname.startsWith("/history")) return "history";
+    if (pathname.startsWith("/admin")) return "admin";
     return undefined;
   };
 
@@ -158,6 +160,9 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             />
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
             <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
+            <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
+                <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
+            </NavAccordionItem>
           </ul>
         </Accordion>
       </nav>
@@ -176,6 +181,7 @@ export function SidebarNav() {
   const getOpenAccordionValue = () => {
     if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
     if (pathname.startsWith("/history")) return "history";
+    if (pathname.startsWith("/admin")) return "admin";
     return undefined;
   };
 
@@ -258,6 +264,9 @@ export function SidebarNav() {
                   />
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
                   <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
+                  <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
+                     <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
+                  </NavAccordionItem>
               </ul>
             </Accordion>
            </nav>
