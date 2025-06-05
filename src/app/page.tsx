@@ -4,7 +4,6 @@ import ProgressOverviewCard from "@/components/dashboard/progress-overview-card"
 import StrengthsWeaknessesCard from "@/components/dashboard/strengths-weaknesses-card";
 import PerformanceChartCard from "@/components/dashboard/performance-chart-card";
 import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
-import RankingCard from "@/components/dashboard/ranking-card";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +21,7 @@ const studentData = {
   ],
   strengths: ["Avaliação Primária (ABCDE)", "Comunicação com Paciente", "Exames Complementares"],
   weaknesses: ["Avaliação Secundária Detalhada", "Condutas Específicas", "Interpretação de ECG"],
-  performanceData: [ 
+  performanceData: [
     { name: "Jan", score: 65 },
     { name: "Fev", score: 70 },
     { name: "Mar", score: 78 },
@@ -32,31 +31,6 @@ const studentData = {
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
 };
-
-const rankings = {
-  overallScore: [
-    { id: "user1", name: "Ana Silva", score: 980, avatar: "https://placehold.co/40x40.png" },
-    { id: "user2", name: "Bruno Costa", score: 950, avatar: "https://placehold.co/40x40.png" },
-    { id: "user3", name: "Clara Dias", score: 920, avatar: "https://placehold.co/40x40.png" },
-    { id: "user4", name: "Daniel Alves", score: 890, avatar: "https://placehold.co/40x40.png" },
-    { id: "user5", name: studentData.name, score: 880, avatar: studentData.avatarUrl }, // Current user example
-  ],
-  stationsCompleted: [
-    { id: "user6", name: "Carlos Lima", stations: 55, avatar: "https://placehold.co/40x40.png" },
-    { id: "user7", name: "Diana Reis", stations: 52, avatar: "https://placehold.co/40x40.png" },
-    { id: "user5", name: studentData.name, stations: 50, avatar: studentData.avatarUrl },
-    { id: "user8", name: "Eduarda Souza", stations: 48, avatar: "https://placehold.co/40x40.png" },
-    { id: "user9", name: "Felipe Barros", stations: 45, avatar: "https://placehold.co/40x40.png" },
-  ],
-  dailyChallenge: [
-    { id: "user5", name: studentData.name, score: 120, avatar: studentData.avatarUrl },
-    { id: "user10", name: "Elisa Matos", score: 115, avatar: "https://placehold.co/40x40.png" },
-    { id: "user11", name: "Gabriel Rocha", score: 110, avatar: "https://placehold.co/40x40.png" },
-    { id: "user12", name: "Helena Costa", score: 105, avatar: "https://placehold.co/40x40.png" },
-    { id: "user13", name: "Igor Martins", score: 100, avatar: "https://placehold.co/40x40.png" },
-  ]
-};
-
 
 export default function StudentDashboardPage() {
   return (
@@ -81,9 +55,9 @@ export default function StudentDashboardPage() {
           <PerformanceChartCard data={studentData.performanceData} />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2"> {/* Ajustado para DailyGoalsCard ocupar mais espaço se for o único */}
             <DailyGoalsCard goals={studentData.dailyGoals} />
-            <RankingCard rankings={rankings} currentUser={studentData} />
+            {/* RankingCard foi removido daqui */}
         </div>
         
         <Card className="shadow-lg">

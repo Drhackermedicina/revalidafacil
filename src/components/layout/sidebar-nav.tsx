@@ -19,7 +19,8 @@ import {
   UserCircle,
   Laptop,
   TrendingUp,
-  FileQuestion, // Added for Banco de Questões
+  FileQuestion,
+  Trophy, // Adicionado para Ranking
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -137,6 +138,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
               <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
             </NavAccordionItem>
+            <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
           </ul>
         </Accordion>
       </nav>
@@ -220,6 +222,7 @@ export function SidebarNav() {
                   <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
                     <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
+                  <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
               </ul>
             </Accordion>
            </nav>
@@ -240,7 +243,7 @@ export function SidebarNav() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-72 bg-sidebar text-sidebar-foreground border-r-0">
-          <SidebarNavContent />
+          <SidebarNavContent isCollapsed={false} /> {/* Always expanded in mobile sheet */}
            <div className="p-4 border-t border-sidebar-border mt-auto absolute bottom-0 w-full">
             <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
               {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
