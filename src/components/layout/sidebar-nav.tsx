@@ -103,8 +103,9 @@ const SidebarNavContent = () => (
               Checklist & Flashcard
             </span>
           </li>
-          <NavAccordionItem icon={ListChecks} label="Banco de checklists" value="checklists">
-            <NavItem href="/checklists/pense" icon={Brain} label="Revalida Fácil" isSubItem />
+          <NavAccordionItem icon={ListChecks} label="Estações" value="checklists">
+            <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
+            <NavItem href="/checklists/pense" icon={Brain} label="REVALIDA FÁCIL" isSubItem />
           </NavAccordionItem>
            <NavAccordionItem icon={Layers} label="Flashcards" value="flashcards">
             <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
@@ -179,8 +180,9 @@ export function SidebarNav() {
                       Checklist & Flashcard
                     </span>
                   </li>}
-                  <NavAccordionItem icon={ListChecks} label={isCollapsed ? "" : "Banco de checklists"} value="checklists">
-                    <NavItem href="/checklists/pense" icon={Brain} label="Revalida Fácil" isSubItem />
+                  <NavAccordionItem icon={ListChecks} label={isCollapsed ? "" : "Estações"} value="checklists">
+                    <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
+                    <NavItem href="/checklists/pense" icon={Brain} label="REVALIDA FÁCIL" isSubItem />
                   </NavAccordionItem>
                   <NavAccordionItem icon={Layers} label={isCollapsed ? "" : "Flashcards"} value="flashcards">
                     <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
