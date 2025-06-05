@@ -31,14 +31,7 @@ const studentData = {
     { name: "Jun", score: 85 },
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
-  performanceByCategory: [
-    { name: "Acolhimento", value: 25, fill: "hsl(var(--chart-1))" },
-    { name: "Anamnese", value: 30, fill: "hsl(var(--chart-2))" },
-    { name: "Exame Físico", value: 20, fill: "hsl(var(--chart-3))" },
-    { name: "Laboratório", value: 15, fill: "hsl(var(--chart-4))" },
-    { name: "Diagnóstico", value: 10, fill: "hsl(var(--chart-5))" },
-  ],
-  categoryProficiency: [ // Novos dados para o gráfico de pontos fortes/fracos por categoria
+  categoryProficiency: [ // Dados para o gráfico de pontos fortes/fracos por categoria
     { name: "Acolhimento", value: 80, fill: "hsl(var(--chart-1))" },
     { name: "Anamnese", value: 65, fill: "hsl(var(--chart-2))" },
     { name: "Exame Físico", value: 70, fill: "hsl(var(--chart-3))" },
@@ -67,17 +60,16 @@ export default function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <ProgressOverviewCard progress={studentData.progress} />
           <PerformanceChartCard data={studentData.performanceData} />
-          <PerformancePieChartCard 
-            data={studentData.categoryProficiency} 
+          <PerformancePieChartCard
+            data={studentData.categoryProficiency}
             title="Pontos Fortes e Fracos por Categoria"
             description="Nível de proficiência em cada área chave. Valores mais altos indicam maior força."
           />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"> {/* Ajustado para três cards lado a lado */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2"> {/* Ajustado para dois cards lado a lado */}
             <StrengthsWeaknessesCard strengths={studentData.strengths} weaknesses={studentData.weaknesses} />
             <DailyGoalsCard goals={studentData.dailyGoals} />
-            <PerformancePieChartCard data={studentData.performanceByCategory} /> {/* Existing pie chart */}
         </div>
         
         <Card className="shadow-lg">
