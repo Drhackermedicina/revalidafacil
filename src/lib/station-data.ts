@@ -48,7 +48,7 @@ export interface ChecklistData {
 export const allStations: ChecklistData[] = [
   {
     title: "Acidente por Água Viva",
-    area: "Clínica Médica",
+    area: "Clínica Médica", // Mantendo a área atualizada
     code: "agua-viva",
     scenario: {
       title: "Cenário Clínico: Queimadura por Água Viva",
@@ -67,7 +67,7 @@ export const allStations: ChecklistData[] = [
     },
     actorInstructions: {
       title: "Instruções para o Ator (Paciente Simulado)",
-      content: "<p>Você sentiu uma dor muito forte na perna, como uma queimadura, após encostar em algo na água. A dor é intensa (nota 8/10). Você está assustado e quer alívio rápido. Responda às perguntas do estudante sobre o ocorrido e seus sintomas.</p>",
+      content: "<p>Você sentiu uma dor muito forte na perna, como uma queimadura, após encostar em algo na água. A dor é intensa (nota 8/10). Você está assustado e quer alívio rápido. Responda às perguntas do estudante sobre o ocorrido e seus sintomas.</p><br /><h4>DADOS PESSOAIS</h4><p>Nome: Carlos Silva<br />Idade: 25 anos<br />Profissão: Estudante</p><br /><h4>MOTIVO DA CONSULTA</h4><p>Queimadura na perna direita por água viva há cerca de 15 minutos.</p><br /><h4>HISTÓRIA DA DOENÇA ATUAL (HDA)</h4><p>Estava nadando na praia quando senti uma fisgada muito forte na perna direita, seguida de uma dor que queima muito. Saí da água imediatamente. A dor é constante, forte, nota 8 de 0 a 10. Não fiz nada ainda para aliviar. A perna está vermelha e um pouco inchada onde encostou.</p><br /><h4>INTERROGATÓRIO SISTEMÁTICO</h4><p>Nega febre, calafrios, tontura, falta de ar, náuseas, vômitos ou outros sintomas. Apenas a dor local.</p><br /><h4>ANTECEDENTES</h4><p>Nega alergias medicamentosas ou alimentares. Nega doenças prévias. Nega uso de medicação contínua. Vacinação em dia. Nega cirurgias prévias.</p><br /><h4>HÁBITOS DE VIDA</h4><p>Pratica natação 3x por semana. Alimentação balanceada. Nega tabagismo. Nega etilismo. Nega uso de drogas ilícitas.</p><br /><h4>COMPORTAMENTO ESPERADO</h4><p>Demonstrar dor e desconforto. Estar ansioso por alívio. Seguir as instruções do médico, mas questionar se algo não ficar claro.</p>",
     },
     printedMaterials: [
       {
