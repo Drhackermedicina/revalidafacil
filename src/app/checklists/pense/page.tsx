@@ -2,7 +2,7 @@
 // src/app/checklists/pense/page.tsx
 import Link from 'next/link';
 import AppLayout from "@/components/layout/app-layout";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { allStations } from '@/lib/station-data'; // Adjust path as necessary
 import { ListChecks } from 'lucide-react';
