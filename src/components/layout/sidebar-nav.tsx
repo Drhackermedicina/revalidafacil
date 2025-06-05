@@ -6,17 +6,13 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   ListChecks,
-  Layers, // Changed from Presentation
-  Video,
-  Users,
-  Newspaper,
+  Layers,
   GraduationCap,
   BookOpen,
   BarChart3,
   History,
   MessageSquareWarning,
   LifeBuoy,
-  Settings,
   Moon,
   Sun,
   ChevronsLeft,
@@ -110,18 +106,11 @@ const SidebarNavContent = () => (
           <NavAccordionItem icon={ListChecks} label="Banco de checklists" value="checklists">
             <NavItem href="/checklists/pense" icon={Brain} label="Revalida Fácil" isSubItem />
           </NavAccordionItem>
-           <NavAccordionItem icon={Layers} label="Flashcards" value="flashcards"> {/* Changed icon */}
+           <NavAccordionItem icon={Layers} label="Flashcards" value="flashcards">
             <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
             <NavItem href="/flashcards/review" icon={BookOpen} label="Revisão" isSubItem />
           </NavAccordionItem>
-          <NavItem href="/training" icon={GraduationCap} label="Treinamento" />
-
-          <li className="px-4 pt-4 pb-2">
-            <span className="text-xs font-medium uppercase text-muted-foreground">
-              Pense Curso
-            </span>
-          </li>
-          <NavItem href="/course" icon={BookOpen} label="Aulas" />
+          <NavItem href="/simulados" icon={ListChecks} label="Simulados" />
 
           <li className="px-4 pt-4 pb-2">
             <span className="text-xs font-medium uppercase text-muted-foreground">
@@ -131,7 +120,7 @@ const SidebarNavContent = () => (
           <NavItem href="/performance" icon={BarChart3} label="Meus Desempenhos" />
           <NavAccordionItem icon={History} label="Histórico" value="history">
             <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
-            <NavItem href="/history/flashcard" icon={Layers} label="Flashcard" isSubItem /> {/* Changed icon */}
+            <NavItem href="/history/flashcard" icon={Layers} label="Flashcard" isSubItem />
           </NavAccordionItem>
 
           <li className="px-4 pt-4 pb-2">
@@ -193,17 +182,12 @@ export function SidebarNav() {
                   <NavAccordionItem icon={ListChecks} label={isCollapsed ? "" : "Banco de checklists"} value="checklists">
                     <NavItem href="/checklists/pense" icon={Brain} label="Revalida Fácil" isSubItem />
                   </NavAccordionItem>
-                  <NavAccordionItem icon={Layers} label={isCollapsed ? "" : "Flashcards"} value="flashcards"> {/* Changed icon */}
+                  <NavAccordionItem icon={Layers} label={isCollapsed ? "" : "Flashcards"} value="flashcards">
                     <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
                     <NavItem href="/flashcards/review" icon={BookOpen} label="Revisão" isSubItem />
                   </NavAccordionItem>
-                  <NavItem href="/training" icon={GraduationCap} label={isCollapsed ? "" : "Treinamento"} />
-                  {!isCollapsed && <li className="px-4 pt-2 pb-1">
-                    <span className="text-xs font-medium uppercase text-muted-foreground">
-                      Pense Curso
-                    </span>
-                  </li>}
-                  <NavItem href="/course" icon={BookOpen} label={isCollapsed ? "" : "Aulas"} />
+                  <NavItem href="/simulados" icon={ListChecks} label={isCollapsed ? "" : "Simulados"} />
+                  
                   {!isCollapsed && <li className="px-4 pt-2 pb-1">
                     <span className="text-xs font-medium uppercase text-muted-foreground">
                       Desempenho
@@ -212,7 +196,7 @@ export function SidebarNav() {
                   <NavItem href="/performance" icon={BarChart3} label={isCollapsed ? "" : "Meus Desempenhos"} />
                   <NavAccordionItem icon={History} label={isCollapsed ? "" : "Histórico"} value="history">
                     <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
-                    <NavItem href="/history/flashcard" icon={Layers} label="Flashcard" isSubItem /> {/* Changed icon */}
+                    <NavItem href="/history/flashcard" icon={Layers} label="Flashcard" isSubItem />
                   </NavAccordionItem>
 
                   {!isCollapsed && <li className="px-4 pt-2 pb-1">
@@ -254,5 +238,3 @@ export function SidebarNav() {
     </>
   );
 }
-
-    
