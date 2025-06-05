@@ -1,24 +1,19 @@
-import type { SVGProps } from 'react';
+import Image from 'next/image';
+import type { ImageProps } from 'next/image';
 
-const Logo = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    aria-hidden="true"
-    {...props}
-  >
-    <rect width="100" height="100" rx="20" fill="hsl(var(--primary))" />
-    <text
-      x="50%"
-      y="50%"
-      dominantBaseline="middle"
-      textAnchor="middle"
-      fontSize="40"
-      fill="hsl(var(--primary-foreground))"
-      className="font-headline"
-    >
-      RF
-    </text>
-  </svg>
+// Você precisará adicionar sua imagem à pasta `public`
+// e então atualizar o `src` abaixo para o caminho correto, por exemplo: /revalida-facil-logo.png
+const LOGO_IMAGE_SRC = "https://placehold.co/150x150.png?text=Revalida+Fácil"; 
+
+const Logo = (props: Omit<ImageProps, 'src' | 'alt'>) => (
+  <Image
+    src={LOGO_IMAGE_SRC}
+    alt="Revalida Fácil Logo"
+    width={props.width || 40} // Default width
+    height={props.height || 40} // Default height
+    priority // Preload the logo
+    data-ai-hint="medical education logo" // Hint for AI image generation if placeholder is used
+    {...props} // Allow overriding width, height, className, etc.
+  />
 );
 export default Logo;

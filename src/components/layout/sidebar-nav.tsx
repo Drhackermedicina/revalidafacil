@@ -19,7 +19,7 @@ import {
   ChevronsRight,
   Menu as MenuIcon,
   ClipboardList,
-  FileCheck, // Added FileCheck
+  FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -88,9 +88,9 @@ const NavAccordionItem: React.FC<{
 
 const SidebarNavContent = () => (
   <>
-    <div className="p-4 border-b border-border">
+    <div className="p-4 border-b border-border flex items-center gap-2">
       <Link href="/" className="flex items-center gap-2">
-        <Logo className="h-8 w-8" />
+        <Logo width={32} height={32} className="h-8 w-8 rounded-md" />
         <h1 className="text-xl font-bold font-headline text-primary">Revalida Fácil</h1>
       </Link>
     </div>
@@ -145,7 +145,7 @@ export function SidebarNav() {
 
   useEffect(() => setMounted(true), []);
 
-  if (!mounted) return null; // Avoid hydration mismatch
+  if (!mounted) return null; 
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
@@ -162,7 +162,7 @@ export function SidebarNav() {
         <div className="p-3 border-b border-border flex items-center justify-between">
           {!isCollapsed && (
             <Link href="/" className="flex items-center gap-2">
-              <Logo className="h-8 w-8" />
+              <Logo width={32} height={32} className="h-8 w-8 rounded-md"/>
               <h1 className="text-lg font-bold font-headline text-primary">Revalida Fácil</h1>
             </Link>
           )}
