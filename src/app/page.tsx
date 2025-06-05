@@ -4,6 +4,7 @@ import ProgressOverviewCard from "@/components/dashboard/progress-overview-card"
 import StrengthsWeaknessesCard from "@/components/dashboard/strengths-weaknesses-card";
 import PerformanceChartCard from "@/components/dashboard/performance-chart-card";
 import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
+import PerformancePieChartCard from "@/components/dashboard/performance-pie-chart-card"; // Novo card
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,13 @@ const studentData = {
     { name: "Jun", score: 85 },
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
+  performanceByCategory: [ // Dados para o novo gráfico de pizza
+    { name: "Acolhimento", value: 25, fill: "hsl(var(--chart-1))" },
+    { name: "Anamnese", value: 30, fill: "hsl(var(--chart-2))" },
+    { name: "Exame Físico", value: 20, fill: "hsl(var(--chart-3))" },
+    { name: "Laboratório", value: 15, fill: "hsl(var(--chart-4))" },
+    { name: "Diagnóstico", value: 10, fill: "hsl(var(--chart-5))" },
+  ],
 };
 
 export default function StudentDashboardPage() {
@@ -55,9 +63,9 @@ export default function StudentDashboardPage() {
           <PerformanceChartCard data={studentData.performanceData} />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2"> {/* Ajustado para DailyGoalsCard ocupar mais espaço se for o único */}
+        <div className="grid gap-6 md:grid-cols-2"> {/* Ajustado para dois cards lado a lado */}
             <DailyGoalsCard goals={studentData.dailyGoals} />
-            {/* RankingCard foi removido daqui */}
+            <PerformancePieChartCard data={studentData.performanceByCategory} />
         </div>
         
         <Card className="shadow-lg">
