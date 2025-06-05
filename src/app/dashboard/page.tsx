@@ -4,7 +4,6 @@ import ProgressOverviewCard from "@/components/dashboard/progress-overview-card"
 import StrengthsWeaknessesCard from "@/components/dashboard/strengths-weaknesses-card";
 import PerformanceChartCard from "@/components/dashboard/performance-chart-card";
 import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
-import PerformancePieChartCard from "@/components/dashboard/performance-pie-chart-card";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -31,13 +30,6 @@ const studentData = {
     { name: "Jun", score: 85 },
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
-  performanceByCategory: [ // Dados para o gráfico "Desempenho por Categoria"
-    { name: "Acolhimento", value: 70, fill: "hsl(var(--chart-1))" },
-    { name: "Anamnese", value: 75, fill: "hsl(var(--chart-2))" },
-    { name: "Exame Físico", value: 80, fill: "hsl(var(--chart-3))" },
-    { name: "Laboratório", value: 65, fill: "hsl(var(--chart-4))" },
-    { name: "Diagnóstico", value: 85, fill: "hsl(var(--chart-5))" },
-  ],
 };
 
 export default function DashboardPage() {
@@ -57,14 +49,9 @@ export default function DashboardPage() {
           </CardHeader>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <ProgressOverviewCard progress={studentData.progress} />
           <PerformanceChartCard data={studentData.performanceData} />
-          <PerformancePieChartCard
-            data={studentData.performanceByCategory}
-            // O título e a descrição padrão do componente são "Desempenho por Categoria" 
-            // e "Sua performance detalhada por área de avaliação.", respectivamente.
-          />
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2"> {/* Ajustado para dois cards lado a lado */}
@@ -72,28 +59,8 @@ export default function DashboardPage() {
             <DailyGoalsCard goals={studentData.dailyGoals} />
         </div>
         
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="font-headline">Próximos Passos</CardTitle>
-            <CardDescription>Sugestões para continuar seus estudos.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-            <Card className="bg-secondary/50 hover:shadow-md transition-shadow">
-              <CardHeader><CardTitle className="text-lg">Revisar Pontos Fracos</CardTitle></CardHeader>
-              <CardContent><p className="text-sm text-muted-foreground">Foque nas áreas onde você pode melhorar para um aprendizado mais eficaz.</p></CardContent>
-            </Card>
-             <Card className="bg-secondary/50 hover:shadow-md transition-shadow">
-              <CardHeader><CardTitle className="text-lg">Nova Estação Prática</CardTitle></CardHeader>
-              <CardContent><p className="text-sm text-muted-foreground">Desafie-se com um novo cenário clínico para aplicar seus conhecimentos.</p></CardContent>
-            </Card>
-             <Card className="bg-secondary/50 hover:shadow-md transition-shadow">
-              <CardHeader><CardTitle className="text-lg">Participar de Simulado</CardTitle></CardHeader>
-              <CardContent><p className="text-sm text-muted-foreground">Teste seu conhecimento em um ambiente simulado completo.</p></CardContent>
-            </Card>
-          </CardContent>
-        </Card>
-
       </div>
     </AppLayout>
   );
 }
+
