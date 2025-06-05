@@ -12,7 +12,7 @@ export interface ChecklistItem {
   id: string;
   description: string;
   points: ChecklistItemEvaluation;
-  type: string; // e.g., 'ac', 'an', 'dx', 'ct', 'ef', 'im', 'lab'
+  type: string; // e.g., 'ac', 'an', 'dx', 'ct', 'ef', 'im', 'lab', 'co'
   observation?: string;
 }
 
@@ -117,10 +117,10 @@ export const allStations: ChecklistData[] = [
     },
     printedMaterials: [
       {
-        id: "pm1-av-folder", // Changed ID to be more specific to avoid future conflicts if other stations have "pm1"
-        title: "Folder Informativo: Primeiros Socorros em Acidentes com Águas Vivas",
-        content: "<p>Este conteúdo foi integrado ao checklist (PEP) do candidato.</p>", // Content now part of checklist
-        imageSrc: "https://app.penserevalida.com/android-chrome-512x512.png", // Example image, as original folder is now in checklist.
+        id: "pm1-av-info",
+        title: "Informações sobre Acidentes com Águas Vivas",
+        content: "<p>Este material contém informações cruciais sobre como proceder em caso de contato com águas vivas, incluindo o que fazer e o que evitar.</p>",
+        imageSrc: "https://placehold.co/600x400.png",
         imageAlt: "Jellyfish sting first aid information",
         dataAiHint: "jellyfish firstaid",
         isLocked: false,
@@ -133,8 +133,6 @@ export const allStations: ChecklistData[] = [
       { id: "ci4-av-anamnese-antecedentes", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou alergias, comorbidades, medicações, vacinação (tétano), hábitos.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
       { id: "ci5-av-examefisico-geral", description: "<strong>Exame Físico - Geral e Sinais Vitais:</strong> Avaliou estado geral, consciência, aferiu/verificou sinais vitais.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ef" },
       { id: "ci6-av-examefisico-lesao", description: "<strong>Exame Físico - Inspeção da Lesão:</strong> Inspecionou e descreveu características da lesão (lineares, eritematosas, etc.).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ef" },
-      
-      // Itens de Conduta baseados no "O que fazer":
       { id: "ci7-av-conduta-sairagua", description: "<strong>Conduta - Saída da Água:</strong> Orientou/garantiu que o paciente saísse da água imediatamente.", points: { inadequate: 0, partial: null, adequate: 0.25 }, type: "ct" },
       { id: "ci8-av-conduta-lavagemmar", description: "<strong>Conduta - Lavagem com ÁGUA DO MAR:</strong> Orientou/realizou lavagem abundante com ÁGUA DO MAR (ou soro fisiológico), explicando NÃO usar água doce.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "CRÍTICO: Não usar água doce." },
       { id: "ci9-av-conduta-vinagre", description: "<strong>Conduta - Aplicação de VINAGRE:</strong> Orientou/realizou aplicação de VINAGRE (ácido acético a 5%) por 15-30 minutos.", points: { inadequate: 0, partial: 1, adequate: 2 }, type: "ct", observation: "Fundamental para neutralizar cnidas." },
@@ -219,11 +217,11 @@ export const allStations: ChecklistData[] = [
     code: "avc-nihss-2024-2",
     scenario: {
       title: "Cenário de Atuação: Suspeita de Acidente Vascular Cerebral",
-      description: "<strong>Nível de atenção:</strong> atenção secundária à saúde.<br><strong>Tipo de atendimento:</strong> urgência e emergência.<br><br><strong>A unidade possui a seguinte infraestrutura:</strong><br>- Consultórios;<br>- Sala de estabilização;<br>- Laboratório de análises clínicas;<br>- Serviço de radiologia com aparelho de radiografia e tomografia computadorizada;<br>- Leitos de internação – enfermaria e terapia intensiva.<br><br><strong>Descrição do caso:</strong><br>Você atenderá um paciente com 58 anos de idade, histórico de arritmia cardíaca, diabetes melito e dislipidemia, com suspeita de acidente vascular cerebral por apresentar déficit neurológico (hemiplegia E) e cefaleia, iniciados há cerca de 1 hora. Paciente encontra- se com respiração espontânea, via aérea pérvia, boa saturação de O2 em ar ambiente e parâmetros hemodinâmicos adequados.",
+      description: "<p><strong>Nível de atenção:</strong> atenção secundária à saúde.<br><strong>Tipo de atendimento:</strong> urgência e emergência.</p><p><strong>A unidade possui a seguinte infraestrutura:</strong><br>- Consultórios;<br>- Sala de estabilização;<br>- Laboratório de análises clínicas;<br>- Serviço de radiologia com aparelho de radiografia e tomografia computadorizada;<br>- Leitos de internação – enfermaria e terapia intensiva.</p><p><strong>Descrição do caso:</strong><br>Você atenderá um paciente com 58 anos de idade, histórico de arritmia cardíaca, diabetes melito e dislipidemia, com suspeita de acidente vascular cerebral por apresentar déficit neurológico (hemiplegia E) e cefaleia, iniciados há cerca de 1 hora. Paciente encontra- se com respiração espontânea, via aérea pérvia, boa saturação de O2 em ar ambiente e parâmetros hemodinâmicos adequados.</p>",
     },
     tasks: {
       title: "Tarefas",
-      timeLimit: "10 minutos", // Default, as timeName is dynamic in source
+      timeLimit: "10 minutos",
       items: [
         "Aplicar a escala NIHSS ao paciente.",
         "Totalizar a pontuação da escala NIHSS e VERBALIZAR.",
@@ -232,35 +230,62 @@ export const allStations: ChecklistData[] = [
     },
     actorInstructions: {
       title: "Orientações do Ator/Atriz",
-      content: "<strong>DADOS PESSOAIS:</strong><br>- Anderson, 58 anos, motorista de ônibus.<br><br><strong>MOTIVO DE CONSULTA:</strong><br>- Não consigo movimentar o braço e a perna esquerda.<br><br><strong>INÍCIO DOS SINTOMAS:</strong><br>- Começou há pouco mais de uma hora.<br><br><strong>ANTECEDENTES PESSOAIS:</strong><br>-  Tenho diabetes, arritmia e colesterol alto.<br><br><strong>AO VERBALIZAR/ SOLICITAR A REALIZAÇÃO DA ESCALA NIHSS, LIBERAR TODOS OS IMPRESSOS DISPONÍVEIS.</strong><br><br><strong>SE PERGUNTADO A IDADE E MÊS QUE ESTAMOS:</strong><br>- Tenho 58 anos e estamos no mês de dezembro.<br><br><strong>SE SOLICITADO PARA FECHAR E ABRIR OS OLHOS E FECHAR E ABRIR A MÃO:</strong><br>- Feche e abra os olhos, feche e abra a mão direita.<br><br><strong>SE SOLICITADO PARA MOVIMENTAR OS OLHOS NA HORIZONTAL PARA OS 2 LADOS:</strong><br>- Movimente os olhos para os 2 lados.<br><br><strong>SE PERGUNTADO QUANTOS DEDOS O PACIENTE VÊ:</strong><br>- Responder adequadamente de acordo ao que for mostrado.<br><br><strong>SE SOLICITADO PARA ACOMPANHAR O MOVIMENTO DOS DEDOS DO PARTICIPANTE:</strong><br>- Acompanhar adequadamente e/ou responder que consegue.<br><br><strong>SE SOLICITADO MOSTRAR OS DENTES/ SORRIR E FECHAR OS OLHOS COM FORÇA:</strong><br>- Mostre os dentes/ sorria e feche os olhos com força.<br><br><strong>SE SOLICITADO PARA SUSTENTAR O BRAÇO DIREITO A 90° POR 10 SEGUNDOS:</strong><br>- Realize a ação corretamente.<br><br><strong>SE SOLICITADO PARA MOVER A PERNA ESQUERDA:</strong><br>- Simule e/ou verbalize que não consegue.<br><br><strong>SE SOLICITADO SUSTENTAR A PERNA DIREITA A 30° POR 5 SEGUNDOS:</strong><br>- Simule e/ou verbalize que consegue realizar a ação.<br><br><strong>SE SOLICITADO QUE O PACIENTE FAÇA O TESTE INDEX-NARIZ OU CALCANHAR-JOELHO:</strong><br>- Realizar adequadamente com o lado direito.<br><br><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO ESQUERDO:</strong><br>- Responder que não sentiu nada.<br><br><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO DIREITO:</strong><br>- Responder que consegue sentir o toque e a dor.<br><br><strong>SE SOLICITADO A DESCREVER O QUE ESTÁ ACONTECENDO NO QUADRO DO IMPRESSO 1:</strong><br>- Descreva adequadamente a cena.<br><br><strong>SE SOLICITADO A NOMEAR OS ITENS NA LISTA DE IDENTIFICAÇÃO DO IMPRESSO 2:</strong><br>- Nomear adequadamente.<br><br><strong>SE SOLICITADO A LER A LISTA DE SENTENÇA DO IMPRESSO 3:</strong><br>- Ler adequadamente.<br><br><strong>SE SOLICITADO A LER OU REPETIR AS PALAVRAS DA LISTA DO IMPRESSO 4:</strong><br>- Realizar a tarefa adequadamente.<br><br><strong>Se o candidato solicitar exame laboratorial ou de imagem de forma inespecífica, dizer:</strong><br>- Seja mais específico com o pedido.<br><br><strong>Se o candidato solicitar exames complementares laboratoriais e/ou de imagem de forma específica, dizer:</strong><br>- Considere solicitado.<br><br><strong>No decorrer da estação, caso o (a) participante concluir a aplicação da escala NIHSS e não verbalizar seu total, perguntar se o candidato concluiu a aplicação da escala e, após confirmar o término da aplicação, perguntar qual foi a pontuação.</strong>",
+      content: `<h4>DADOS PESSOAIS:</h4>
+                 <p>- Anderson, 58 anos, motorista de ônibus.</p><br/>
+                 <h4>MOTIVO DE CONSULTA:</h4>
+                 <p>- Não consigo movimentar o braço e a perna esquerda.</p><br/>
+                 <h4>INÍCIO DOS SINTOMAS:</h4>
+                 <p>- Começou há pouco mais de uma hora.</p><br/>
+                 <h4>ANTECEDENTES PESSOAIS:</h4>
+                 <p>-  Tenho diabetes, arritmia e colesterol alto.</p><br/>
+                 <p><strong>AO VERBALIZAR/ SOLICITAR A REALIZAÇÃO DA ESCALA NIHSS, LIBERAR TODOS OS IMPRESSOS DISPONÍVEIS.</strong></p><br/>
+                 <p><strong>SE PERGUNTADO A IDADE E MÊS QUE ESTAMOS:</strong><br/>- Tenho 58 anos e estamos no mês de dezembro.</p><br/>
+                 <p><strong>SE SOLICITADO PARA FECHAR E ABRIR OS OLHOS E FECHAR E ABRIR A MÃO:</strong><br/>- Feche e abra os olhos, feche e abra a mão direita.</p><br/>
+                 <p><strong>SE SOLICITADO PARA MOVIMENTAR OS OLHOS NA HORIZONTAL PARA OS 2 LADOS:</strong><br/>- Movimente os olhos para os 2 lados.</p><br/>
+                 <p><strong>SE PERGUNTADO QUANTOS DEDOS O PACIENTE VÊ:</strong><br/>- Responder adequadamente de acordo ao que for mostrado.</p><br/>
+                 <p><strong>SE SOLICITADO PARA ACOMPANHAR O MOVIMENTO DOS DEDOS DO PARTICIPANTE:</strong><br/>- Acompanhar adequadamente e/ou responder que consegue.</p><br/>
+                 <p><strong>SE SOLICITADO MOSTRAR OS DENTES/ SORRIR E FECHAR OS OLHOS COM FORÇA:</strong><br/>- Mostre os dentes/ sorria e feche os olhos com força.</p><br/>
+                 <p><strong>SE SOLICITADO PARA SUSTENTAR O BRAÇO DIREITO A 90° POR 10 SEGUNDOS:</strong><br/>- Realize a ação corretamente.</p><br/>
+                 <p><strong>SE SOLICITADO PARA MOVER A PERNA ESQUERDA:</strong><br/>- Simule e/ou verbalize que não consegue.</p><br/>
+                 <p><strong>SE SOLICITADO SUSTENTAR A PERNA DIREITA A 30° POR 5 SEGUNDOS:</strong><br/>- Simule e/ou verbalize que consegue realizar a ação.</p><br/>
+                 <p><strong>SE SOLICITADO QUE O PACIENTE FAÇA O TESTE INDEX-NARIZ OU CALCANHAR-JOELHO:</strong><br/>- Realizar adequadamente com o lado direito.</p><br/>
+                 <p><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO ESQUERDO:</strong><br/>- Responder que não sentiu nada.</p><br/>
+                 <p><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO DIREITO:</strong><br/>- Responder que consegue sentir o toque e a dor.</p><br/>
+                 <p><strong>SE SOLICITADO A DESCREVER O QUE ESTÁ ACONTECENDO NO QUADRO DO IMPRESSO 1:</strong><br/>- Descreva adequadamente a cena.</p><br/>
+                 <p><strong>SE SOLICITADO A NOMEAR OS ITENS NA LISTA DE IDENTIFICAÇÃO DO IMPRESSO 2:</strong><br/>- Nomear adequadamente.</p><br/>
+                 <p><strong>SE SOLICITADO A LER A LISTA DE SENTENÇA DO IMPRESSO 3:</strong><br/>- Ler adequadamente.</p><br/>
+                 <p><strong>SE SOLICITADO A LER OU REPETIR AS PALAVRAS DA LISTA DO IMPRESSO 4:</strong><br/>- Realizar a tarefa adequadamente.</p><br/>
+                 <p><strong>Se o candidato solicitar exame laboratorial ou de imagem de forma inespecífica, dizer:</strong><br/>- Seja mais específico com o pedido.</p><br/>
+                 <p><strong>Se o candidato solicitar exames complementares laboratoriais e/ou de imagem de forma específica, dizer:</strong><br/>- Considere solicitado.</p><br/>
+                 <p><strong>No decorrer da estação, caso o (a) participante concluir a aplicação da escala NIHSS e não verbalizar seu total, perguntar se o candidato concluiu a aplicação da escala e, após confirmar o término da aplicação, perguntar qual foi a pontuação.</strong></p>`,
     },
     printedMaterials: [
-      { id: "pm1-avc-nihss", title: "Impresso 1 ( Imagem para descrever )", content: "<strong>Imagem:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736174755.jpeg", imageAlt: "Imagem para descrição NIHSS", dataAiHint: "scene description", isLocked: true },
-      { id: "pm2-avc-nihss", title: "Impresso 2 ( Itens para identificação )", content: "<strong>Imagem:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736174895.jpeg", imageAlt: "Itens para identificação NIHSS", dataAiHint: "object identification", isLocked: true },
-      { id: "pm3-avc-nihss", title: "Impresso 3 ( Sentenças para leitura )", content: "<strong>Sentenças:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736175002.jpeg", imageAlt: "Sentenças para leitura NIHSS", dataAiHint: "sentence reading", isLocked: true },
-      { id: "pm4-avc-nihss", title: "Impresso 4 ( Palavras para ler/repetir )", content: "<strong>Palavras:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736175158.jpeg", imageAlt: "Palavras para leitura/repetição NIHSS", dataAiHint: "word list", isLocked: true },
-      { id: "pm5-avc-nihss", title: "Impresso 5 ( NIHSS 1/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176406.jpeg", imageAlt: "Escala NIHSS parte 1", dataAiHint: "medical chart", isLocked: true },
-      { id: "pm6-avc-nihss", title: "Impresso 6 ( NIHSS 2/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176434.jpeg", imageAlt: "Escala NIHSS parte 2", dataAiHint: "medical chart", isLocked: true },
-      { id: "pm7-avc-nihss", title: "Impresso 7 ( NIHSS 3/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176461.jpeg", imageAlt: "Escala NIHSS parte 3", dataAiHint: "medical chart", isLocked: true },
-      { id: "pm8-avc-nihss", title: "Impresso 8 ( NIHSS 4/4 )", content: "<strong>NIHSS:</strong>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176492.jpeg", imageAlt: "Escala NIHSS parte 4", dataAiHint: "medical chart", isLocked: true },
+      { id: "pm1-avc-nihss", title: "Impresso 1 ( Imagem para descrever )", content: "<p><strong>Imagem:</strong> Uma imagem para o paciente descrever, como parte da avaliação neurológica.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736174755.jpeg", imageAlt: "Imagem para descrição NIHSS", dataAiHint: "scene description", isLocked: true },
+      { id: "pm2-avc-nihss", title: "Impresso 2 ( Itens para identificação )", content: "<p><strong>Imagem:</strong> Uma série de objetos comuns para o paciente nomear.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736174895.jpeg", imageAlt: "Itens para identificação NIHSS", dataAiHint: "object identification", isLocked: true },
+      { id: "pm3-avc-nihss", title: "Impresso 3 ( Sentenças para leitura )", content: "<p><strong>Sentenças:</strong> Uma lista de sentenças para o paciente ler em voz alta.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736175002.jpeg", imageAlt: "Sentenças para leitura NIHSS", dataAiHint: "sentence reading", isLocked: true },
+      { id: "pm4-avc-nihss", title: "Impresso 4 ( Palavras para ler/repetir )", content: "<p><strong>Palavras:</strong> Uma lista de palavras para o paciente ler ou repetir.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736175158.jpeg", imageAlt: "Palavras para leitura/repetição NIHSS", dataAiHint: "word list", isLocked: true },
+      { id: "pm5-avc-nihss", title: "Impresso 5 ( NIHSS 1/4 )", content: "<p><strong>NIHSS:</strong> Primeira parte da folha da escala NIHSS.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176406.jpeg", imageAlt: "Escala NIHSS parte 1", dataAiHint: "medical chart", isLocked: true },
+      { id: "pm6-avc-nihss", title: "Impresso 6 ( NIHSS 2/4 )", content: "<p><strong>NIHSS:</strong> Segunda parte da folha da escala NIHSS.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176434.jpeg", imageAlt: "Escala NIHSS parte 2", dataAiHint: "medical chart", isLocked: true },
+      { id: "pm7-avc-nihss", title: "Impresso 7 ( NIHSS 3/4 )", content: "<p><strong>NIHSS:</strong> Terceira parte da folha da escala NIHSS.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176461.jpeg", imageAlt: "Escala NIHSS parte 3", dataAiHint: "medical chart", isLocked: true },
+      { id: "pm8-avc-nihss", title: "Impresso 8 ( NIHSS 4/4 )", content: "<p><strong>NIHSS:</strong> Quarta e última parte da folha da escala NIHSS.</p>", imageSrc: "https://app.penserevalida.com/impressos/10/1736176492.jpeg", imageAlt: "Escala NIHSS parte 4", dataAiHint: "medical chart", isLocked: true },
     ],
     checklistItems: [
-      { id: "pep1-avc", description: "1. <strong>Apresentação:</strong><br>(1) identifica-se; e,<br>(2) cumprimenta o paciente simulado e pergunta seu nome.<br><br><strong>Adequado:</strong> realiza as duas ações.<br><strong>Parcialmente adequado:</strong> realiza uma ação.<br><strong>Inadequado:</strong> não realiza ação alguma.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ac" },
-      { id: "pep2-avc", description: "2. <strong>Realiza a avaliação 1 a do NIHSS:</strong><br><br><strong>Adequado:</strong> avalia se o paciente está alerta, falando com ele(a).<br><strong>Inadequado:</strong> não avalia se o paciente está alerta.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "an" },
-      { id: "pep3-avc", description: "3. <strong>Realiza a avaliação 1 b do NIHSS. Pergunta:</strong><br>(1) idade do paciente; e<br>(2) em que mês estamos.<br><br><strong>Adequado:</strong> pergunta os dois itens.<br><strong>Parcialmente adequado:</strong> pergunta apenas um item. <strong>Inadequado:</strong> não pergunta item algum.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
-      { id: "pep4-avc", description: "4. <strong>Realiza a avaliação 1 c do NIHSS. Solicita que o paciente:</strong><br>(1) abra e feche os olhos e<br>(2) abra e feche a mão.<br><br><strong>Adequado:</strong> realiza as duas solicitações.<br><strong>Parcialmente adequado:</strong> realiza apenas uma solicitação. <strong>Inadequado:</strong> não solicita nenhuma das duas ações.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
-      { id: "pep5-avc", description: "5. <strong>Realiza a avaliação 2 do NIHSS. Pede que o paciente movimente os olhos horizontalmente para os dois lados (olhar para a direita e para a esquerda).</strong><br><br><strong>Adequado:</strong> avalia a movimentação para os dois lados. <br><strong>Parcialmente adequado:</strong> avalia a movimentação para um lado.<br><strong>Inadequado:</strong> não avalia a movimentação ocular.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
-      { id: "pep6-avc", description: "6. <strong>Realiza a avaliação 3 do NIHSS. Avalia os campos visuais (superiores e inferiores).</strong><br><br><strong>Adequado:</strong> avalia os quatro quadrantes.<br><strong>Inadequado:</strong> não avalia os quatro quadrantes.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
-      { id: "pep7-avc", description: "7. <strong>Realiza a avaliação 4 do NIHSS. Pede que o paciente sorria (ou mostre os dentes) e feche os olhos com força.</strong><br><br><strong>Adequado:</strong> faz as duas solicitações.<br><strong>Parcialmente adequado:</strong> faz apenas uma solicitação. <strong>Inadequado:</strong> não faz nenhuma dessas solicitações.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
-      { id: "pep8-avc", description: "8. <strong>Realiza a avaliação 5 do NIHSS. Solicita que o paciente sustente os braços a 90°, com as palmas das mãos para baixo.</strong><br><br><strong>Adequado:</strong> realiza com ângulo E posicionamento das mãos adequados.<br><strong>Parcialmente adequado:</strong> realiza com ângulo OU posicionamento das mãos inadequados.<br><strong>Inadequado:</strong> não realiza a pesquisa ou a faz com ângulo E posicionamento das mãos inadequados.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
-      { id: "pep9-avc", description: "9. <strong>Realiza a avaliação 6 do NIHSS. Solicita que o paciente sustente as pernas a 30°, em extensão.</strong><br><br><strong>Adequado:</strong> realiza com ângulo E extensão adequados. <br><strong>Parcialmente adequado:</strong> realiza com ângulo OU extensão inadequados.<br><strong>Inadequado:</strong> não realiza a pesquisa ou a faz com ângulo E extensão inadequados.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
-      { id: "pep10-avc", description: "10. <strong>Realiza a avaliação 7 do NIHSS. Solicita que o paciente faça o teste index-nariz OU calcanhar-joelho.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
-      { id: "pep11-avc", description: "11. <strong>Realiza a avaliação 8 do NIHSS. Testa a sensibilidade do paciente.</strong><br><br><strong>Adequado:</strong> testa.<br><strong>Inadequado:</strong> não testa.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "ex" },
-      { id: "pep12-avc", description: "12. <strong>Realiza a avaliação 9 do NIHSS. Solicita que o paciente descreva a imagem.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
-      { id: "pep13-avc", description: "13. <strong>Realiza a avaliação 10 do NIHSS. Solicita que o paciente leia (ou repita) a lista de palavras.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
-      { id: "pep14-avc", description: "14. <strong>Totaliza corretamente a escala NIHSS. Verbaliza total de 10 pontos.</strong><br><br><strong>Adequado:</strong> totaliza corretamente.<br><strong>Inadequado:</strong> não totaliza ou totaliza com outro valor.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "dx" },
-      { id: "pep15-avc", description: "15. <strong>Solicita TC, ou tomografia, ou tomografia computadorizada, ou ressonância, ou ressonância magnética de crânio SEM CONTRASTE.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Parcialmente adequado:</strong> solicita COM CONTRASTE. <br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "im" },
-      { id: "pep16-avc", description: "16. <strong>Solicita outros exames complementares:</strong><br>(1) Eletrocardiograma;<br>(2) Glicemia capilar;<br>(3) Hemograma;<br>(4) Coagulograma (TAP / INR e TTPA);<br>(5) Potássio e sódio;<br>(6) Ureia e creatinina;<br>(7) Troponina.<br><br><strong>Adequado:</strong> solicita ao menos cinco exames.<br><strong>Inadequado:</strong> solicita menos que cinco exames.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "lab" },
+      { id: "ci1-avc", description: "1. <strong>Apresentação:</strong><br>(1) identifica-se; e,<br>(2) cumprimenta o paciente simulado e pergunta seu nome.<br><br><strong>Adequado:</strong> realiza as duas ações.<br><strong>Parcialmente adequado:</strong> realiza uma ação.<br><strong>Inadequado:</strong> não realiza ação alguma.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ac" },
+      { id: "ci2-avc", description: "2. <strong>Realiza a avaliação 1a do NIHSS:</strong><br><br><strong>Adequado:</strong> avalia se o paciente está alerta, falando com ele(a).<br><strong>Inadequado:</strong> não avalia se o paciente está alerta.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "an" },
+      { id: "ci3-avc", description: "3. <strong>Realiza a avaliação 1b do NIHSS. Pergunta:</strong><br>(1) idade do paciente; e<br>(2) em que mês estamos.<br><br><strong>Adequado:</strong> pergunta os dois itens.<br><strong>Parcialmente adequado:</strong> pergunta apenas um item.<br><strong>Inadequado:</strong> não pergunta item algum.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
+      { id: "ci4-avc", description: "4. <strong>Realiza a avaliação 1c do NIHSS. Solicita que o paciente:</strong><br>(1) abra e feche os olhos e<br>(2) abra e feche a mão.<br><br><strong>Adequado:</strong> realiza as duas solicitações.<br><strong>Parcialmente adequado:</strong> realiza apenas uma solicitação.<br><strong>Inadequado:</strong> não solicita nenhuma das duas ações.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "ci5-avc", description: "5. <strong>Realiza a avaliação 2 do NIHSS. Pede que o paciente movimente os olhos horizontalmente para os dois lados (olhar para a direita e para a esquerda).</strong><br><br><strong>Adequado:</strong> avalia a movimentação para os dois lados.<br><strong>Parcialmente adequado:</strong> avalia a movimentação para um lado.<br><strong>Inadequado:</strong> não avalia a movimentação ocular.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "ci6-avc", description: "6. <strong>Realiza a avaliação 3 do NIHSS. Avalia os campos visuais (superiores e inferiores).</strong><br><br><strong>Adequado:</strong> avalia os quatro quadrantes.<br><strong>Inadequado:</strong> não avalia os quatro quadrantes.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "ci7-avc", description: "7. <strong>Realiza a avaliação 4 do NIHSS. Pede que o paciente sorria (ou mostre os dentes) e feche os olhos com força.</strong><br><br><strong>Adequado:</strong> faz as duas solicitações.<br><strong>Parcialmente adequado:</strong> faz apenas uma solicitação.<br><strong>Inadequado:</strong> não faz nenhuma dessas solicitações.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "ci8-avc", description: "8. <strong>Realiza a avaliação 5 do NIHSS. Solicita que o paciente sustente os braços a 90°, com as palmas das mãos para baixo.</strong><br><br><strong>Adequado:</strong> realiza com ângulo E posicionamento das mãos adequados.<br><strong>Parcialmente adequado:</strong> realiza com ângulo OU posicionamento das mãos inadequados.<br><strong>Inadequado:</strong> não realiza a pesquisa ou a faz com ângulo E posicionamento das mãos inadequados.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "ci9-avc", description: "9. <strong>Realiza a avaliação 6 do NIHSS. Solicita que o paciente sustente as pernas a 30°, em extensão.</strong><br><br><strong>Adequado:</strong> realiza com ângulo E extensão adequados.<br><strong>Parcialmente adequado:</strong> realiza com ângulo OU extensão inadequados.<br><strong>Inadequado:</strong> não realiza a pesquisa ou a faz com ângulo E extensão inadequados.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "ci10-avc", description: "10. <strong>Realiza a avaliação 7 do NIHSS. Solicita que o paciente faça o teste index-nariz OU calcanhar-joelho.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "ci11-avc", description: "11. <strong>Realiza a avaliação 8 do NIHSS. Testa a sensibilidade do paciente.</strong><br><br><strong>Adequado:</strong> testa.<br><strong>Inadequado:</strong> não testa.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "ex" },
+      { id: "ci12-avc", description: "12. <strong>Realiza a avaliação 9 do NIHSS. Solicita que o paciente descreva a imagem.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "ci13-avc", description: "13. <strong>Realiza a avaliação 10 do NIHSS. Solicita que o paciente leia (ou repita) a lista de palavras.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "ci14-avc", description: "14. <strong>Totaliza corretamente a escala NIHSS. Verbaliza total de 10 pontos.</strong><br><br><strong>Adequado:</strong> totaliza corretamente.<br><strong>Inadequado:</strong> não totaliza ou totaliza com outro valor.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "dx" },
+      { id: "ci15-avc", description: "15. <strong>Solicita TC, ou tomografia, ou tomografia computadorizada, ou ressonância, ou ressonância magnética de crânio SEM CONTRASTE.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Parcialmente adequado:</strong> solicita COM CONTRASTE.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "im" },
+      { id: "ci16-avc", description: "16. <strong>Solicita outros exames complementares:</strong><br>(1) Eletrocardiograma;<br>(2) Glicemia capilar;<br>(3) Hemograma;<br>(4) Coagulograma (TAP / INR e TTPA);<br>(5) Potássio e sódio;<br>(6) Ureia e creatinina;<br>(7) Troponina.<br><br><strong>Adequado:</strong> solicita ao menos cinco exames.<br><strong>Inadequado:</strong> solicita menos que cinco exames.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "lab" },
     ],
     references: [
       { text: "Estação aplicada pela banca do INEP / 2024.2", url: "#" }
@@ -271,6 +296,196 @@ export const allStations: ChecklistData[] = [
       { id: "fc3-avc-nihss", question: "Cite 3 componentes avaliados pela escala NIHSS.", answer: "Nível de consciência, motricidade dos membros (braços e pernas), linguagem (afasia), disartria, campos visuais, melhor olhar conjugado.", tag: "Componentes" },
       { id: "fc4-avc-nihss", question: "Em que tipo de paciente a escala NIHSS é primariamente utilizada?", answer: "Em pacientes com suspeita ou diagnóstico de Acidente Vascular Cerebral (AVC) agudo.", tag: "Aplicação" },
       { id: "fc5-avc-nihss", question: "Uma pontuação mais ALTA na escala NIHSS indica um AVC mais grave ou menos grave?", answer: "Mais grave. Quanto maior a pontuação, maior o déficit neurológico.", tag: "Interpretação" }
+    ],
+  },
+  {
+    title: "REVALIDA FÁCIL (VAGINOSE BACTERIANA)",
+    area: "Ginecologia e Obstetrícia",
+    code: "vaginose-bacteriana-rf",
+    scenario: {
+      title: "Cenário de Atendimento: Queixa de Corrimento com Odor Fétido",
+      description: `
+        <p><strong>Nível de Atenção:</strong> Atenção primária à saúde (Unidade Básica de Saúde - UBS)</p>
+        <p><strong>Tipo de Atendimento:</strong> Ambulatorial</p>
+        <p><strong>Infraestrutura da Unidade (Disponível para o candidato):</strong></p>
+        <ul>
+          <li>Consultório equipado</li>
+          <li>Maca ginecológica para descrição do exame (não haverá exame físico real)</li>
+          <li>Material para coleta de exame a fresco, pH vaginal e teste das aminas (simulado)</li>
+        </ul>
+        <p><strong>DESCRIÇÃO COMPLETA DO CASO (Informação inicial para o candidato):</strong></p>
+        <p>"Sra. Carla, 26 anos, chega à UBS queixando-se de 'corrimento com cheiro muito ruim, tipo de peixe podre', há cerca de uma semana, com piora após as relações sexuais."</p>
+      `,
+    },
+    tasks: {
+      title: "Tarefas Principais",
+      timeLimit: "10 minutos",
+      items: [
+        "Realizar a anamnese direcionada à queixa principal da paciente, investigando características dos sintomas, fatores de risco e histórico ginecológico e sexual.",
+        "Descrever como realizaria o exame físico ginecológico (inspeção vulvar, exame especular), indicando o que esperaria encontrar e quais testes rápidos realizaria no consultório (pH vaginal, teste das aminas).",
+        "Considerar diagnósticos diferenciais de vulvovaginites.",
+        "Interpretar os resultados dos achados do exame físico e dos testes rápidos fornecidos para formular o diagnóstico (utilizando os Critérios de Amsel).",
+        "Verbalizar o diagnóstico mais provável.",
+        "Elaborar e comunicar a conduta terapêutica inicial.",
+        "Orientar a paciente sobre sua condição, tratamento, e medidas de prevenção de recorrência.",
+      ],
+    },
+    actorInstructions: {
+      title: "INSTRUÇÕES AO ATOR/ATRIZ (Sra. Carla)",
+      content: `
+        <p><strong>Nome do Paciente (Simulado):</strong> Carla Mendes, 26 anos, casada, secretária.</p>
+        <p><strong>Humor/Comportamento do Paciente:</strong> Envergonhada e desconfortável devido ao odor, mas cooperativa e buscando solução.</p>
+        <p><strong>Resposta a outras perguntas não previstas no script:</strong> "Não consta no script" ou "Não sei informar".</p>
+        <p><strong>Perguntas do paciente (se conduta adequada ou em momento específico):</strong></p>
+        <ul>
+          <li>"Doutor(a), o que eu tenho exatamente?"</li>
+          <li>"Isso é alguma Doença Sexualmente Transmissível (DST)?"</li>
+          <li>"É grave? Pode complicar?"</li>
+          <li>"Meu marido precisa se tratar também?"</li>
+          <li>"Como eu posso evitar que isso volte?"</li>
+        </ul>
+        <p><strong>Condução de Exames/Procedimentos Específicos (se houver):</strong> Não haverá exame físico real. O candidato deverá descrever.</p>
+        <p><strong>Informações Adicionais para o Ator:</strong></p>
+        <ul>
+          <li>Relatar que já tentou usar sabonetes íntimos perfumados e fez duchas vaginais, mas o odor piorou.</li>
+          <li>Manter contato visual e expressar preocupação com o odor.</li>
+        </ul>
+        <br/>
+        <h4>DADOS DO PACIENTE SIMULADO (Script para o Ator - Sra. Carla)</h4>
+        <br/>
+        <p><strong>MOTIVO DE CONSULTA:</strong></p>
+        <p>"[Doutor(a), estou aqui porque estou com um corrimento com um cheiro muito forte, que parece peixe podre. Isso já faz uma semana e piora depois da relação com meu marido e também quando estou menstruada. Estou muito incomodada.]"</p>
+        <br/>
+        <p><strong>Detalhar cada sintoma/queixa principal:</strong></p>
+        <p><strong>Sintoma 1: Odor Vaginal Fétido</strong></p>
+        <ul>
+          <li><strong>Início:</strong> "Há cerca de uma semana."</li>
+          <li><strong>Localização:</strong> "Vem da vagina mesmo."</li>
+          <li><strong>Qualidade/Tipo:</strong> "Cheiro de peixe podre, muito característico."</li>
+          <li><strong>Intensidade (0-10):</strong> "O cheiro é um 9, bem forte e constrangedor."</li>
+          <li><strong>Duração:</strong> "Persistente."</li>
+          <li><strong>Fatores de Melhora:</strong> "Não notei nada que melhore, lavar só alivia na hora."</li>
+          <li><strong>Fatores de Piora:</strong> "Piora muito depois da relação sexual e quando estou para menstruar ou durante a menstruação. As duchas vaginais que fiz parecem que pioraram também."</li>
+          <li><strong>Evolução:</strong> "Tem se mantido igual ou piorado um pouco."</li>
+        </ul>
+        <br/>
+        <p><strong>Sintoma 2: Corrimento Vaginal</strong></p>
+        <ul>
+          <li><strong>Início:</strong> "Junto com o cheiro, há uma semana."</li>
+          <li><strong>Aspecto/Cor:</strong> "É branco-acinzentado, meio aguado, não é grosso."</li>
+          <li><strong>Odor:</strong> "Sim, o mesmo cheiro de peixe."</li>
+          <li><strong>Quantidade:</strong> "Moderada, suja a calcinha, mas não muito."</li>
+        </ul>
+        <br/>
+        <p><strong>Sintomas Acompanhantes (Investigar ativamente ou responder se perguntado):</strong></p>
+        <ul>
+          <li><strong>Prurido vulvovaginal:</strong> "Não, coceira quase nenhuma. Às vezes uma irritação leve, mas nada demais."</li>
+          <li><strong>Disúria:</strong> "Não, para urinar está normal."</li>
+          <li><strong>Dispareunia:</strong> "Não sinto dor na relação, só o cheiro que piora depois."</li>
+          <li><strong>Febre:</strong> "Não tive febre."</li>
+          <li><strong>Dor pélvica/abdominal:</strong> "Não."</li>
+          <li><strong>Sangramento anormal:</strong> "Não, minha menstruação é regular."</li>
+          <li><strong>Sintomas no parceiro:</strong> "Meu marido não tem nenhuma queixa."</li>
+        </ul>
+        <br/>
+        <p><strong>Medicações de Alívio Usadas:</strong> "Tentei usar sabonetes íntimos com cheiro e fiz duchas com água e vinagre que vi na internet, mas não adiantou, acho que até piorou o cheiro."</p>
+        <br/>
+        <p><strong>ANTECEDENTES PESSOAIS:</strong></p>
+        <ul>
+          <li><strong>Doenças Prévias (Comorbidades):</strong> Nega DM, HAS, imunossupressão.</li>
+          <li><strong>Medicamentos de Uso Contínuo/Vitaminas:</strong> "Uso pílula anticoncepcional (desogestrel isolado) há 2 anos."</li>
+          <li><strong>Alergias:</strong> Nega alergias medicamentosas.</li>
+          <li><strong>Cirurgias Prévias:</strong> Nega.</li>
+          <li><strong>Internações Prévias:</strong> Nega.</li>
+          <li><strong>Vacinação:</strong> Completa, incluindo HPV.</li>
+        </ul>
+        <br/>
+        <p><strong>Ginecológicos/Obstétricos (para pacientes do sexo feminino):</strong></p>
+        <ul>
+          <li><strong>DUM:</strong> "Terminou há 3 dias." (Ciclos regulares de 28/30 dias)</li>
+          <li><strong>Gesta/Para/Aborto:</strong> G0P0A0.</li>
+          <li><strong>Sexarca:</strong> 17 anos.</li>
+          <li><strong>Número de parceiros nos últimos 12 meses:</strong> 1 (marido, há 3 anos).</li>
+          <li><strong>Uso de contraceptivos:</strong> Anticoncepcional oral (desogestrel).</li>
+          <li><strong>Preventivo (Papanicolau):</strong> "Fiz há 6 meses, resultado normal."</li>
+          <li><strong>Histórico de ISTs:</strong> Nega.</li>
+          <li><strong>VB/Candidíase prévia:</strong> "Acho que já tive candidíase uma vez, mas era diferente, coçava muito. Esse cheiro é a primeira vez."</li>
+        </ul>
+        <br/>
+        <p><strong>HÁBITOS DE VIDA:</strong></p>
+        <ul>
+          <li><strong>Alimentação:</strong> Refere dieta equilibrada.</li>
+          <li><strong>Atividade Física:</strong> Caminhada 2 vezes por semana.</li>
+          <li><strong>Álcool:</strong> Nega.</li>
+          <li><strong>Tabagismo:</strong> Nega.</li>
+          <li><strong>Drogas Ilícitas:</strong> Nega.</li>
+          <li><strong>Higiene íntima:</strong> "Tomo banho 2 vezes ao dia. Estava usando sabonetes íntimos perfumados e fazendo duchas vaginais por causa do cheiro."</li>
+        </ul>
+        <br/>
+        <p><strong>HISTÓRIA PSICOSSOCIAL E EPIDEMIOLÓGICA:</strong></p>
+        <ul>
+          <li><strong>Ocupação/Trabalho:</strong> Secretária.</li>
+          <li><strong>Moradia/Saneamento:</strong> Apartamento com boas condições.</li>
+        </ul>
+        <br/>
+        <p><strong>HISTÓRIA FAMILIAR:</strong></p>
+        <p>Pais saudáveis. Nega história familiar relevante.</p>
+      `,
+    },
+    printedMaterials: [
+      {
+        id: "pm1-vb-rf-sv",
+        title: "IMPRESSO 1: SINAIS VITAIS",
+        content: `
+          <p><strong>Frequência Cardíaca (FC):</strong> 72 bpm</p>
+          <p><strong>Frequência Respiratória (FR):</strong> 15 irpm</p>
+          <p><strong>Pressão Arterial (PA):</strong> 110 x 70 mmHg (MMSS D)</p>
+          <p><strong>Temperatura Axilar (Tax):</strong> 36.4ºC</p>
+        `,
+        isLocked: true,
+      },
+      {
+        id: "pm2-vb-rf-exg",
+        title: "IMPRESSO 2: ACHADOS DO EXAME GINECOLÓGICO",
+        content: `
+          <p><strong>Inspeção Vulvar:</strong> Vulva sem hiperemia significativa, edema ou lesões.</p>
+          <p><strong>Exame Especular:</strong> Paredes vaginais sem sinais inflamatórios intensos. Presença de conteúdo vaginal fluido, homogêneo, branco-acinzentado, de odor fétido característico (similar a peixe podre), em pequena a moderada quantidade. Colo uterino epitelizado, sem hiperemia ou friabilidade.</p>
+          <p><strong>Testes Rápidos Realizados no Consultório:</strong></p>
+          <ul>
+            <li>pH vaginal aferido: 5.5 (Ref: 3.8-4.5)</li>
+            <li>Teste das aminas (Whiff test com KOH 10%): Positivo (odor de peixe intensificado).</li>
+          </ul>
+          <p><strong>Exame a Fresco (Microscopia da secreção vaginal com salina):</strong> Observadas numerosas "clue cells" (células epiteliais vaginais recobertas por cocobacilos, com bordas obscurecidas). Diminuição acentuada de lactobacilos. Ausência de Trichomonas. Raros leucócitos.</p>
+        `,
+        isLocked: true,
+      },
+    ],
+    checklistItems: [
+      { id: "ci1-vb-rf-acolhimento", description: "<strong>Apresentação e Acolhimento:</strong><br>(1) Identifica-se (nome e/ou função); E<br>(2) Cumprimenta o paciente simulado e pergunta seu nome (ou confirma).<br><br><strong>Adequado (0.5 pts):</strong> Realiza as duas ações.<br><strong>Parcialmente Adequado (0.25 pts):</strong> Realiza uma ação.<br><strong>Inadequado (0.0 pts):</strong> Não realiza ação alguma.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ac" },
+      { id: "ci2-vb-rf-anamnese-hda", description: "<strong>Investigação da Queixa Principal e HDA (Corrimento e Odor):</strong><br>Investiga pelo menos 3 características do corrimento (aspecto, cor, quantidade, consistência) E 3 características do odor (tipo, intensidade, fatores de piora).<br><br><strong>Adequado (1.0 pts):</strong> Investiga ≥3 características de cada.<br><strong>Parcialmente Adequado (0.5 pts):</strong> Investiga parcialmente as características.<br><strong>Inadequado (0.0 pts):</strong> Investiga <2 características de cada ou não investiga.", points: { inadequate: 0, partial: 0.5, adequate: 1.0 }, type: "an" },
+      { id: "ci3-vb-rf-sintomas-associados", description: "<strong>Investigação de Sintomas Associados (para diagnóstico diferencial):</strong><br>Pergunta sobre prurido, disúria, dispareunia, dor pélvica, febre (para diferenciar de candidíase, tricomoníase, cervicite/DIP).<br><br><strong>Adequado (0.75 pts):</strong> Investiga ≥3 dos sintomas listados.<br><strong>Parcialmente Adequado (0.4 pts):</strong> Investiga 1-2 dos sintomas listados.<br><strong>Inadequado (0.0 pts):</strong> Não investiga os sintomas listados.", points: { inadequate: 0, partial: 0.4, adequate: 0.75 }, type: "an" },
+      { id: "ci4-vb-rf-fatores-risco", description: "<strong>Investigação de Fatores de Risco/Desencadeantes e Hábitos de Higiene:</strong><br>Pergunta sobre uso de duchas vaginais, múltiplos parceiros (embora não seja o caso aqui, é uma pergunta padrão), troca frequente de parceiros, uso de DIU, tabagismo, e hábitos de higiene íntima.<br><br><strong>Adequado (0.75 pts):</strong> Pergunta sobre ≥2 fatores de risco/hábitos relevantes (especialmente duchas).<br><strong>Parcialmente Adequado (0.4 pts):</strong> Pergunta sobre 1 fator/hábito.<br><strong>Inadequado (0.0 pts):</strong> Não pergunta.", points: { inadequate: 0, partial: 0.4, adequate: 0.75 }, type: "an" },
+      { id: "ci5-vb-rf-descreve-exame", description: "<strong>Descreve a Inspeção Vulvar e Exame Especular:</strong><br>Verbaliza a observação da vulva (procurando sinais inflamatórios) E a passagem do espéculo para visualização das paredes vaginais, colo e características do conteúdo vaginal.<br><br><strong>Adequado (0.75 pts):</strong> Descreve de forma sistemática os passos da inspeção vulvar E do exame especular.<br><strong>Parcialmente Adequado (0.4 pts):</strong> Descreve parcialmente ou apenas um dos componentes.<br><strong>Inadequado (0.0 pts):</strong> Não descreve ou o faz de forma inadequada.", points: { inadequate: 0, partial: 0.4, adequate: 0.75 }, type: "ef" },
+      { id: "ci6-vb-rf-menciona-testes", description: "<strong>Menciona a Realização dos Testes Rápidos (pH e Teste das Aminas):</strong><br>Verbaliza a intenção de coletar material para aferição de pH vaginal E realização do teste das aminas (Whiff test) com KOH.<br><br><strong>Adequado (0.75 pts):</strong> Menciona os dois testes.<br><strong>Parcialmente Adequado (0.4 pts):</strong> Menciona apenas um dos testes.<br><strong>Inadequado (0.0 pts):</strong> Não menciona os testes.", points: { inadequate: 0, partial: 0.4, adequate: 0.75 }, type: "ef" },
+      { id: "ci7-vb-rf-interpreta-achados", description: "<strong>Interpreta Corretamente os Achados Fornecidos (Critérios de Amsel):</strong><br>Identifica os achados fornecidos (corrimento homogêneo branco-acinzentado, pH vaginal > 4.5, teste das aminas positivo, presença de clue cells no exame a fresco) e os relaciona com os Critérios de Amsel, confirmando o diagnóstico com pelo menos 3 critérios.<br><br><strong>Adequado (1.0 pts):</strong> Interpreta corretamente os achados e menciona/aplica os Critérios de Amsel (pelo menos 3).<br><strong>Parcialmente Adequado (0.5 pts):</strong> Interpreta os achados, mas não os relaciona explicitamente com os Critérios de Amsel ou identifica menos de 3.<br><strong>Inadequado (0.0 pts):</strong> Não interpreta ou interpreta erroneamente.", points: { inadequate: 0, partial: 0.5, adequate: 1.0 }, type: "dx" },
+      { id: "ci8-vb-rf-verbaliza-diagnostico", description: "<strong>Verbaliza o Diagnóstico Principal:</strong><br>Verbaliza o diagnóstico de Vaginose Bacteriana.<br><br><strong>Adequado (1.0 pts):</strong> Verbaliza o diagnóstico corretamente.<br><strong>Parcialmente Adequado (0.5 pts):</strong> Hesita ou não é claro no diagnóstico.<br><strong>Inadequado (0.0 pts):</strong> Não verbaliza o diagnóstico ou o faz incorretamente.", points: { inadequate: 0, partial: 0.5, adequate: 1.0 }, type: "dx" },
+      { id: "ci9-vb-rf-conduta-terapeutica", description: "<strong>Elabora e Comunica Conduta Terapêutica Inicial Adequada (Tratamento Farmacológico):</strong><br>Prescreve uma opção de tratamento farmacológico válida para Vaginose Bacteriana (Ex: Metronidazol 500mg VO 12/12h por 7 dias OU Metronidazol gel vaginal 1x/noite por 5 dias), com dose e duração corretas.<br><br><strong>Adequado (1.25 pts):</strong> Orienta uma opção terapêutica correta e completa.<br><strong>Parcialmente Adequado (0.65 pts):</strong> Orienta opção correta, mas com dose/duração incompleta ou parcialmente correta.<br><strong>Inadequado (0.0 pts):</strong> Não orienta ou orienta conduta inadequada.", points: { inadequate: 0, partial: 0.65, adequate: 1.25 }, type: "ct" },
+      { id: "ci10-vb-rf-orientacoes-vb", description: "<strong>Fornece Orientações sobre a Natureza da VB e Medidas Comportamentais/Prevenção:</strong><br>Explica que VB é um desequilíbrio da flora vaginal, orienta evitar duchas vaginais e sabonetes íntimos inadequados.<br><br><strong>Adequado (1.0 pts):</strong> Fornece ≥2 orientações relevantes (natureza da VB, evitar duchas).<br><strong>Parcialmente Adequado (0.5 pts):</strong> Fornece 1 orientação.<br><strong>Inadequado (0.0 pts):</strong> Não orienta.", points: { inadequate: 0, partial: 0.5, adequate: 1.0 }, type: "co" },
+      { id: "ci11-vb-rf-aborda-parceiro-antabuse", description: "<strong>Aborda Questões sobre Parceiro e Efeito Antabuse (se Metronidazol oral):</strong><br>Informa que o tratamento do parceiro não é rotineiramente indicado para VB E, se prescreveu Metronidazol oral, orienta sobre a abstenção de álcool.<br><br><strong>Adequado (0.75 pts):</strong> Aborda corretamente as duas questões (parceiro E efeito antabuse se aplicável).<br><strong>Parcialmente Adequado (0.4 pts):</strong> Aborda apenas uma das questões.<br><strong>Inadequado (0.0 pts):</strong> Não aborda.", points: { inadequate: 0, partial: 0.4, adequate: 0.75 }, type: "co" },
+      { id: "ci12-vb-rf-comunicacao-paciente", description: "<strong>Comunicação com o Paciente (Clareza, Empatia, Linguagem Acessível):</strong><br>(Avaliação global da comunicação durante a estação)<br><br><strong>Adequado (0.5 pts):</strong> Comunica-se de forma clara, empática e com linguagem acessível.<br><strong>Parcialmente Adequado (0.25 pts):</strong> Apresenta falhas em um dos aspectos.<br><strong>Inadequado (0.0 pts):</strong> Comunicação inadequada.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "co" },
+    ],
+    references: [
+      { text: "Brasil. Ministério da Saúde. Protocolo Clínico e Diretrizes Terapêuticas para Atenção Integral às Pessoas com Infecções Sexualmente Transmissíveis (IST). Brasília: Ministério da Saúde. (Versão mais recente).", url: "#" },
+      { text: "Federação Brasileira das Associações de Ginecologia e Obstetrícia (FEBRASGO). Manual de Orientação em Trato Genital Inferior e Colposcopia. (Versão mais recente).", url: "#" },
+      { text: "Berek JS, Novak E. Berek & Novak – Tratado de Ginecologia. Guanabara Koogan. (Edição mais recente).", url: "#" },
+      { text: "Critérios de Amsel para diagnóstico de Vaginose Bacteriana.", url: "#" },
+    ],
+    flashcards: [
+      { id: "fc1-vb-rf", question: "Quais são os 4 Critérios de Amsel para o diagnóstico de Vaginose Bacteriana?", answer: "1. Corrimento vaginal homogêneo, branco-acinzentado, aderente às paredes vaginais; 2. pH vaginal > 4.5; 3. Teste das aminas (Whiff test) positivo; 4. Presença de 'clue cells' na microscopia a fresco (pelo menos 20% das células epiteliais). Pelo menos 3 critérios devem estar presentes.", tag: "Diagnóstico" },
+      { id: "fc2-vb-rf", question: "Qual é o tratamento de primeira linha para Vaginose Bacteriana em pacientes não gestantes?", answer: "Metronidazol 500 mg, via oral, 2 vezes ao dia, por 7 dias. Alternativas incluem metronidazol gel vaginal ou clindamicina creme vaginal.", tag: "Tratamento" },
+      { id: "fc3-vb-rf", question: "O parceiro sexual de uma mulher com Vaginose Bacteriana precisa ser tratado?", answer: "Não rotineiramente. O tratamento do parceiro não demonstrou reduzir a recorrência da VB na mulher.", tag: "Manejo do Parceiro" },
+      { id: "fc4-vb-rf", question: "Quais orientações de higiene íntima são importantes para prevenir a recorrência da Vaginose Bacteriana?", answer: "Evitar duchas vaginais, não usar sabonetes íntimos agressivos ou perfumados, preferir roupas íntimas de algodão e evitar roupas muito justas por longos períodos.", tag: "Prevenção" },
+      { id: "fc5-vb-rf", question: "O que são 'clue cells'?", answer: "São células epiteliais vaginais recobertas por grande quantidade de cocobacilos, principalmente Gardnerella vaginalis, que obscurecem suas bordas, conferindo um aspecto granular. São um achado característico da Vaginose Bacteriana no exame a fresco.", tag: "Microscopia" },
     ],
   },
 ];
