@@ -1,7 +1,7 @@
 
 "use client";
 
-import * as React from "react"; // Added this line
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -46,9 +46,6 @@ interface NavItemProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed }) => {
-  const pathname = usePathname();
-  const isActive = pathname === href;
-
   return (
     <li>
       <Link href={href} passHref>
@@ -59,7 +56,7 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, i
             isCollapsed
               ? (isSubItem ? "pl-6 justify-start" : "px-0 justify-center")
               : (isSubItem ? "pl-10 pr-6 py-2" : "px-6 py-2"),
-            isActive && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold hover:bg-sidebar-accent/90"
+            // Removed active state styling: isActive && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold hover:bg-sidebar-accent/90"
           )}
           title={isCollapsed && !isSubItem ? label : undefined}
         >
@@ -85,8 +82,6 @@ const NavAccordionItem: React.FC<{
     }
     return false;
   });
-  // Check if accordion is open based on active sub-item
-  const defaultOpenValue = isActive ? value : undefined;
 
 
   return (
@@ -94,7 +89,7 @@ const NavAccordionItem: React.FC<{
       <AccordionTrigger className={cn(
         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground text-sm font-medium",
         "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-[state=open]:font-semibold",
-        isActive && !isCollapsed && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold", // Apply active style when open and not collapsed
+        // Removed: isActive && !isCollapsed && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold",
         isCollapsed ? "px-2 justify-center" : "px-6 py-2",
         "w-full"
         )}
@@ -115,7 +110,15 @@ const NavAccordionItem: React.FC<{
   );
 };
 
-const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = false}) => (
+const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = false}) => {
+  const pathname = usePathname();
+  const getOpenAccordionValue = () => {
+    if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
+    if (pathname.startsWith("/history")) return "history";
+    return undefined;
+  };
+
+  return (
   <>
     <div className={cn(
         "p-4 border-b border-sidebar-border flex items-center gap-2",
@@ -136,7 +139,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
     </div>
     <ScrollArea className="flex-grow">
       <nav className="py-2">
-        <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-1")}>
+        <Accordion type="multiple" defaultValue={getOpenAccordionValue()} className={cn("w-full", isCollapsed && "px-1")}>
           <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
             <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
               <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed}/>
@@ -146,7 +149,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
               <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
             </NavAccordionItem>
-
+            
             <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
             <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
             <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
@@ -159,7 +162,8 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
       </nav>
     </ScrollArea>
   </>
-);
+  );
+};
 
 
 export function SidebarNav() {
@@ -169,7 +173,7 @@ export function SidebarNav() {
   const pathname = usePathname();
 
   const getOpenAccordionValue = () => {
-    if (pathname.startsWith("/estacoes")) return "checklists";
+    if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
     if (pathname.startsWith("/history")) return "history";
     return undefined;
   };
@@ -237,7 +241,7 @@ export function SidebarNav() {
                   <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
                     <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
-
+                  
                   <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
                   <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
                   <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
@@ -280,3 +284,4 @@ export function SidebarNav() {
     </>
   );
 }
+
