@@ -100,16 +100,12 @@ const SidebarNavContent = () => (
           <NavItem href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
           <li className="px-4 pt-4 pb-2">
             <span className="text-xs font-medium uppercase text-muted-foreground">
-              Checklist & Flashcard
+              Checklist
             </span>
           </li>
           <NavAccordionItem icon={ListChecks} label="Estações" value="checklists">
             <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
             <NavItem href="/checklists/pense" icon={FileCheck} label="REVALIDA FÁCIL" isSubItem />
-          </NavAccordionItem>
-           <NavAccordionItem icon={Layers} label="Flashcards" value="flashcards">
-            <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
-            <NavItem href="/flashcards/review" icon={BookOpen} label="Revisão" isSubItem />
           </NavAccordionItem>
           <NavItem href="/simulados" icon={ListChecks} label="Simulados" />
 
@@ -121,7 +117,6 @@ const SidebarNavContent = () => (
           <NavItem href="/performance" icon={BarChart3} label="Meus Desempenhos" />
           <NavAccordionItem icon={History} label="Histórico" value="history">
             <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
-            <NavItem href="/history/flashcard" icon={Layers} label="Flashcard" isSubItem />
           </NavAccordionItem>
 
           <li className="px-4 pt-4 pb-2">
@@ -177,16 +172,12 @@ export function SidebarNav() {
                  <NavItem href="/dashboard" icon={LayoutDashboard} label={isCollapsed ? "" : "Dashboard"} />
                  {!isCollapsed && <li className="px-4 pt-2 pb-1">
                     <span className="text-xs font-medium uppercase text-muted-foreground">
-                      Checklist & Flashcard
+                      Checklist
                     </span>
                   </li>}
                   <NavAccordionItem icon={ListChecks} label={isCollapsed ? "" : "Estações"} value="checklists">
                     <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
                     <NavItem href="/checklists/pense" icon={FileCheck} label="REVALIDA FÁCIL" isSubItem />
-                  </NavAccordionItem>
-                  <NavAccordionItem icon={Layers} label={isCollapsed ? "" : "Flashcards"} value="flashcards">
-                    <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
-                    <NavItem href="/flashcards/review" icon={BookOpen} label="Revisão" isSubItem />
                   </NavAccordionItem>
                   <NavItem href="/simulados" icon={ListChecks} label={isCollapsed ? "" : "Simulados"} />
                   
@@ -198,7 +189,6 @@ export function SidebarNav() {
                   <NavItem href="/performance" icon={BarChart3} label={isCollapsed ? "" : "Meus Desempenhos"} />
                   <NavAccordionItem icon={History} label={isCollapsed ? "" : "Histórico"} value="history">
                     <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
-                    <NavItem href="/history/flashcard" icon={Layers} label="Flashcard" isSubItem />
                   </NavAccordionItem>
 
                   {!isCollapsed && <li className="px-4 pt-2 pb-1">
