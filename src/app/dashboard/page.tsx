@@ -7,6 +7,7 @@ import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import PerformancePieChartCard from "@/components/dashboard/performance-pie-chart-card"; // Ensure this is imported if used
 
 // Placeholder data - substitua com seus dados reais
 const studentData = {
@@ -30,17 +31,24 @@ const studentData = {
     { name: "Jun", score: 85 },
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
+  performanceByCategory: [
+    { name: "Acolhimento", value: 19, fill: "hsl(var(--chart-1))" },
+    { name: "Anamnese", value: 20, fill: "hsl(var(--chart-2))" },
+    { name: "Exame Físico", value: 21, fill: "hsl(var(--chart-3))" },
+    { name: "Laboratório", value: 17, fill: "hsl(var(--chart-4))" },
+    { name: "Diagnóstico", value: 23, fill: "hsl(var(--chart-5))" },
+  ],
 };
 
 export default function DashboardPage() {
   return (
     <AppLayout>
-      <div className="space-y-6 p-1 md:p-0"> {/* Adicionado padding responsivo */}
+      <div className="space-y-6 p-1 md:p-0">
         <Card className="shadow-lg">
           <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 pb-4">
             <div>
-              <CardTitle className="text-2xl font-bold font-headline">Área do Estudante</CardTitle>
-              <CardDescription>Bem-vindo(a) de volta, {studentData.name}!</CardDescription>
+              <CardTitle className="text-2xl font-bold font-headline">{studentData.name}</CardTitle>
+              <CardDescription>Bem-vindo(a) de volta!</CardDescription>
             </div>
             <Avatar className="h-[100px] w-[100px]">
               <AvatarImage src={studentData.avatarUrl} alt={studentData.name} data-ai-hint="google avatar profile" />
@@ -49,12 +57,17 @@ export default function DashboardPage() {
           </CardHeader>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <ProgressOverviewCard progress={studentData.progress} />
           <PerformanceChartCard data={studentData.performanceData} />
+          <PerformancePieChartCard
+            data={studentData.performanceByCategory}
+            title="Desempenho por Categoria"
+            description="Sua performance detalhada por área de avaliação."
+          />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2"> {/* Ajustado para dois cards lado a lado */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
             <StrengthsWeaknessesCard strengths={studentData.strengths} weaknesses={studentData.weaknesses} />
             <DailyGoalsCard goals={studentData.dailyGoals} />
         </div>
@@ -63,4 +76,3 @@ export default function DashboardPage() {
     </AppLayout>
   );
 }
-
