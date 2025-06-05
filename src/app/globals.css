@@ -32,7 +32,7 @@ h1, h2, h3, h4, h5, h6 {
     --input: 220 25% 92%; /* #E4E9EF */
     --ring: 235 65% 70%; /* Versão mais clara do novo primary */
     --chart-1: 15 80% 60%;
-    --chart-2: 160 60% 40%;
+    --chart-2: 140 65% 45%; /* Verde mais vivo */
     --chart-3: 200 40% 25%;
     --chart-4: 45 75% 65%;
     --chart-5: 30 90% 68%;
@@ -72,6 +72,8 @@ h1, h2, h3, h4, h5, h6 {
     --border: 220 10% 30%; /* #40454D */
     --input: 220 10% 25%; /* #383D45 */
     --ring: 235 65% 75%;
+
+    --chart-2: 140 65% 55%; /* Verde mais vivo para dark mode também */
 
     --sidebar-background: 220 10% 15%;
     --sidebar-foreground: 220 20% 85%;
