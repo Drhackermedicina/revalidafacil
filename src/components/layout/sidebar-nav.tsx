@@ -22,6 +22,7 @@ import {
   TrendingUp,
   FileQuestion,
   Trophy,
+  Youtube, // Ícone adicionado
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -43,26 +44,28 @@ interface NavItemProps {
   label: string;
   isSubItem?: boolean;
   isCollapsed?: boolean;
+  target?: string; // Adicionado para links externos
+  rel?: string; // Adicionado para links externos
 }
 
-const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed }) => {
+const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed, target, rel }) => {
+  const linkProps = target ? { target, rel } : {};
   return (
     <li>
-      <Link href={href} passHref>
-        <Button
-          variant={"ghost"}
+      <Link href={href} passHref legacyBehavior>
+        <a
+          {...linkProps}
           className={cn(
-            "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm font-medium",
+            "flex items-center w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm font-medium rounded-md",
             isCollapsed
-              ? (isSubItem ? "pl-6 justify-start" : "px-0 justify-center")
-              : (isSubItem ? "pl-10 pr-6 py-2" : "px-6 py-2"),
-            // Removed active state styling: isActive && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold hover:bg-sidebar-accent/90"
+              ? (isSubItem ? "pl-6 justify-start h-9" : "px-0 justify-center h-9 w-9 mx-auto") 
+              : (isSubItem ? "pl-10 pr-6 py-2 h-9" : "px-6 py-2 h-9"),
           )}
           title={isCollapsed && !isSubItem ? label : undefined}
         >
           <Icon className={cn("mr-2 h-5 w-5", isCollapsed && !isSubItem && "mr-0")} />
           {(!isCollapsed || (isSubItem && isCollapsed)) && label}
-        </Button>
+        </a>
       </Link>
     </li>
   );
@@ -75,22 +78,12 @@ const NavAccordionItem: React.FC<{
   value: string;
   isCollapsed?: boolean;
 }> = ({ icon: Icon, label, children, value, isCollapsed }) => {
-  const pathname = usePathname();
-  const isActive = React.Children.toArray(children).some(child => {
-    if (React.isValidElement(child) && child.props.href) {
-      return pathname === child.props.href;
-    }
-    return false;
-  });
-
-
   return (
     <AccordionItem value={value} className="border-none">
       <AccordionTrigger className={cn(
-        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground text-sm font-medium",
+        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground text-sm font-medium h-9",
         "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-[state=open]:font-semibold",
-        // Removed: isActive && !isCollapsed && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold",
-        isCollapsed ? "px-2 justify-center" : "px-6 py-2",
+        isCollapsed ? "px-2 justify-center w-9 mx-auto" : "px-6 py-2",
         "w-full"
         )}
         title={isCollapsed ? label : undefined}
@@ -139,7 +132,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
     </div>
     <ScrollArea className="flex-grow">
       <nav className="py-2">
-        <Accordion type="multiple" defaultValue={getOpenAccordionValue()} className={cn("w-full", isCollapsed && "px-1")}>
+        <Accordion type="multiple" defaultValue={getOpenAccordionValue()} className={cn("w-full", isCollapsed && "px-0")}>
           <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
             <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
               <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed}/>
@@ -155,6 +148,14 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
             <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed}/>
             <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
+            <NavItem 
+              href="https://www.youtube.com" 
+              icon={Youtube} 
+              label={"Video Aulas"} 
+              isCollapsed={isCollapsed} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            />
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
             <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
           </ul>
@@ -247,6 +248,14 @@ export function SidebarNav() {
                   <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
                   <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed} />
                   <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
+                  <NavItem 
+                    href="https://www.youtube.com/" 
+                    icon={Youtube} 
+                    label={"Video Aulas"} 
+                    isCollapsed={isCollapsed} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  />
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
                   <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
               </ul>
@@ -285,3 +294,4 @@ export function SidebarNav() {
   );
 }
 
+    
