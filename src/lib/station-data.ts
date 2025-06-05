@@ -34,7 +34,7 @@ export interface Flashcard {
 
 export interface ChecklistData {
   title: string;
-  area: string;
+  area: string; // Padronizado para categorias principais
   code: string; // Unique code for routing
   scenario: { title: string; description: string };
   tasks: { title: string; timeLimit: string; items: string[] };
@@ -48,7 +48,7 @@ export interface ChecklistData {
 export const allStations: ChecklistData[] = [
   {
     title: "Acidente por Água Viva",
-    area: "Clínica Médica / Dermatologia",
+    area: "Clínica Médica", // Padronizado
     code: "agua-viva",
     scenario: {
       title: "Cenário Clínico: Queimadura por Água Viva",
@@ -95,7 +95,7 @@ export const allStations: ChecklistData[] = [
   },
   {
     title: "Trauma Abdominal Fechado",
-    area: "Cirurgia / Emergência",
+    area: "Cirurgia", // Padronizado
     code: "trauma-abdominal",
     scenario: {
       title: "Cenário Clínico: Politraumatizado Pós-Colisão Automobilística",
@@ -151,6 +151,18 @@ export const allStations: ChecklistData[] = [
       { id: "fc2-ta", question: "Quais são os 4 espaços avaliados no FAST abdominal?", answer: "Hepatorrenal (Morison), Esplenorrenal, Pélvico (fundo de saco de Douglas) e Pericárdico.", tag: "Diagnóstico" },
     ],
   },
+  // Você pode adicionar mais estações aqui, atribuindo a 'area' correta.
+  // Exemplo para Pediatria:
+  // {
+  //   title: "Crise Convulsiva Febril",
+  //   area: "Pediatria",
+  //   code: "convulsao-febril",
+  //   scenario: { ... },
+  //   tasks: { ... },
+  //   actorInstructions: { ... },
+  //   printedMaterials: [],
+  //   checklistItems: [],
+  //   references: [],
+  //   flashcards: [],
+  // }
 ];
-
-    
