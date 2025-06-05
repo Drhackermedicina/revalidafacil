@@ -8,8 +8,8 @@ import {
   BookMarked,
   History, 
   Clock,
-  LightbulbOff, // Changed from Moon
-  Lightbulb,    // Changed from Sun
+  LightbulbOff,
+  Lightbulb,
   ChevronsLeft,
   ChevronsRight,
   Menu as MenuIcon,
@@ -100,9 +100,21 @@ const NavAccordionItem: React.FC<{
 
 const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = false}) => (
   <>
-    <div className={cn("p-4 border-b border-sidebar-border flex items-center", isCollapsed ? "justify-center" : "justify-center")}>
-      <Link href="/">
-        <Logo width={isCollapsed ? 28 : 36} height={isCollapsed ? 28 : 36} className={cn("text-sidebar-foreground", isCollapsed ? "h-7 w-7" : "h-9 w-9")} />
+    <div className={cn(
+        "p-4 border-b border-sidebar-border flex items-center gap-2", 
+        isCollapsed ? "justify-center" : "justify-start"
+    )}>
+      <Link href="/" className="flex items-center gap-2 group">
+        <Logo 
+            width={isCollapsed ? 28 : 36} 
+            height={isCollapsed ? 28 : 36} 
+            className={cn("text-sidebar-foreground transition-colors duration-200 ease-in-out", isCollapsed ? "h-7 w-7" : "h-9 w-9")} 
+        />
+        {!isCollapsed && (
+            <span className="font-semibold text-lg text-sidebar-foreground group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
+              Revalida Fácil
+            </span>
+        )}
       </Link>
     </div>
     <ScrollArea className="flex-grow">
@@ -154,19 +166,38 @@ export function SidebarNav() {
       >
         <div className={cn(
           "p-3 border-b border-sidebar-border flex items-center",
-          isCollapsed ? "flex-col gap-2 py-2.5 items-center" : "justify-between" 
+          isCollapsed ? "flex-col gap-2 py-2.5" : "justify-between"
         )}>
-          <Link href="/" className={cn(isCollapsed && "flex justify-center w-full")}>
-            <Logo 
-              width={isCollapsed ? 28 : 32} 
-              height={isCollapsed ? 28 : 32} 
-              className={cn(isCollapsed ? "h-7 w-7" : "h-8 w-8", "text-sidebar-foreground")}
-            />
-          </Link>
-          
-          <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn("text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", isCollapsed && "mt-1")}>
-            {isCollapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
-          </Button>
+          {isCollapsed ? (
+            <>
+              <Link href="/" className="flex justify-center w-full">
+                <Logo 
+                  width={28} 
+                  height={28} 
+                  className="h-7 w-7 text-sidebar-foreground"
+                />
+              </Link>
+              <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                <ChevronsRight className="h-5 w-5" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/" className="flex items-center gap-2 group">
+                <Logo 
+                  width={32} 
+                  height={32} 
+                  className="h-8 w-8 text-sidebar-foreground transition-colors duration-200 ease-in-out"
+                />
+                <span className="font-semibold text-lg text-sidebar-foreground group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
+                  Revalida Fácil
+                </span>
+              </Link>
+              <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                <ChevronsLeft className="h-5 w-5" />
+              </Button>
+            </>
+          )}
         </div>
         <ScrollArea className="flex-grow">
            <nav className="py-2">
