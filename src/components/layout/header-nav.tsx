@@ -8,7 +8,8 @@ import {
   Activity,
   TrendingUp,
   Search,
-  MessageSquare, // Added for Chat
+  MessageSquare,
+  Sparkles, // Added for Gemini
   Lightbulb,
   LightbulbOff, 
   Bell
@@ -49,6 +50,10 @@ export function HeaderNav() {
               <div className="flex items-center space-x-1.5">
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-10 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Chat */}
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+                <div className="w-14 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Gemini */}
               </div>
           </div>
           
@@ -91,6 +96,15 @@ export function HeaderNav() {
             <MessageSquare className="h-5 w-5" />
             <span>Chat</span>
           </div>
+          <Link
+            href="https://gemini.google.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
+          >
+            <Sparkles className="h-5 w-5" />
+            <span>Gemini</span>
+          </Link>
         </nav>
         
         {/* Right side: Theme, Notifications */}
