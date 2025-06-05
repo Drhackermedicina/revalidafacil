@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import type { ImageProps } from 'next/image';
 
-// Você precisará adicionar sua imagem à pasta `public`
-// e então atualizar o `src` abaixo para o caminho correto, por exemplo: /revalida-facil-logo.png
-const LOGO_IMAGE_SRC = "https://placehold.co/150x150.png?text=Revalida+Fácil"; 
+// Certifique-se de que sua imagem de logo está em 'public/revalida-facil-logo.png'.
+// Se usar um nome ou caminho diferente, atualize a constante LOGO_IMAGE_SRC abaixo.
+const LOGO_IMAGE_SRC = "/revalida-facil-logo.png";
 
 const Logo = (props: Omit<ImageProps, 'src' | 'alt'>) => (
   <Image
@@ -12,7 +12,6 @@ const Logo = (props: Omit<ImageProps, 'src' | 'alt'>) => (
     width={props.width || 40} // Default width
     height={props.height || 40} // Default height
     priority // Preload the logo
-    data-ai-hint="medical education logo" // Hint for AI image generation if placeholder is used
     {...props} // Allow overriding width, height, className, etc.
   />
 );
