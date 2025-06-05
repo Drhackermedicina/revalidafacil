@@ -16,6 +16,7 @@ import {
   ChevronsRight,
   Menu as MenuIcon,
   FileCheck,
+  GraduationCap, // Adicionado GraduationCap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -93,7 +94,7 @@ const SidebarNavContent = () => (
     <ScrollArea className="flex-grow">
       <nav className="py-4">
         <ul className="space-y-1 px-2">
-          <NavItem href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+          <NavItem href="/dashboard" icon={GraduationCap} label="Área do estudante" />
           <li className="px-4 pt-4 pb-2">
             <span className="text-xs font-medium uppercase text-muted-foreground">
               Checklist
@@ -157,7 +158,7 @@ export function SidebarNav() {
            <nav className="py-2">
             <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-2")}>
               <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
-                 <NavItem href="/dashboard" icon={LayoutDashboard} label={isCollapsed ? "" : "Dashboard"} />
+                 <NavItem href="/dashboard" icon={GraduationCap} label={isCollapsed ? "" : "Área do estudante"} />
                  {!isCollapsed && <li className="px-4 pt-2 pb-1">
                     <span className="text-xs font-medium uppercase text-muted-foreground">
                       Checklist
