@@ -31,12 +31,12 @@ const studentData = {
     { name: "Jun", score: 85 },
   ],
   dailyGoals: { completed: 2, total: 3, streak: 5 },
-  categoryProficiency: [ // Dados para o gráfico de pontos fortes/fracos por categoria
-    { name: "Acolhimento", value: 80, fill: "hsl(var(--chart-1))" },
-    { name: "Anamnese", value: 65, fill: "hsl(var(--chart-2))" },
-    { name: "Exame Físico", value: 70, fill: "hsl(var(--chart-3))" },
-    { name: "Laboratório", value: 90, fill: "hsl(var(--chart-4))" },
-    { name: "Diagnóstico", value: 60, fill: "hsl(var(--chart-5))" },
+  performanceByCategory: [ // Dados para o gráfico "Desempenho por Categoria"
+    { name: "Acolhimento", value: 70, fill: "hsl(var(--chart-1))" },
+    { name: "Anamnese", value: 75, fill: "hsl(var(--chart-2))" },
+    { name: "Exame Físico", value: 80, fill: "hsl(var(--chart-3))" },
+    { name: "Laboratório", value: 65, fill: "hsl(var(--chart-4))" },
+    { name: "Diagnóstico", value: 85, fill: "hsl(var(--chart-5))" },
   ],
 };
 
@@ -61,9 +61,9 @@ export default function DashboardPage() {
           <ProgressOverviewCard progress={studentData.progress} />
           <PerformanceChartCard data={studentData.performanceData} />
           <PerformancePieChartCard
-            data={studentData.categoryProficiency}
-            title="Pontos Fortes e Fracos por Categoria"
-            description="Nível de proficiência em cada área chave. Valores mais altos indicam maior força."
+            data={studentData.performanceByCategory}
+            // O título e a descrição padrão do componente são "Desempenho por Categoria" 
+            // e "Sua performance detalhada por área de avaliação.", respectivamente.
           />
         </div>
 
