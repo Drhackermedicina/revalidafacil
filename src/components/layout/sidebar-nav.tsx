@@ -77,6 +77,17 @@ const NavAccordionItem: React.FC<{
   value: string;
   isCollapsed?: boolean;
 }> = ({ icon: Icon, label, children, value, isCollapsed }) => {
+  const pathname = usePathname();
+  const isActive = React.Children.toArray(children).some(child => {
+    if (React.isValidElement(child) && child.props.href) {
+      return pathname === child.props.href;
+    }
+    return false;
+  });
+  // Check if accordion is open based on active sub-item
+  const defaultOpenValue = isActive ? value : undefined;
+
+
   return (
     <AccordionItem value={value} className="border-none">
       <AccordionTrigger className={cn(
@@ -136,7 +147,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
 
             <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
             <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
-            <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
+            <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
             <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed}/>
             <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
@@ -153,6 +164,13 @@ export function SidebarNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+
+  const getOpenAccordionValue = () => {
+    if (pathname.startsWith("/estacoes")) return "checklists";
+    if (pathname.startsWith("/history")) return "history";
+    return undefined;
+  };
 
   useEffect(() => setMounted(true), []);
 
@@ -207,7 +225,7 @@ export function SidebarNav() {
         </div>
         <ScrollArea className="flex-grow">
            <nav className="py-2">
-            <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-0")}>
+            <Accordion type="multiple" defaultValue={getOpenAccordionValue()} className={cn("w-full", isCollapsed && "px-0")}>
               <ul className={cn("space-y-1", isCollapsed ? "px-1" : "px-2")}>
                   <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
                     <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed} />
@@ -220,7 +238,7 @@ export function SidebarNav() {
 
                   <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
                   <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
-                  <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
+                  <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
                   <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed} />
                   <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
