@@ -2,16 +2,15 @@
 import Link from 'next/link';
 import AppLayout from "@/components/layout/app-layout";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-// Removed Button import as it's no longer used here
 import { allStations, type ChecklistData } from '@/lib/station-data'; // Adjust path as necessary
 import { ListChecks, Stethoscope, Baby, ShieldEllipsis, GitFork, Activity } from 'lucide-react'; // Added icons for categories
 
 const stationCategories = [
-  { name: "Clínica Médica", icon: Activity },
-  { name: "Cirurgia", icon: GitFork },
-  { name: "G.O", displayName: "Ginecologia e Obstetrícia", icon: Stethoscope },
-  { name: "Pediatria", icon: Baby },
-  { name: "Preventiva", displayName: "Medicina Preventiva", icon: ShieldEllipsis },
+  { name: "Clínica Médica", icon: Activity, displayName: "Clínica Médica", abbreviation: "CM", textColorClass: "text-sky-600 dark:text-sky-400" },
+  { name: "Cirurgia", icon: GitFork, displayName: "Cirurgia", abbreviation: "CR", textColorClass: "text-blue-700 dark:text-blue-500" },
+  { name: "G.O", displayName: "Ginecologia e Obstetrícia", icon: Stethoscope, abbreviation: "GO", textColorClass: "text-pink-600 dark:text-pink-400" },
+  { name: "Pediatria", icon: Baby, displayName: "Pediatria", abbreviation: "PE", textColorClass: "text-green-600 dark:text-green-400" },
+  { name: "Preventiva", displayName: "Medicina Preventiva", icon: ShieldEllipsis, abbreviation: "MP", textColorClass: "text-orange-600 dark:text-orange-400" },
 ];
 
 export default function PenseChecklistsPage() {
@@ -43,16 +42,29 @@ export default function PenseChecklistsPage() {
               </h2>
               {stationsInCategory.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {stationsInCategory.map((station) => (
-                    <Link href={`/training/${station.code}`} passHref key={station.code} className="block h-full rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none">
-                      <Card className="flex flex-col hover:shadow-xl transition-shadow duration-200 ease-in-out rounded-lg overflow-hidden cursor-pointer h-full">
-                        <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4 flex-grow">
-                          <CardTitle className="text-lg leading-tight">{station.title}</CardTitle>
-                        </CardHeader>
-                        {/* CardFooter with Button removed */}
-                      </Card>
-                    </Link>
-                  ))}
+                  {stationsInCategory.map((station) => {
+                    const stationCatDetails = stationCategories.find(cat => cat.name === station.area);
+
+                    return (
+                      <Link href={`/training/${station.code}`} passHref key={station.code} className="block h-full rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none">
+                        <Card className="flex flex-col hover:shadow-xl transition-shadow duration-200 ease-in-out rounded-lg overflow-hidden cursor-pointer h-full">
+                          <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4 flex-grow">
+                            <CardTitle className="text-lg leading-tight flex items-center">
+                              {stationCatDetails && (
+                                <span
+                                  className={`mr-2 inline-flex items-center justify-center rounded-sm px-1.5 py-0.5 text-xs font-bold ${stationCatDetails.textColorClass} border border-current`}
+                                  aria-hidden="true"
+                                >
+                                  {stationCatDetails.abbreviation}
+                                </span>
+                              )}
+                              {station.title}
+                            </CardTitle>
+                          </CardHeader>
+                        </Card>
+                      </Link>
+                    );
+                  })}
                 </div>
               ) : (
                 <Card className="border-dashed">
