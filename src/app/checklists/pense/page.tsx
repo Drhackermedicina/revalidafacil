@@ -1,16 +1,15 @@
-
 // src/app/checklists/pense/page.tsx
 import Link from 'next/link';
 import AppLayout from "@/components/layout/app-layout";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+// Removed Button import as it's no longer used here
 import { allStations, type ChecklistData } from '@/lib/station-data'; // Adjust path as necessary
 import { ListChecks, Stethoscope, Baby, ShieldEllipsis, GitFork, Activity } from 'lucide-react'; // Added icons for categories
 
 const stationCategories = [
   { name: "Clínica Médica", icon: Activity },
   { name: "Cirurgia", icon: GitFork },
-  { name: "G.O", displayName: "Ginecologia e Obstetrícia", icon: Stethoscope }, // Assuming Stethoscope for G.O, adjust if better icon exists
+  { name: "G.O", displayName: "Ginecologia e Obstetrícia", icon: Stethoscope },
   { name: "Pediatria", icon: Baby },
   { name: "Preventiva", displayName: "Medicina Preventiva", icon: ShieldEllipsis },
 ];
@@ -27,7 +26,7 @@ export default function PenseChecklistsPage() {
             </CardTitle>
             <CardDescription>
               Acesse nossas estações práticas simuladas para treinar suas habilidades para o Revalida.
-              As estações estão organizadas por grandes áreas.
+              As estações estão organizadas por grandes áreas. Clique em uma estação para iniciar.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -45,20 +44,14 @@ export default function PenseChecklistsPage() {
               {stationsInCategory.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {stationsInCategory.map((station) => (
-                    <Card key={station.code} className="flex flex-col hover:shadow-xl transition-shadow duration-200 ease-in-out rounded-lg overflow-hidden">
-                      <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4 flex-grow">
-                        <CardTitle className="text-lg leading-tight">{station.title}</CardTitle>
-                         {/* A descrição da área foi removida daqui pois já está no título da categoria */}
-                      </CardHeader>
-                      {/* CardContent com a descrição do cenário foi removido */}
-                      <CardFooter className="p-4 border-t bg-card-foreground/5 dark:bg-card-foreground/10">
-                        <Link href={`/training/${station.code}`} passHref legacyBehavior>
-                          <Button className="w-full">
-                            Iniciar Estação
-                          </Button>
-                        </Link>
-                      </CardFooter>
-                    </Card>
+                    <Link href={`/training/${station.code}`} passHref key={station.code} className="block h-full rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none">
+                      <Card className="flex flex-col hover:shadow-xl transition-shadow duration-200 ease-in-out rounded-lg overflow-hidden cursor-pointer h-full">
+                        <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4 flex-grow">
+                          <CardTitle className="text-lg leading-tight">{station.title}</CardTitle>
+                        </CardHeader>
+                        {/* CardFooter with Button removed */}
+                      </Card>
+                    </Link>
                   ))}
                 </div>
               ) : (
