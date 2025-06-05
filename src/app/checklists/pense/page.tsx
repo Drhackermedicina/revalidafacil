@@ -46,13 +46,11 @@ export default function PenseChecklistsPage() {
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {stationsInCategory.map((station) => (
                     <Card key={station.code} className="flex flex-col hover:shadow-xl transition-shadow duration-200 ease-in-out rounded-lg overflow-hidden">
-                      <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4">
+                      <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4 flex-grow">
                         <CardTitle className="text-lg leading-tight">{station.title}</CardTitle>
                          {/* A descrição da área foi removida daqui pois já está no título da categoria */}
                       </CardHeader>
-                      <CardContent className="flex-grow p-4">
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-4" dangerouslySetInnerHTML={{ __html: station.scenario.description.replace(/<p>|<\/p>/g, "") }}></p>
-                      </CardContent>
+                      {/* CardContent com a descrição do cenário foi removido */}
                       <CardFooter className="p-4 border-t bg-card-foreground/5 dark:bg-card-foreground/10">
                         <Link href={`/training/${station.code}`} passHref legacyBehavior>
                           <Button className="w-full">
