@@ -25,7 +25,11 @@ async function getStationData(code: string): Promise<ChecklistData | undefined> 
 }
 
 export default async function StationTrainingPage({ params }: StationPageProps) {
-  const stationData = await getStationData(params.code);
+  // Address the error: "params should be awaited before using its properties"
+  const resolvedParams = await params;
+  const stationCode = resolvedParams.code;
+  
+  const stationData = await getStationData(stationCode);
 
   if (!stationData) {
     return (
@@ -38,7 +42,7 @@ export default async function StationTrainingPage({ params }: StationPageProps) 
                 </CardHeader>
                 <CardContent className="text-center">
                     <p className="text-muted-foreground">
-                        A estação com o código "{params.code}" não foi encontrada. 
+                        A estação com o código "{stationCode}" não foi encontrada. 
                         Por favor, verifique o código ou volte para a lista de estações.
                     </p>
                 </CardContent>
