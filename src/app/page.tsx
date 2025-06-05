@@ -25,55 +25,63 @@ export default function Home() {
     },
     actorInstructions: {
       title: "Orientações do Ator/Atriz",
-      content: `<strong>DADOS PESSOAIS:</strong>
--Gustavo, 32 anos, solteiro, surfista.
+      content: `<h4>DADOS PESSOAIS:</h4>
+- Gustavo, 32 anos, solteiro, surfista.
+<br /><br />
 
-<strong>MOTIVO DE CONSULTA:</strong>
+<h4>MOTIVO DE CONSULTA:</h4>
 Doutor(a), hoje pela manhã, enquanto estava surfando na praia, senti uma dor forte e súbita na coxa direita.
+<br /><br />
 
-<strong>SOBRE A DOR:</strong>
-<strong>Tempo de evolução:</strong> Faz cerca de 40 minutos.
-<strong>Localização:</strong> Na coxa direita.
-<strong>Intensidade:</strong> É uma dor intensa, 8 na escala de dor.
-<strong>Características:</strong> Do tipo queimação.
-<strong>Irradiação</strong>: Está se espalhando pela coxa, o local da lesão é sensível ao toque.
-<strong>Progressão dos sintomas</strong>: Está piorando com o tempo.
-<strong>Fatores de melhora ou Fatores de piora</strong>: Lavei o local com água doce e coloquei gelo, mesmo assim a dor piorou.
+<h4>SOBRE A DOR:</h4>
+<strong>Tempo de evolução:</strong> Faz cerca de 40 minutos.<br />
+<strong>Localização:</strong> Na coxa direita.<br />
+<strong>Intensidade:</strong> É uma dor intensa, 8 na escala de dor.<br />
+<strong>Características:</strong> Do tipo queimação.<br />
+<strong>Irradiação:</strong> Está se espalhando pela coxa, o local da lesão é sensível ao toque.<br />
+<strong>Progressão dos sintomas:</strong> Está piorando com o tempo.<br />
+<strong>Fatores de melhora ou Fatores de piora:</strong> Lavei o local com água doce e coloquei gelo, mesmo assim a dor piorou.<br />
 <strong>Episódios anteriores:</strong> Nega.
+<br /><br />
 
-<strong>FATORES DESENCADEANTES</strong>:
--<strong>Contato com planta, produto químico, inseto ou bicho</strong>: Uma água-viva encostou na minha coxa. 
-<strong>(NESSE MOMENTO LIBERAR IMAGEM DA ÁGUA-VIVA)</strong>.
--<strong>Higienização do local</strong>: Logo após o incidente, lavei o local lesionado com água doce e coloquei gelo, mesmo assim a dor piorou.
--<strong>Uso de medicamentos</strong>: Não ingeri remédios.
+<h4>FATORES DESENCADEANTES:</h4>
+- <strong>Contato com planta, produto químico, inseto ou bicho:</strong> Uma água-viva encostou na minha coxa. 
+<strong>(NESSE MOMENTO LIBERAR IMAGEM DA ÁGUA-VIVA)</strong>.<br />
+- <strong>Higienização do local:</strong> Logo após o incidente, lavei o local lesionado com água doce e coloquei gelo, mesmo assim a dor piorou.<br />
+- <strong>Uso de medicamentos:</strong> Não ingeri remédios.
+<br /><br />
 
-<strong>SINTOMAS ASSOCIADOS:</strong>
--<strong>Mal- estar geral</strong>: Sim.
--<strong>Dor de cabeça</strong>: Sim.
--<strong>Enjoos</strong>: Sim.
--<strong>Prurido</strong>: Sim.
--<strong>Não apresento outros sintomas</strong>.
+<h4>SINTOMAS ASSOCIADOS:</h4>
+- <strong>Mal-estar geral:</strong> Sim.<br />
+- <strong>Dor de cabeça:</strong> Sim.<br />
+- <strong>Enjoos:</strong> Sim.<br />
+- <strong>Prurido:</strong> Sim.<br />
+- <strong>Não apresento outros sintomas.</strong>
+<br /><br />
 
-<strong>ANTECEDENTES PESSOAIS/PATOLÓGICOS</strong>:
--<strong>Comorbidades</strong>: Não tenho problemas de saúde.
--<strong>Medicações</strong>: Nega.
--<strong>Alergias</strong>: Nega.
--<strong>Cirurgia prévia</strong>: Nega.
--<strong>Internações prévias:</strong> Nega.
+<h4>ANTECEDENTES PESSOAIS/PATOLÓGICOS:</h4>
+- <strong>Comorbidades:</strong> Não tenho problemas de saúde.<br />
+- <strong>Medicações:</strong> Nega.<br />
+- <strong>Alergias:</strong> Nega.<br />
+- <strong>Cirurgia prévia:</strong> Nega.<br />
+- <strong>Internações prévias:</strong> Nega.
+<br /><br />
 
-<strong>HÁBITOS</strong>:
--<strong>Tabagismo</strong>: Nega.
--<strong>Etilismo</strong>: Nega.
--<strong>Drogas ilícitas</strong>: Nega.
-<strong>Atividade Física:</strong> Pratico surf regularmente.
+<h4>HÁBITOS:</h4>
+- <strong>Tabagismo:</strong> Nega.<br />
+- <strong>Etilismo:</strong> Nega.<br />
+- <strong>Drogas ilícitas:</strong> Nega.<br />
+<strong>Atividade Física:</strong> Pratico surf regularmente.<br />
 <strong>Dieta:</strong> Alimentação balanceada.
+<br /><br />
 
-●Ao questionar se alguma planta, produto químico, inseto ou bicho encostou na pele do paciente, liberar o <strong>IMPRESSO - IMAGEM DA ÁGUA-VIVA</strong>.
+● Ao questionar se alguma planta, produto químico, inseto ou bicho encostou na pele do paciente, liberar o <strong>IMPRESSO - IMAGEM DA ÁGUA-VIVA</strong>.
+<br /><br />
 
-<strong>No decorrer do atendimento, caso a investigação clínica for feita de maneira adequada pelo(a) participante, a paciente simulada poderá perguntar</strong>: 
-● Como está o minha coxa? O que eu tenho é grave? 
-● Como vamos tratar o minha coxa? 
-● Por que devo ser internado? Estou correndo risco de vida?
+<strong>No decorrer do atendimento, caso a investigação clínica for feita de maneira adequada pelo(a) participante, a paciente simulada poderá perguntar:</strong><br /> 
+● Como está o minha coxa? O que eu tenho é grave?<br /> 
+● Como vamos tratar o minha coxa?<br /> 
+● Por que devo ser internado? Estou correndo risco de vida?<br />
 ● O que devo fazer quando isso acontecer?`,
     },
     printedMaterials: [
@@ -141,3 +149,4 @@ Bolhas e necrose cutânea superficial não visualizadas.`,
     </AppLayout>
   );
 }
+
