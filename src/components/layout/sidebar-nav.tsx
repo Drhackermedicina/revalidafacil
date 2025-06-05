@@ -55,15 +55,16 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, i
           variant={"ghost"}
           className={cn(
             "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-            isSubItem ? "pl-10" : "pl-6",
-            isActive && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold hover:bg-sidebar-accent/90",
-            isCollapsed && !isSubItem && "px-0 justify-center",
-            isCollapsed && isSubItem && "pl-6" 
+            // Consistent padding for expanded items
+            isCollapsed
+              ? (isSubItem ? "pl-6 justify-start" : "px-0 justify-center") // Collapsed states
+              : (isSubItem ? "pl-10 pr-6 py-2" : "px-6 py-2"), // Expanded states with consistent padding
+            isActive && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold hover:bg-sidebar-accent/90"
           )}
-          title={isCollapsed ? label : undefined}
+          title={isCollapsed && !isSubItem ? label : undefined} // Show tooltip only for collapsed main items
         >
           <Icon className={cn("mr-2 h-5 w-5", isCollapsed && !isSubItem && "mr-0")} />
-          {(!isCollapsed || isSubItem) && label}
+          {(!isCollapsed || (isSubItem && isCollapsed)) && label} {/* Show label if not collapsed, or if it's a sub-item AND collapsed (though sub-items usually hidden when parent accordion is collapsed) */}
         </Button>
       </Link>
     </li>
@@ -80,21 +81,23 @@ const NavAccordionItem: React.FC<{
   return (
     <AccordionItem value={value} className="border-none">
       <AccordionTrigger className={cn(
-        "py-2 px-6 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground", // Alterado aqui
-        "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-[state=open]:font-semibold", // Adicionado/Confirmado
-        isCollapsed && "px-2 justify-center"
+        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground",
+        "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-[state=open]:font-semibold",
+        // Consistent padding for expanded items
+        isCollapsed ? "px-2 justify-center" : "px-6 py-2", // Use px-6 py-2 to match NavItem
+        "w-full" // Ensure trigger takes full width
         )}
         title={isCollapsed ? label : undefined}
         hideChevron={isCollapsed}
         >
-        <div className={cn("flex items-center", isCollapsed && "w-full justify-center")}>
+        <div className={cn("flex items-center flex-1", isCollapsed && "w-full justify-center")}> {/* Added flex-1 to push chevron if not hidden */}
           <Icon className={cn("mr-2 h-5 w-5", isCollapsed && "mr-0")} />
           {!isCollapsed && label}
         </div>
       </AccordionTrigger>
       {!isCollapsed && (
         <AccordionContent className="pb-0">
-          <ul className="space-y-1">{children}</ul>
+          <ul className="space-y-1 pt-1">{children}</ul>
         </AccordionContent>
       )}
     </AccordionItem>
@@ -105,7 +108,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
   <>
     <div className={cn(
         "p-4 border-b border-sidebar-border flex items-center gap-2", 
-        isCollapsed ? "justify-center" : "justify-start"
+        isCollapsed ? "justify-center" : "justify-between" // Changed justify-start to justify-between for header when not collapsed
     )}>
       <Link href="/" className="flex items-center gap-2 group">
         <Logo 
@@ -119,9 +122,10 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             </span>
         )}
       </Link>
+      {/* The toggle button is now part of the main SidebarNav component structure for desktop */}
     </div>
     <ScrollArea className="flex-grow">
-      <nav className="py-4">
+      <nav className="py-2">
         <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-1")}>
           <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
             <NavItem href="/dashboard" icon={UserCircle} label={"Área do estudante"} isCollapsed={isCollapsed} />
@@ -131,15 +135,15 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
               <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed}/>
             </NavAccordionItem>
             
-            <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
-              <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
-            </NavAccordionItem>
-
             <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
             <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
             <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed}/>
             <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
+            
+            <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
+              <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
+            </NavAccordionItem>
             <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
           </ul>
         </Accordion>
@@ -176,14 +180,14 @@ export function SidebarNav() {
         )}>
           {isCollapsed ? (
             <>
-              <Link href="/" className="flex justify-center w-full">
+              <Link href="/" className="flex justify-center w-full py-1"> {/* Added py-1 for spacing consistency */}
                 <Logo 
                   width={28} 
                   height={28} 
                   className="h-7 w-7 text-sidebar-foreground"
                 />
               </Link>
-              <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+              <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8"> {/* Ensured button size */}
                 <ChevronsRight className="h-5 w-5" />
               </Button>
             </>
@@ -199,7 +203,7 @@ export function SidebarNav() {
                   Revalida Fácil
                 </span>
               </Link>
-              <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+              <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8">  {/* Ensured button size */}
                 <ChevronsLeft className="h-5 w-5" />
               </Button>
             </>
@@ -207,8 +211,8 @@ export function SidebarNav() {
         </div>
         <ScrollArea className="flex-grow">
            <nav className="py-2">
-            <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-1")}>
-              <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
+            <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-0")}> {/* Changed px-1 to px-0 for collapsed accordion */}
+              <ul className={cn("space-y-1", isCollapsed ? "px-1" : "px-2")}> {/* px-1 for collapsed items container */}
                  <NavItem href="/dashboard" icon={UserCircle} label={"Área do estudante"} isCollapsed={isCollapsed} />
                  
                   <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
@@ -216,22 +220,23 @@ export function SidebarNav() {
                     <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
 
-                  <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
-                    <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
-                  </NavAccordionItem>
-
                   <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
                   <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
                   <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed} />
                   <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
+                  
+                  <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
+                    <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
+                  </NavAccordionItem>
                   <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
               </ul>
             </Accordion>
            </nav>
         </ScrollArea>
         <div className="p-4 border-t border-sidebar-border mt-auto">
-          <Button variant="ghost" onClick={toggleTheme} className={cn("w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", isCollapsed && "justify-center")}>
+          <Button variant="ghost" onClick={toggleTheme} className={cn("w-full text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", 
+                                                                    isCollapsed ? "justify-center px-0" : "justify-start px-2", "py-2 h-auto")}>
             {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
             {!isCollapsed && <span className="ml-2">{theme === "light" ? "Modo Noite" : "Modo Dia"}</span>}
           </Button>
@@ -245,10 +250,12 @@ export function SidebarNav() {
             <MenuIcon className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-72 bg-sidebar text-sidebar-foreground border-r-0">
-          <SidebarNavContent isCollapsed={false} /> {/* Always expanded in mobile sheet */}
-           <div className="p-4 border-t border-sidebar-border mt-auto absolute bottom-0 w-full">
-            <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+        <SheetContent side="left" className="p-0 w-72 bg-sidebar text-sidebar-foreground border-r-0 flex flex-col"> {/* Added flex flex-col */}
+          <div className="flex-grow"> {/* Wrapper for content to push footer down */}
+            <SidebarNavContent isCollapsed={false} /> {/* Always expanded in mobile sheet */}
+          </div>
+           <div className="p-4 border-t border-sidebar-border mt-auto"> {/* Removed absolute bottom, relies on flex */}
+            <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground px-2 py-2 h-auto">
               {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
               <span className="ml-2">{theme === "light" ? "Modo Noite" : "Modo Dia"}</span>
             </Button>
@@ -258,5 +265,3 @@ export function SidebarNav() {
     </>
   );
 }
-
-    
