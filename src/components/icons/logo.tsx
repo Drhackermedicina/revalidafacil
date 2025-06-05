@@ -1,9 +1,8 @@
 import Image from 'next/image';
 import type { ImageProps } from 'next/image';
 
-// Certifique-se de que sua imagem de logo está em 'public/revalida-facil-logo.png'.
-// Se usar um nome ou caminho diferente, atualize a constante LOGO_IMAGE_SRC abaixo.
-const LOGO_IMAGE_SRC = "/revalida-facil-logo.png";
+// Updated to use the Firebase Storage URL
+const LOGO_IMAGE_SRC = "https://firebasestorage.googleapis.com/v0/b/appestacoes.firebasestorage.app/o/Gemini_Generated_Image_i9d3fi9d3fi9d3fi.png?alt=media&token=3d5efc89-91be-4954-8a27-c20fd56bcc71";
 
 const Logo = (props: Omit<ImageProps, 'src' | 'alt'>) => (
   <Image
@@ -13,6 +12,7 @@ const Logo = (props: Omit<ImageProps, 'src' | 'alt'>) => (
     height={props.height || 40} // Default height
     priority // Preload the logo
     {...props} // Allow overriding width, height, className, etc.
+    unoptimized={LOGO_IMAGE_SRC.startsWith('https://firebasestorage.googleapis.com')} // Add unoptimized if it's a remote pattern and you want to avoid Next.js optimization for this specific URL if issues arise, otherwise it's fine.
   />
 );
 export default Logo;
