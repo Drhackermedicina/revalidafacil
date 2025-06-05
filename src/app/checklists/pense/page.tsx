@@ -1,22 +1,74 @@
 // src/app/checklists/pense/page.tsx
+"use client";
+
 import Link from 'next/link';
+import { useState, useMemo } from 'react';
 import AppLayout from "@/components/layout/app-layout";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { allStations, type ChecklistData } from '@/lib/station-data'; // Adjust path as necessary
-import { ListChecks, Stethoscope, Baby, ShieldEllipsis, GitFork, Activity } from 'lucide-react'; // Added icons for categories
+import { allStations, type ChecklistData } from '@/lib/station-data';
+import { ListChecks, Stethoscope, Baby, ShieldEllipsis, GitFork, Activity, Filter } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-const stationCategories = [
-  { name: "Clínica Médica", icon: Activity, displayName: "Clínica Médica", abbreviation: "CM", textColorClass: "text-sky-600 dark:text-sky-400" },
-  { name: "Cirurgia", icon: GitFork, displayName: "Cirurgia", abbreviation: "CR", textColorClass: "text-blue-700 dark:text-blue-500" },
-  { name: "G.O", displayName: "Ginecologia e Obstetrícia", icon: Stethoscope, abbreviation: "GO", textColorClass: "text-pink-600 dark:text-pink-400" },
-  { name: "Pediatria", icon: Baby, displayName: "Pediatria", abbreviation: "PE", textColorClass: "text-green-600 dark:text-green-400" },
-  { name: "Preventiva", displayName: "Medicina Preventiva", icon: ShieldEllipsis, abbreviation: "MP", textColorClass: "text-orange-600 dark:text-orange-400" },
+interface PageStationCategory {
+  name: string;
+  icon: React.ElementType;
+  displayName: string;
+  abbreviation: string;
+  textColorClass: string; // For category title, if used
+  badgeBgClass: string;
+  badgeTextColor: string;
+}
+
+const pageStationCategories: PageStationCategory[] = [
+  { name: "Todas", icon: ListChecks, displayName: "Todas as Áreas", abbreviation: "ALL", textColorClass: "", badgeBgClass: "", badgeTextColor: "" }, // Placeholder for "All"
+  { name: "Clínica Médica", icon: Activity, displayName: "Clínica Médica", abbreviation: "CM", textColorClass: "text-sky-600 dark:text-sky-400", badgeBgClass: "bg-sky-500 hover:bg-sky-600", badgeTextColor: "text-white" },
+  { name: "Cirurgia", icon: GitFork, displayName: "Cirurgia", abbreviation: "CR", textColorClass: "text-blue-700 dark:text-blue-500", badgeBgClass: "bg-purple-500 hover:bg-purple-600", badgeTextColor: "text-white" },
+  { name: "G.O", displayName: "Ginecologia e Obstetrícia", icon: Stethoscope, abbreviation: "GO", textColorClass: "text-pink-600 dark:text-pink-400", badgeBgClass: "bg-pink-500 hover:bg-pink-600", badgeTextColor: "text-white" },
+  { name: "Pediatria", icon: Baby, displayName: "Pediatria", abbreviation: "PE", textColorClass: "text-green-600 dark:text-green-400", badgeBgClass: "bg-green-500 hover:bg-green-600", badgeTextColor: "text-white" },
+  { name: "Preventiva", icon: ShieldEllipsis, displayName: "Medicina Preventiva", abbreviation: "PR", textColorClass: "text-orange-600 dark:text-orange-400", badgeBgClass: "bg-orange-500 hover:bg-orange-600", badgeTextColor: "text-white" },
 ];
 
+// Function to generate placeholder data, moved outside component for stability
+const generatePlaceholderData = (stationCode: string) => {
+  // Simple hash function to get a somewhat consistent random number based on code
+  let hash = 0;
+  for (let i = 0; i < stationCode.length; i++) {
+    const char = stationCode.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  const randomSeed = Math.abs(hash);
+
+  const media = ((randomSeed % 31) / 10 + 7).toFixed(1); // 7.0 to 10.0
+  const nota = ((randomSeed % 301) / 100 + 7).toFixed(2); // 7.00 to 10.00
+  return { media, nota };
+};
+
+
 export default function PenseChecklistsPage() {
+  const [selectedArea, setSelectedArea] = useState<string>("Todas");
+
+  const filteredStations = useMemo(() => {
+    if (selectedArea === "Todas") {
+      return allStations;
+    }
+    return allStations.filter(station => station.area === selectedArea);
+  }, [selectedArea]);
+
+  // Generate placeholder data for stations (memoized if possible, or stable)
+  const stationDataWithPlaceholders = useMemo(() => {
+    return filteredStations.map(station => ({
+      ...station,
+      ...generatePlaceholderData(station.code),
+    }));
+  }, [filteredStations]);
+
+
   return (
     <AppLayout>
-      <div className="space-y-8">
+      <div className="space-y-6">
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold font-headline flex items-center">
@@ -25,73 +77,97 @@ export default function PenseChecklistsPage() {
             </CardTitle>
             <CardDescription>
               Acesse nossas estações práticas simuladas para treinar suas habilidades para o Revalida.
-              As estações estão organizadas por grandes áreas. Clique em uma estação para iniciar.
+              Filtre por área ou navegue por todas as estações disponíveis.
             </CardDescription>
           </CardHeader>
         </Card>
 
-        {stationCategories.map((category) => {
-          const stationsInCategory = allStations.filter(station => station.area === category.name);
-          const CategoryIcon = category.icon;
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <Select value={selectedArea} onValueChange={setSelectedArea}>
+                <SelectTrigger className="w-full sm:w-[220px] bg-background shadow-sm">
+                  <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
+                  <SelectValue placeholder="Filtrar por Área" />
+                </SelectTrigger>
+                <SelectContent>
+                  {pageStationCategories.map(cat => (
+                    <SelectItem key={cat.name} value={cat.name}>{cat.displayName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="text-sm text-muted-foreground self-end sm:self-center">
+                {stationDataWithPlaceholders.length} Checklist(s) encontrado(s)
+              </div>
+            </div>
 
-          return (
-            <section key={category.name} className="space-y-4">
-              <h2 className="text-2xl font-semibold font-headline text-primary flex items-center">
-                <CategoryIcon className="mr-3 h-6 w-6" />
-                {category.displayName || category.name}
-              </h2>
-              {stationsInCategory.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {stationsInCategory.map((station) => {
-                    const stationCatDetails = stationCategories.find(cat => cat.name === station.area);
+            {/* Table-like structure */}
+            <div className="rounded-md border overflow-hidden">
+              {/* Table Header */}
+              <div className="flex items-center px-4 py-3 bg-muted/60 border-b">
+                <div className="flex-grow font-medium text-muted-foreground text-xs uppercase tracking-wider pr-2">Checklist</div>
+                <div className="w-20 text-center font-medium text-muted-foreground text-xs uppercase tracking-wider hidden sm:block">Média</div>
+                <div className="w-24 text-center font-medium text-muted-foreground text-xs uppercase tracking-wider">Nota</div>
+                <div className="w-28 text-center font-medium text-muted-foreground text-xs uppercase tracking-wider">Treinar</div>
+              </div>
 
-                    return (
-                      <Link href={`/training/${station.code}`} passHref key={station.code} className="block h-full rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none">
-                        <Card className="flex flex-col hover:shadow-xl transition-shadow duration-200 ease-in-out rounded-lg overflow-hidden cursor-pointer h-full">
-                          <CardHeader className="bg-card-foreground/5 dark:bg-card-foreground/10 p-4 flex-grow">
-                            <CardTitle className="text-base leading-tight flex items-center">
-                              {stationCatDetails && (
-                                <span
-                                  className={`mr-2 inline-flex items-center justify-center rounded-sm px-1.5 py-0.5 text-xs font-bold ${stationCatDetails.textColorClass} border border-current`}
-                                  aria-hidden="true"
-                                >
-                                  {stationCatDetails.abbreviation}
-                                </span>
-                              )}
-                              {station.title}
-                            </CardTitle>
-                          </CardHeader>
-                        </Card>
-                      </Link>
-                    );
-                  })}
-                </div>
+              {/* Table Body */}
+              {stationDataWithPlaceholders.length > 0 ? (
+                stationDataWithPlaceholders.map((station, index) => {
+                  const stationCatDetails = pageStationCategories.find(cat => cat.name === station.area);
+                  const { media, nota } = station; // Use pre-generated placeholder data
+
+                  return (
+                    <Link href={`/training/${station.code}`} passHref key={station.code} className="block group transition-colors duration-150 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                      <div className={`flex items-center px-4 py-3.5 text-sm ${index < stationDataWithPlaceholders.length - 1 ? 'border-b' : ''}`}>
+                        <div className="flex-grow flex items-center min-w-0 pr-2">
+                          {stationCatDetails && (
+                            <Badge
+                              variant="default"
+                              className={`mr-2 sm:mr-3 py-0.5 px-1.5 sm:px-2 text-xs font-bold ${stationCatDetails.badgeBgClass} ${stationCatDetails.badgeTextColor} border-none whitespace-nowrap rounded-sm group-hover:opacity-90 transition-opacity`}
+                            >
+                              {stationCatDetails.abbreviation}
+                            </Badge>
+                          )}
+                          <span className="font-medium text-foreground truncate group-hover:text-primary transition-colors" title={station.title}>
+                            {station.title}
+                          </span>
+                        </div>
+                        <div className="w-20 text-center text-muted-foreground hidden sm:block">{media}</div>
+                        <div className="w-24 text-center">
+                          <Badge 
+                            variant="secondary" 
+                            className={`py-1 px-2 text-xs sm:px-2.5 font-semibold text-white rounded-md
+                              ${parseFloat(nota) >= 9 ? 'bg-green-500 hover:bg-green-600' : 
+                                parseFloat(nota) >= 7.5 ? 'bg-sky-500 hover:bg-sky-600' : 
+                                'bg-amber-500 hover:bg-amber-600'}`}
+                          >
+                            {nota}
+                          </Badge>
+                        </div>
+                        <div className="w-28 flex justify-center items-center">
+                          <Button variant="outline" size="sm" className="h-8 px-4 text-xs group-hover:bg-primary group-hover:text-primary-foreground transition-colors border-border group-hover:border-primary/80">
+                            Iniciar
+                          </Button>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })
               ) : (
-                <Card className="border-dashed">
-                  <CardContent className="p-6 text-center">
-                    <p className="text-muted-foreground">
-                      Nenhuma estação disponível em <strong className="text-foreground">{category.displayName || category.name}</strong> no momento.
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="p-10 text-center">
+                  <ListChecks className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-lg font-semibold text-muted-foreground">
+                    Nenhuma estação encontrada para "{selectedArea}".
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Tente selecionar outra área ou verifique novamente mais tarde.
+                  </p>
+                </div>
               )}
-            </section>
-          );
-        })}
-
-        {allStations.length === 0 && (
-           <Card className="border-dashed">
-              <CardContent className="p-10 text-center">
-                <ListChecks className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-xl font-semibold text-muted-foreground">
-                  Nenhuma estação prática disponível no momento.
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Por favor, verifique novamente mais tarde.
-                </p>
-              </CardContent>
-            </Card>
-        )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </AppLayout>
   );
