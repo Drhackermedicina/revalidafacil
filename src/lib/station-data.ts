@@ -12,7 +12,7 @@ export interface ChecklistItem {
   id: string;
   description: string;
   points: ChecklistItemEvaluation;
-  type: string; // e.g., 'ac', 'an', 'dx', 'ct'
+  type: string; // e.g., 'ac', 'an', 'dx', 'ct', 'ef', 'im', 'lab'
   observation?: string;
 }
 
@@ -59,7 +59,7 @@ export const allStations: ChecklistData[] = [
       timeLimit: "10 minutos",
       items: [
         "Acolher o paciente e garantir a biossegurança.",
-        "Realizar anamnese detalhada focada no incidente, explorando as características da dor e sintomas associados.",
+        "Realizar anamnese detalhada focada no incidente.",
         "Examinar a lesão e o estado geral do paciente.",
         "Instituir medidas para alívio da dor e neutralização do veneno.",
         "Orientar o paciente sobre cuidados posteriores e sinais de alerta.",
@@ -114,20 +114,30 @@ export const allStations: ChecklistData[] = [
         <p>Paciente deve demonstrar dor e ansiedade compatíveis com a intensidade referida (8/10). Deve cooperar com a anamnese e o exame físico, mas pode mostrar-se impaciente devido à dor. Seguir as instruções do médico durante a aplicação das condutas (lavagem, vinagre, compressas). Fazer perguntas sobre a gravidade da lesão e o tempo de recuperação, se o candidato der abertura.</p>
       `,
     },
-    printedMaterials: [], // Removido o folder, pois o conteúdo será parte do PEP
+    printedMaterials: [
+      {
+        id: "pm1-av",
+        title: "Folder Informativo: Primeiros Socorros em Acidentes com Águas Vivas",
+        content: "<p>Este material foi integrado ao checklist (PEP) do candidato.</p>",
+        imageSrc: "https://placehold.co/600x400.png",
+        imageAlt: "first aid jellyfish",
+        isLocked: false,
+      }
+    ],
     checklistItems: [
-      { id: "ci1-av-acolhimento", description: "<strong>Acolhimento e Biossegurança:</strong> Apresentou-se ao paciente, estabeleceu uma comunicação empática e utilizou Equipamentos de Proteção Individual (EPIs) básicos (ex: luvas) antes de iniciar o contato.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ac" },
-      { id: "ci2-av-anamnese-id-qp", description: "<strong>Anamnese - Identificação e Queixa Principal:</strong> Coletou dados de identificação do paciente e registrou claramente a queixa principal (dor/queimadura por água viva) e sua duração.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
-      { id: "ci3-av-anamnese-hda", description: "<strong>Anamnese - História da Doença Atual (HDA):</strong> Investigou detalhadamente o sintoma principal (dor), incluindo: início, causa/mecanismo do trauma (contato com água viva), localização, irradiação, qualidade/tipo, intensidade (escala de 0-10), duração/evolução, fatores de melhora/piora. Questionou sobre sintomas associados locais (eritema, edema, prurido, marcas) e sistêmicos (febre, náuseas, tontura, dispneia, etc.).", points: { inadequate: 0, partial: 1.5, adequate: 3 }, type: "an", observation: "Avaliar a completude da investigação da dor e sintomas associados, conforme detalhado nas instruções do ator." },
-      { id: "ci4-av-anamnese-antecedentes", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou sobre alergias, comorbidades, medicações em uso, estado vacinal (antitetânica), e hábitos relevantes.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
-      { id: "ci5-av-examefisico-geral", description: "<strong>Exame Físico - Geral e Sinais Vitais:</strong> Avaliou o estado geral do paciente, nível de consciência, e aferiu/verificou os sinais vitais (PA, FC, FR, SatO2, Temp.), se aplicável ao cenário.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ef" },
-      { id: "ci6-av-examefisico-lesao", description: "<strong>Exame Físico - Inspeção da Lesão:</strong> Inspecionou cuidadosamente a área afetada, descrevendo as características da lesão (ex: lineares, eritematosas, edemaciadas, presença de tentáculos visíveis, extensão da lesão).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ef", observation: "Verificar se o estudante descreveu adequadamente os achados cutâneos." },
-      { id: "ci7-av-conduta-lavagem", description: "<strong>Conduta - Lavagem Inicial:</strong> Orientou/realizou a lavagem imediata e abundante da área afetada com ÁGUA DO MAR (ou soro fisiológico), explicando a importância de NÃO usar água doce neste momento.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "CRÍTICO: O uso de água doce antes do vinagre pode piorar a liberação de toxinas. Verificar se o candidato mencionou a contraindicação da água doce." },
-      { id: "ci8-av-conduta-vinagre", description: "<strong>Conduta - Neutralização com Vinagre:</strong> Orientou/realizou a aplicação de VINAGRE comum (ácido acético a 5%) no local afetado por 15 a 30 minutos.", points: { inadequate: 0, partial: 1, adequate: 2 }, type: "ct", observation: "Fundamental para neutralizar cnidas não disparadas. Avaliar tempo de aplicação e se foi a medida subsequente à lavagem com água do mar." },
-      { id: "ci9-av-conduta-tentaculos", description: "<strong>Conduta - Remoção de Tentáculos:</strong> Orientou/realizou a remoção de tentáculos visíveis com cuidado, utilizando uma pinça ou luvas, e evitando esfregar a área.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ct", observation: "Verificar técnica de remoção (sem contato direto, sem esfregar)." },
-      { id: "ci10-av-conduta-aliviodor", description: "<strong>Conduta - Alívio da Dor (Pós-Vinagre):</strong> APÓS a aplicação do vinagre, orientou/realizou a aplicação de compressas de água MORNA (40-45°C, tolerável à pele) por cerca de 20 minutos. Considerou analgesia sistêmica (ex: dipirona, paracetamol), se necessário e ausentes contraindicações.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "Enfatizar que as compressas mornas são APÓS o vinagre. Avaliar se a analgesia sistêmica foi considerada." },
-      { id: "ci11-av-conduta-naofazer", description: "<strong>Conduta - Orientações sobre Práticas Incorretas:</strong> Orientou ativamente o paciente a NÃO utilizar/aplicar urina, álcool, ou outras substâncias não recomendadas na lesão.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ct", observation: "Verificar se o candidato abordou proativamente o que NÃO fazer." },
-      { id: "ci12-av-conduta-orientacoes", description: "<strong>Conduta - Orientações Finais e Sinais de Alerta:</strong> Orientou o paciente sobre cuidados posteriores com a lesão (ex: evitar coçar), e detalhou os sinais de alerta que necessitam reavaliação médica (piora significativa da dor não responsiva a analgésicos comuns, sinais de infecção como febre/pus, ou sintomas sistêmicos como dificuldade respiratória, tontura, náuseas/vômitos persistentes, reações alérgicas graves). Verificou/orientou sobre a necessidade de profilaxia antitetânica se não atualizada.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct" },
+      { id: "ci1-av-acolhimento", description: "<strong>Acolhimento e Biossegurança:</strong> Apresentou-se, estabeleceu comunicação empática e utilizou EPIs (luvas).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ac" },
+      { id: "ci2-av-anamnese-id-qp", description: "<strong>Anamnese - Identificação e Queixa Principal:</strong> Coletou dados e queixa principal (dor/queimadura por água viva) e duração.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
+      { id: "ci3-av-anamnese-hda", description: "<strong>Anamnese - HDA:</strong> Investigou dor (início, causa, localização, irradiação, qualidade, intensidade, duração, melhora/piora) e sintomas associados (locais/sistêmicos).", points: { inadequate: 0, partial: 1.5, adequate: 3 }, type: "an", observation: "Avaliar completude da investigação da dor." },
+      { id: "ci4-av-anamnese-antecedentes", description: "<strong>Anamnese - Antecedentes e Hábitos:</strong> Questionou alergias, comorbidades, medicações, vacinação (tétano), hábitos.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "an" },
+      { id: "ci5-av-examefisico-geral", description: "<strong>Exame Físico - Geral e Sinais Vitais:</strong> Avaliou estado geral, consciência, aferiu/verificou sinais vitais.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ef" },
+      { id: "ci6-av-examefisico-lesao", description: "<strong>Exame Físico - Inspeção da Lesão:</strong> Inspecionou e descreveu características da lesão (lineares, eritematosas, etc.).", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ef" },
+      { id: "ci7-av-conduta-sairagua", description: "<strong>Conduta - Saída da Água:</strong> Orientou/garantiu que o paciente saísse da água imediatamente.", points: { inadequate: 0, partial: null, adequate: 0.25 }, type: "ct" },
+      { id: "ci8-av-conduta-lavagemmar", description: "<strong>Conduta - Lavagem com ÁGUA DO MAR:</strong> Orientou/realizou lavagem abundante com ÁGUA DO MAR (ou soro fisiológico), explicando NÃO usar água doce.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "CRÍTICO: Não usar água doce." },
+      { id: "ci9-av-conduta-vinagre", description: "<strong>Conduta - Aplicação de VINAGRE:</strong> Orientou/realizou aplicação de VINAGRE (ácido acético a 5%) por 15-30 minutos.", points: { inadequate: 0, partial: 1, adequate: 2 }, type: "ct", observation: "Fundamental para neutralizar cnidas." },
+      { id: "ci10-av-conduta-tentaculos", description: "<strong>Conduta - Remoção de Tentáculos:</strong> Orientou/realizou remoção cuidadosa de tentáculos visíveis (pinça/luvas), SEM esfregar.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ct" },
+      { id: "ci11-av-conduta-aliviodor", description: "<strong>Conduta - Alívio da Dor (Pós-Vinagre):</strong> Orientou/realizou compressas MORNAS (40-45°C) por ~20 min. Considerou analgesia sistêmica.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "ct", observation: "Compressas mornas APÓS vinagre." },
+      { id: "ci12-av-conduta-naofazer", description: "<strong>Conduta - O que NÃO Fazer:</strong> Orientou ativamente a NÃO usar urina, álcool, etc.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ct" },
+      { id: "ci13-av-conduta-orientacoesfinais", description: "<strong>Conduta - Orientações Finais e Sinais de Alerta:</strong> Orientou cuidados posteriores e sinais de alerta para reavaliação médica (piora da dor, infecção, sintomas sistêmicos graves, reação alérgica). Verificou/orientou profilaxia antitetânica.", points: { inadequate: 0, partial: 0.75, adequate: 1.25 }, type: "ct" }
     ],
     references: [{ text: "Protocolos clínicos para acidentes com animais aquáticos (ex: Ministério da Saúde, Sociedades Médicas de Dermatologia ou Toxicologia).", url: "#" }],
     flashcards: [
@@ -195,6 +205,66 @@ export const allStations: ChecklistData[] = [
     flashcards: [
       { id: "fc1-ta", question: "O que significa a sigla FAST no contexto do trauma?", answer: "Focused Assessment with Sonography for Trauma.", tag: "Diagnóstico" },
       { id: "fc2-ta", question: "Quais são os 4 espaços avaliados no FAST abdominal?", answer: "Hepatorrenal (Morison), Esplenorrenal, Pélvico (fundo de saco de Douglas) e Pericárdico.", tag: "Diagnóstico" },
+    ],
+  },
+  {
+    title: "AVC - Escala NIHSS - INEP | 2024.2",
+    area: "Clínica Médica",
+    code: "avc-nihss-2024-2",
+    scenario: {
+      title: "Cenário de Atuação: Suspeita de Acidente Vascular Cerebral",
+      description: "<strong>Nível de atenção:</strong> atenção secundária à saúde.<br><strong>Tipo de atendimento:</strong> urgência e emergência.<br><br><strong>A unidade possui a seguinte infraestrutura:</strong><br>- Consultórios;<br>- Sala de estabilização;<br>- Laboratório de análises clínicas;<br>- Serviço de radiologia com aparelho de radiografia e tomografia computadorizada;<br>- Leitos de internação – enfermaria e terapia intensiva.<br><br><strong>Descrição do caso:</strong><br>Você atenderá um paciente com 58 anos de idade, histórico de arritmia cardíaca, diabetes melito e dislipidemia, com suspeita de acidente vascular cerebral por apresentar déficit neurológico (hemiplegia E) e cefaleia, iniciados há cerca de 1 hora. Paciente encontra- se com respiração espontânea, via aérea pérvia, boa saturação de O2 em ar ambiente e parâmetros hemodinâmicos adequados.",
+    },
+    tasks: {
+      title: "Tarefas",
+      timeLimit: "10 minutos", // Default, as timeName is dynamic in source
+      items: [
+        "Aplicar a escala NIHSS ao paciente.",
+        "Totalizar a pontuação da escala NIHSS e VERBALIZAR.",
+        "Solicitar exames complementares necessários à avaliação inicial do caso.",
+      ],
+    },
+    actorInstructions: {
+      title: "Orientações do Ator/Atriz",
+      content: "<strong>DADOS PESSOAIS:</strong><br>- Anderson, 58 anos, motorista de ônibus.<br><br><strong>MOTIVO DE CONSULTA:</strong><br>- Não consigo movimentar o braço e a perna esquerda.<br><br><strong>INÍCIO DOS SINTOMAS:</strong><br>- Começou há pouco mais de uma hora.<br><br><strong>ANTECEDENTES PESSOAIS:</strong><br>-  Tenho diabetes, arritmia e colesterol alto.<br><br><strong>AO VERBALIZAR/ SOLICITAR A REALIZAÇÃO DA ESCALA NIHSS, LIBERAR TODOS OS IMPRESSOS DISPONÍVEIS.</strong><br><br><strong>SE PERGUNTADO A IDADE E MÊS QUE ESTAMOS:</strong><br>- Tenho 58 anos e estamos no mês de dezembro.<br><br><strong>SE SOLICITADO PARA FECHAR E ABRIR OS OLHOS E FECHAR E ABRIR A MÃO:</strong><br>- Feche e abra os olhos, feche e abra a mão direita.<br><br><strong>SE SOLICITADO PARA MOVIMENTAR OS OLHOS NA HORIZONTAL PARA OS 2 LADOS:</strong><br>- Movimente os olhos para os 2 lados.<br><br><strong>SE PERGUNTADO QUANTOS DEDOS O PACIENTE VÊ:</strong><br>- Responder adequadamente de acordo ao que for mostrado.<br><br><strong>SE SOLICITADO PARA ACOMPANHAR O MOVIMENTO DOS DEDOS DO PARTICIPANTE:</strong><br>- Acompanhar adequadamente e/ou responder que consegue.<br><br><strong>SE SOLICITADO MOSTRAR OS DENTES/ SORRIR E FECHAR OS OLHOS COM FORÇA:</strong><br>- Mostre os dentes/ sorria e feche os olhos com força.<br><br><strong>SE SOLICITADO PARA SUSTENTAR O BRAÇO DIREITO A 90° POR 10 SEGUNDOS:</strong><br>- Realize a ação corretamente.<br><br><strong>SE SOLICITADO PARA MOVER A PERNA ESQUERDA:</strong><br>- Simule e/ou verbalize que não consegue.<br><br><strong>SE SOLICITADO SUSTENTAR A PERNA DIREITA A 30° POR 5 SEGUNDOS:</strong><br>- Simule e/ou verbalize que consegue realizar a ação.<br><br><strong>SE SOLICITADO QUE O PACIENTE FAÇA O TESTE INDEX-NARIZ OU CALCANHAR-JOELHO:</strong><br>- Realizar adequadamente com o lado direito.<br><br><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO ESQUERDO:</strong><br>- Responder que não sentiu nada.<br><br><strong>SE O CANDIDATO VERBALIZAR QUE IRÁ TOCAR/ BELISCAR OS MEMBROS DO LADO DIREITO:</strong><br>- Responder que consegue sentir o toque e a dor.<br><br><strong>SE SOLICITADO A DESCREVER O QUE ESTÁ ACONTECENDO NO QUADRO DO IMPRESSO 1:</strong><br>- Descreva adequadamente a cena.<br><br><strong>SE SOLICITADO A NOMEAR OS ITENS NA LISTA DE IDENTIFICAÇÃO DO IMPRESSO 2:</strong><br>- Nomear adequadamente.<br><br><strong>SE SOLICITADO A LER A LISTA DE SENTENÇA DO IMPRESSO 3:</strong><br>- Ler adequadamente.<br><br><strong>SE SOLICITADO A LER OU REPETIR AS PALAVRAS DA LISTA DO IMPRESSO 4:</strong><br>- Realizar a tarefa adequadamente.<br><br><strong>Se o candidato solicitar exame laboratorial ou de imagem de forma inespecífica, dizer:</strong><br>- Seja mais específico com o pedido.<br><br><strong>Se o candidato solicitar exames complementares laboratoriais e/ou de imagem de forma específica, dizer:</strong><br>- Considere solicitado.<br><br><strong>No decorrer da estação, caso o (a) participante concluir a aplicação da escala NIHSS e não verbalizar seu total, perguntar se o candidato concluiu a aplicação da escala e, após confirmar o término da aplicação, perguntar qual foi a pontuação.</strong>",
+    },
+    printedMaterials: [
+      { id: "pm1-avc-nihss", title: "Impresso 1 ( Imagem para descrever )", content: "<strong>Imagem:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "scene description task", isLocked: true },
+      { id: "pm2-avc-nihss", title: "Impresso 2 ( Itens para identificação )", content: "<strong>Imagem:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "item identification task", isLocked: true },
+      { id: "pm3-avc-nihss", title: "Impresso 3 ( Sentenças para leitura )", content: "<strong>Sentenças:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "sentence reading task", isLocked: true },
+      { id: "pm4-avc-nihss", title: "Impresso 4 ( Palavras para ler/repetir )", content: "<strong>Palavras:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "word reading task", isLocked: true },
+      { id: "pm5-avc-nihss", title: "Impresso 5 ( NIHSS 1/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 1", isLocked: true },
+      { id: "pm6-avc-nihss", title: "Impresso 6 ( NIHSS 2/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 2", isLocked: true },
+      { id: "pm7-avc-nihss", title: "Impresso 7 ( NIHSS 3/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 3", isLocked: true },
+      { id: "pm8-avc-nihss", title: "Impresso 8 ( NIHSS 4/4 )", content: "<strong>NIHSS:</strong> (Conteúdo principal é a imagem)", imageSrc: "https://placehold.co/600x400.png", imageAlt: "NIHSS chart part 4", isLocked: true },
+    ],
+    checklistItems: [
+      { id: "pep1-avc", description: "1. <strong>Apresentação:</strong><br>(1) identifica-se; e,<br>(2) cumprimenta o paciente simulado e pergunta seu nome.<br><br><strong>Adequado:</strong> realiza as duas ações.<br><strong>Parcialmente adequado:</strong> realiza uma ação.<br><strong>Inadequado:</strong> não realiza ação alguma.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ac" },
+      { id: "pep2-avc", description: "2. <strong>Realiza a avaliação 1 a do NIHSS:</strong><br><br><strong>Adequado:</strong> avalia se o paciente está alerta, falando com ele(a).<br><strong>Inadequado:</strong> não avalia se o paciente está alerta.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "an" },
+      { id: "pep3-avc", description: "3. <strong>Realiza a avaliação 1 b do NIHSS. Pergunta:</strong><br>(1) idade do paciente; e<br>(2) em que mês estamos.<br><br><strong>Adequado:</strong> pergunta os dois itens.<br><strong>Parcialmente adequado:</strong> pergunta apenas um item. <strong>Inadequado:</strong> não pergunta item algum.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "an" },
+      { id: "pep4-avc", description: "4. <strong>Realiza a avaliação 1 c do NIHSS. Solicita que o paciente:</strong><br>(1) abra e feche os olhos e<br>(2) abra e feche a mão.<br><br><strong>Adequado:</strong> realiza as duas solicitações.<br><strong>Parcialmente adequado:</strong> realiza apenas uma solicitação. <strong>Inadequado:</strong> não solicita nenhuma das duas ações.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "pep5-avc", description: "5. <strong>Realiza a avaliação 2 do NIHSS. Pede que o paciente movimente os olhos horizontalmente para os dois lados (olhar para a direita e para a esquerda).</strong><br><br><strong>Adequado:</strong> avalia a movimentação para os dois lados. <br><strong>Parcialmente adequado:</strong> avalia a movimentação para um lado.<br><strong>Inadequado:</strong> não avalia a movimentação ocular.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "pep6-avc", description: "6. <strong>Realiza a avaliação 3 do NIHSS. Avalia os campos visuais (superiores e inferiores).</strong><br><br><strong>Adequado:</strong> avalia os quatro quadrantes.<br><strong>Inadequado:</strong> não avalia os quatro quadrantes.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "pep7-avc", description: "7. <strong>Realiza a avaliação 4 do NIHSS. Pede que o paciente sorria (ou mostre os dentes) e feche os olhos com força.</strong><br><br><strong>Adequado:</strong> faz as duas solicitações.<br><strong>Parcialmente adequado:</strong> faz apenas uma solicitação. <strong>Inadequado:</strong> não faz nenhuma dessas solicitações.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "pep8-avc", description: "8. <strong>Realiza a avaliação 5 do NIHSS. Solicita que o paciente sustente os braços a 90°, com as palmas das mãos para baixo.</strong><br><br><strong>Adequado:</strong> realiza com ângulo E posicionamento das mãos adequados.<br><strong>Parcialmente adequado:</strong> realiza com ângulo OU posicionamento das mãos inadequados.<br><strong>Inadequado:</strong> não realiza a pesquisa ou a faz com ângulo E posicionamento das mãos inadequados.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "pep9-avc", description: "9. <strong>Realiza a avaliação 6 do NIHSS. Solicita que o paciente sustente as pernas a 30°, em extensão.</strong><br><br><strong>Adequado:</strong> realiza com ângulo E extensão adequados. <br><strong>Parcialmente adequado:</strong> realiza com ângulo OU extensão inadequados.<br><strong>Inadequado:</strong> não realiza a pesquisa ou a faz com ângulo E extensão inadequados.", points: { inadequate: 0, partial: 0.25, adequate: 0.5 }, type: "ex" },
+      { id: "pep10-avc", description: "10. <strong>Realiza a avaliação 7 do NIHSS. Solicita que o paciente faça o teste index-nariz OU calcanhar-joelho.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "pep11-avc", description: "11. <strong>Realiza a avaliação 8 do NIHSS. Testa a sensibilidade do paciente.</strong><br><br><strong>Adequado:</strong> testa.<br><strong>Inadequado:</strong> não testa.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "ex" },
+      { id: "pep12-avc", description: "12. <strong>Realiza a avaliação 9 do NIHSS. Solicita que o paciente descreva a imagem.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "pep13-avc", description: "13. <strong>Realiza a avaliação 10 do NIHSS. Solicita que o paciente leia (ou repita) a lista de palavras.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: null, adequate: 0.5 }, type: "ex" },
+      { id: "pep14-avc", description: "14. <strong>Totaliza corretamente a escala NIHSS. Verbaliza total de 10 pontos.</strong><br><br><strong>Adequado:</strong> totaliza corretamente.<br><strong>Inadequado:</strong> não totaliza ou totaliza com outro valor.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "dx" },
+      { id: "pep15-avc", description: "15. <strong>Solicita TC, ou tomografia, ou tomografia computadorizada, ou ressonância, ou ressonância magnética de crânio SEM CONTRASTE.</strong><br><br><strong>Adequado:</strong> solicita.<br><strong>Parcialmente adequado:</strong> solicita COM CONTRASTE. <br><strong>Inadequado:</strong> não solicita.", points: { inadequate: 0, partial: 0.5, adequate: 1 }, type: "im" },
+      { id: "pep16-avc", description: "16. <strong>Solicita outros exames complementares:</strong><br>(1) Eletrocardiograma;<br>(2) Glicemia capilar;<br>(3) Hemograma;<br>(4) Coagulograma (TAP / INR e TTPA);<br>(5) Potássio e sódio;<br>(6) Ureia e creatinina;<br>(7) Troponina.<br><br><strong>Adequado:</strong> solicita ao menos cinco exames.<br><strong>Inadequado:</strong> solicita menos que cinco exames.", points: { inadequate: 0, partial: null, adequate: 1 }, type: "lab" },
+    ],
+    references: [
+      { text: "Estação aplicada pela banca do INEP / 2024.2", url: "#" }
+    ],
+    flashcards: [
+      { id: "fc1-avc-nihss", question: "O que significa a sigla NIHSS?", answer: "National Institutes of Health Stroke Scale.", tag: "Definição" },
+      { id: "fc2-avc-nihss", question: "Qual o objetivo principal da escala NIHSS?", answer: "Avaliar quantitativamente o déficit neurológico causado por um AVC, auxiliando na decisão terapêutica e prognóstico.", tag: "Objetivo" },
+      { id: "fc3-avc-nihss", question: "Cite 3 componentes avaliados pela escala NIHSS.", answer: "Nível de consciência, motricidade dos membros (braços e pernas), linguagem (afasia), disartria, campos visuais, melhor olhar conjugado.", tag: "Componentes" },
+      { id: "fc4-avc-nihss", question: "Em que tipo de paciente a escala NIHSS é primariamente utilizada?", answer: "Em pacientes com suspeita ou diagnóstico de Acidente Vascular Cerebral (AVC) agudo.", tag: "Aplicação" },
+      { id: "fc5-avc-nihss", question: "Uma pontuação mais ALTA na escala NIHSS indica um AVC mais grave ou menos grave?", answer: "Mais grave. Quanto maior a pontuação, maior o déficit neurológico.", tag: "Interpretação" }
     ],
   },
 ];
