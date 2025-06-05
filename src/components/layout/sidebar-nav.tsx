@@ -8,8 +8,8 @@ import {
   BookMarked,
   History, 
   Clock,
-  Moon,
-  Sun,
+  LightbulbOff, // Changed from Moon
+  Lightbulb,    // Changed from Sun
   ChevronsLeft,
   ChevronsRight,
   Menu as MenuIcon,
@@ -52,11 +52,11 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, i
         <Button
           variant={"ghost"}
           className={cn(
-            "w-full justify-start text-primary-foreground hover:bg-primary-foreground/10",
+            "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
             isSubItem ? "pl-10" : "pl-6",
-            isActive && "bg-primary-foreground/15 text-primary-foreground font-semibold hover:bg-primary-foreground/20",
+            isActive && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold hover:bg-sidebar-accent/90",
             isCollapsed && !isSubItem && "px-0 justify-center",
-            isCollapsed && isSubItem && "pl-6" // Keep some padding for sub-items when collapsed if label is shown
+            isCollapsed && isSubItem && "pl-6" 
           )}
           title={isCollapsed ? label : undefined}
         >
@@ -78,7 +78,7 @@ const NavAccordionItem: React.FC<{
   return (
     <AccordionItem value={value} className="border-none">
       <AccordionTrigger className={cn(
-        "py-2 px-6 hover:bg-primary-foreground/10 hover:no-underline rounded-md text-primary-foreground/80 data-[state=open]:text-primary-foreground data-[state=open]:font-semibold",
+        "py-2 px-6 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground/80 data-[state=open]:text-sidebar-accent-foreground data-[state=open]:font-semibold",
         isCollapsed && "px-2 justify-center"
         )}
         title={isCollapsed ? label : undefined}
@@ -100,12 +100,12 @@ const NavAccordionItem: React.FC<{
 
 const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = false}) => (
   <>
-    <div className={cn("p-4 border-b border-primary-foreground/20 flex items-center", isCollapsed ? "justify-center" : "justify-center")}>
+    <div className={cn("p-4 border-b border-sidebar-border flex items-center", isCollapsed ? "justify-center" : "justify-center")}>
       <Link href="/">
-        <Logo width={isCollapsed ? 28 : 36} height={isCollapsed ? 28 : 36} className={cn("text-primary-foreground", isCollapsed ? "h-7 w-7" : "h-9 w-9")} />
+        <Logo width={isCollapsed ? 28 : 36} height={isCollapsed ? 28 : 36} className={cn("text-sidebar-foreground", isCollapsed ? "h-7 w-7" : "h-9 w-9")} />
       </Link>
     </div>
-    <ScrollArea className="flex-grow sidebar-scroll-area">
+    <ScrollArea className="flex-grow">
       <nav className="py-4">
         <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-1")}>
           <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
@@ -148,27 +148,27 @@ export function SidebarNav() {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden md:flex flex-col h-screen border-r border-primary-foreground/20 transition-all duration-300 ease-in-out sidebar-gradient bg-gradient-to-b from-primary to-[hsl(var(--chart-2))] text-primary-foreground",
+          "hidden md:flex flex-col h-screen border-r border-sidebar-border transition-all duration-300 ease-in-out bg-sidebar text-sidebar-foreground",
           isCollapsed ? "w-16" : "w-64"
         )}
       >
         <div className={cn(
-          "p-3 border-b border-primary-foreground/20 flex items-center",
+          "p-3 border-b border-sidebar-border flex items-center",
           isCollapsed ? "flex-col gap-2 py-2.5 items-center" : "justify-between" 
         )}>
           <Link href="/" className={cn(isCollapsed && "flex justify-center w-full")}>
             <Logo 
               width={isCollapsed ? 28 : 32} 
               height={isCollapsed ? 28 : 32} 
-              className={cn(isCollapsed ? "h-7 w-7" : "h-8 w-8", "text-primary-foreground")}
+              className={cn(isCollapsed ? "h-7 w-7" : "h-8 w-8", "text-sidebar-foreground")}
             />
           </Link>
           
-          <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn("text-primary-foreground hover:bg-primary-foreground/10", isCollapsed && "mt-1")}>
+          <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn("text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", isCollapsed && "mt-1")}>
             {isCollapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
           </Button>
         </div>
-        <ScrollArea className="flex-grow sidebar-scroll-area">
+        <ScrollArea className="flex-grow">
            <nav className="py-2">
             <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-1")}>
               <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
@@ -190,10 +190,10 @@ export function SidebarNav() {
             </Accordion>
            </nav>
         </ScrollArea>
-        <div className="p-4 border-t border-primary-foreground/20 mt-auto">
-          <Button variant="ghost" onClick={toggleTheme} className={cn("w-full justify-start text-primary-foreground hover:bg-primary-foreground/10", isCollapsed && "justify-center")}>
-            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-            {!isCollapsed && <span className="ml-2">{theme === "light" ? "Dark Mode" : "Light Mode"}</span>}
+        <div className="p-4 border-t border-sidebar-border mt-auto">
+          <Button variant="ghost" onClick={toggleTheme} className={cn("w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", isCollapsed && "justify-center")}>
+            {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
+            {!isCollapsed && <span className="ml-2">{theme === "light" ? "Modo Noite" : "Modo Dia"}</span>}
           </Button>
         </div>
       </aside>
@@ -205,12 +205,12 @@ export function SidebarNav() {
             <MenuIcon className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-72 sidebar-gradient bg-gradient-to-b from-primary to-[hsl(var(--chart-2))] text-primary-foreground border-r-0">
+        <SheetContent side="left" className="p-0 w-72 bg-sidebar text-sidebar-foreground border-r-0">
           <SidebarNavContent />
-           <div className="p-4 border-t border-primary-foreground/20 mt-auto absolute bottom-0 w-full">
-            <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start text-primary-foreground hover:bg-primary-foreground/10">
-              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-              <span className="ml-2">{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
+           <div className="p-4 border-t border-sidebar-border mt-auto absolute bottom-0 w-full">
+            <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+              {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
+              <span className="ml-2">{theme === "light" ? "Modo Noite" : "Modo Dia"}</span>
             </Button>
           </div>
         </SheetContent>
@@ -218,5 +218,3 @@ export function SidebarNav() {
     </>
   );
 }
-
-    
