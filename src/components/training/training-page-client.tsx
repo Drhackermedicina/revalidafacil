@@ -368,7 +368,7 @@ export default function TrainingPageClient({ checklistData }: TrainingPageClient
                       {material.isRevealed ? (
                         <>
                           {material.imageSrc && (
-                            <div className="my-2 relative w-full max-w-xs h-auto aspect-video">
+                            <div className="my-2 relative w-full max-w-lg h-auto aspect-video">
                               <Image src={material.imageSrc} alt={material.imageAlt || material.title} layout="fill" objectFit="contain" className="rounded-md border" data-ai-hint={material.imageAlt || "medical document"}/>
                             </div>
                           )}
