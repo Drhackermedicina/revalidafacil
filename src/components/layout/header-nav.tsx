@@ -27,10 +27,8 @@ export function HeaderNav() {
     return (
       <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-primary to-[hsl(var(--chart-2))] text-primary-foreground">
         <div className="container flex h-16 items-center justify-between space-x-4">
-          {/* Placeholder for Left group: Brand + Nav Items */}
-          <div className="flex items-center space-x-6">
-            <div className="w-32 h-6 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* "Revalida Fácil" placeholder */}
-            <div className="hidden md:flex items-center space-x-4 md:space-x-6">
+          {/* Placeholder for Nav Items */}
+          <div className="flex items-center space-x-4 md:space-x-6">
               <div className="flex items-center space-x-1.5">
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-12 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Início */}
@@ -47,7 +45,6 @@ export function HeaderNav() {
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-16 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Recursos */}
               </div>
-            </div>
           </div>
           
           {/* Placeholder for Right side: Theme, Bell */}
@@ -67,30 +64,25 @@ export function HeaderNav() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-primary to-[hsl(var(--chart-2))] text-primary-foreground">
       <div className="container flex h-16 items-center justify-between space-x-4">
-        {/* Left group: Brand + Nav Items */}
-        <div className="flex items-center space-x-6">
-          <Link href="/" className="text-lg font-semibold font-headline text-primary-foreground hover:text-primary-foreground/90 transition-colors">
-            Revalida Fácil
+        {/* Nav Items */}
+        <nav className="flex items-center space-x-3 lg:space-x-4 text-sm">
+          <Link href="/" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            <Home className="h-5 w-5" />
+            <span>Início</span>
           </Link>
-          <nav className="hidden md:flex items-center space-x-3 lg:space-x-4 text-sm">
-            <Link href="/" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-              <Home className="h-5 w-5" />
-              <span>Início</span>
-            </Link>
-            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-              <Activity className="h-5 w-5" />
-              <span>Estatísticas</span>
-            </div>
-            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-              <TrendingUp className="h-5 w-5" />
-              <span>Evolução</span>
-            </div>
-            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-              <Search className="h-5 w-5" />
-              <span>Recursos</span>
-            </div>
-          </nav>
-        </div>
+          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            <Activity className="h-5 w-5" />
+            <span>Estatísticas</span>
+          </div>
+          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            <TrendingUp className="h-5 w-5" />
+            <span>Evolução</span>
+          </div>
+          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            <Search className="h-5 w-5" />
+            <span>Recursos</span>
+          </div>
+        </nav>
         
         {/* Right side: Theme, Notifications */}
         <div className="flex items-center space-x-1">
