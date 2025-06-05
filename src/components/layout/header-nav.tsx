@@ -10,35 +10,20 @@ import {
   Search,
   Lightbulb,
   LightbulbOff, 
-  Bell,
-  User,
-  Settings,
-  LogOut
+  Bell
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 
 export function HeaderNav() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [userName, setUserName] = useState("Usuário");
-  // const [userAvatar, setUserAvatar] = useState("https://placehold.co/40x40.png"); // No longer used directly here
+  // const [userName, setUserName] = useState("Usuário"); // No longer displayed directly
 
   useEffect(() => {
     setMounted(true);
     // In a real app, fetch user data here
-    setUserName("hellitoncechinel");
-    // setUserAvatar("https://app.penserevalida.com/avatar/cc0984d1-dae5-4b44-8097-2a19a68c6b9e.png");
+    // setUserName("hellitoncechinel"); 
   }, []);
 
   if (!mounted) {
@@ -65,9 +50,9 @@ export function HeaderNav() {
             </div>
           </div>
           
-          {/* Placeholder for Right side: User Name, Theme, Bell */}
+          {/* Placeholder for Right side: Theme, Bell */}
           <div className="flex items-center space-x-2">
-            <div className="w-24 h-4 bg-muted animate-pulse rounded-md hidden sm:inline"></div> {/* User name placeholder */}
+            {/* User name placeholder removed */}
             <div className="w-10 h-10 bg-muted animate-pulse rounded-full"></div> {/* Theme toggle placeholder */}
             <div className="w-10 h-10 bg-muted animate-pulse rounded-full"></div> {/* Notification Bell placeholder */}
           </div>
@@ -103,9 +88,9 @@ export function HeaderNav() {
           </div>
         </nav>
         
-        {/* Right side: User Name, Theme, Notifications */}
+        {/* Right side: Theme, Notifications */}
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-foreground hidden sm:inline">{userName}</span>
+          {/* <span className="text-sm font-medium text-foreground hidden sm:inline">{userName}</span> Removed username display */}
           
           <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Alternar tema">
             {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
