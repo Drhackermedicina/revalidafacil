@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -54,9 +55,9 @@ export function HeaderNav() {
             <span>0/7</span>
         </div>
         
-        <span className="text-sm font-medium hidden md:block">{userName}</span>
+        {/* User name text removed from here */}
 
-        <Button variant="ghost" size="icon" onClick={toggleTheme} className="hidden md:inline-flex">
+        <Button variant="ghost" size="icon" onClick={toggleTheme}>
           {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
           <span className="sr-only">Toggle theme</span>
         </Button>
