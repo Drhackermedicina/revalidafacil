@@ -19,7 +19,7 @@ import {
   ChevronsRight,
   Menu as MenuIcon,
   ClipboardList,
-  Brain,
+  FileCheck, // Added FileCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -105,7 +105,7 @@ const SidebarNavContent = () => (
           </li>
           <NavAccordionItem icon={ListChecks} label="Estações" value="checklists">
             <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
-            <NavItem href="/checklists/pense" icon={Brain} label="REVALIDA FÁCIL" isSubItem />
+            <NavItem href="/checklists/pense" icon={FileCheck} label="REVALIDA FÁCIL" isSubItem />
           </NavAccordionItem>
            <NavAccordionItem icon={Layers} label="Flashcards" value="flashcards">
             <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
@@ -182,7 +182,7 @@ export function SidebarNav() {
                   </li>}
                   <NavAccordionItem icon={ListChecks} label={isCollapsed ? "" : "Estações"} value="checklists">
                     <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
-                    <NavItem href="/checklists/pense" icon={Brain} label="REVALIDA FÁCIL" isSubItem />
+                    <NavItem href="/checklists/pense" icon={FileCheck} label="REVALIDA FÁCIL" isSubItem />
                   </NavAccordionItem>
                   <NavAccordionItem icon={Layers} label={isCollapsed ? "" : "Flashcards"} value="flashcards">
                     <NavItem href="/flashcards" icon={ClipboardList} label="Flashcards" isSubItem />
