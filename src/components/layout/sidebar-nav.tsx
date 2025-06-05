@@ -7,18 +7,14 @@ import {
   LayoutDashboard,
   ListChecks,
   Layers,
-  GraduationCap,
   BookOpen,
   BarChart3,
   History,
-  MessageSquareWarning,
-  LifeBuoy,
   Moon,
   Sun,
   ChevronsLeft,
   ChevronsRight,
   Menu as MenuIcon,
-  ClipboardList,
   FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -118,14 +114,6 @@ const SidebarNavContent = () => (
           <NavAccordionItem icon={History} label="Histórico" value="history">
             <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
           </NavAccordionItem>
-
-          <li className="px-4 pt-4 pb-2">
-            <span className="text-xs font-medium uppercase text-muted-foreground">
-              Contato
-            </span>
-          </li>
-          <NavItem href="/feedback" icon={MessageSquareWarning} label="Feedback" />
-          <NavItem href="https://api.whatsapp.com/send?phone=5517996576639" icon={LifeBuoy} label="Suporte" />
         </ul>
       </nav>
     </ScrollArea>
@@ -190,14 +178,6 @@ export function SidebarNav() {
                   <NavAccordionItem icon={History} label={isCollapsed ? "" : "Histórico"} value="history">
                     <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
                   </NavAccordionItem>
-
-                  {!isCollapsed && <li className="px-4 pt-2 pb-1">
-                    <span className="text-xs font-medium uppercase text-muted-foreground">
-                      Contato
-                    </span>
-                  </li>}
-                  <NavItem href="/feedback" icon={MessageSquareWarning} label={isCollapsed ? "" : "Feedback"} />
-                  <NavItem href="https://api.whatsapp.com/send?phone=5517996576639" icon={LifeBuoy} label={isCollapsed ? "" : "Suporte"} />
               </ul>
             </Accordion>
            </nav>
