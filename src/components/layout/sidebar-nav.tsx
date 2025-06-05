@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   ListChecks,
-  Layers,
+  Layers, // Adicionado Layers
   BookOpen,
   BarChart3,
   History,
@@ -15,8 +15,8 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Menu as MenuIcon,
-  FileCheck,
-  GraduationCap, // Adicionado GraduationCap
+  FileCheck, // Adicionado FileCheck
+  GraduationCap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -87,7 +87,7 @@ const SidebarNavContent = () => (
   <>
     <div className="p-4 border-b border-border flex items-center gap-2">
       <Link href="/" className="flex items-center gap-2">
-        <Logo width={32} height={32} className="h-8 w-8 rounded-md" />
+        <Logo width={32} height={32} className="h-8 w-8" />
         <h1 className="text-xl font-bold font-headline text-primary">Revalida Fácil</h1>
       </Link>
     </div>
@@ -95,26 +95,18 @@ const SidebarNavContent = () => (
       <nav className="py-4">
         <ul className="space-y-1 px-2">
           <NavItem href="/dashboard" icon={GraduationCap} label="Área do estudante" />
-          <li className="px-4 pt-4 pb-2">
-            <span className="text-xs font-medium uppercase text-muted-foreground">
-              Checklist
-            </span>
-          </li>
+          
           <NavAccordionItem icon={ListChecks} label="Estações" value="checklists">
             <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
             <NavItem href="/checklists/pense" icon={FileCheck} label="REVALIDA FÁCIL" isSubItem />
           </NavAccordionItem>
           <NavItem href="/simulados" icon={ListChecks} label="Simulados" />
-
-          <li className="px-4 pt-4 pb-2">
-            <span className="text-xs font-medium uppercase text-muted-foreground">
-              Desempenho
-            </span>
-          </li>
           <NavItem href="/performance" icon={BarChart3} label="Meus Desempenhos" />
           <NavAccordionItem icon={History} label="Histórico" value="history">
             <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
           </NavAccordionItem>
+          <NavItem href="/materiais-apoio" icon={Layers} label="Materiais de apoio" />
+          <NavItem href="/modelos-checklists" icon={FileCheck} label="Modelo de Checklists" />
         </ul>
       </nav>
     </ScrollArea>
@@ -146,7 +138,7 @@ export function SidebarNav() {
         <div className="p-3 border-b border-border flex items-center justify-between">
           {!isCollapsed && (
             <Link href="/" className="flex items-center gap-2">
-              <Logo width={32} height={32} className="h-8 w-8 rounded-md"/>
+              <Logo width={32} height={32} className="h-8 w-8"/>
               <h1 className="text-lg font-bold font-headline text-primary">Revalida Fácil</h1>
             </Link>
           )}
@@ -159,26 +151,19 @@ export function SidebarNav() {
             <Accordion type="multiple" className={cn("w-full", isCollapsed && "px-2")}>
               <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
                  <NavItem href="/dashboard" icon={GraduationCap} label={isCollapsed ? "" : "Área do estudante"} />
-                 {!isCollapsed && <li className="px-4 pt-2 pb-1">
-                    <span className="text-xs font-medium uppercase text-muted-foreground">
-                      Checklist
-                    </span>
-                  </li>}
+                 
                   <NavAccordionItem icon={ListChecks} label={isCollapsed ? "" : "Estações"} value="checklists">
                     <NavItem href="/estacoes/inep" icon={BookOpen} label="INEP Provas anteriores" isSubItem />
                     <NavItem href="/checklists/pense" icon={FileCheck} label="REVALIDA FÁCIL" isSubItem />
                   </NavAccordionItem>
                   <NavItem href="/simulados" icon={ListChecks} label={isCollapsed ? "" : "Simulados"} />
                   
-                  {!isCollapsed && <li className="px-4 pt-2 pb-1">
-                    <span className="text-xs font-medium uppercase text-muted-foreground">
-                      Desempenho
-                    </span>
-                  </li>}
                   <NavItem href="/performance" icon={BarChart3} label={isCollapsed ? "" : "Meus Desempenhos"} />
                   <NavAccordionItem icon={History} label={isCollapsed ? "" : "Histórico"} value="history">
                     <NavItem href="/history/checklist" icon={ListChecks} label="Checklist" isSubItem />
                   </NavAccordionItem>
+                  <NavItem href="/materiais-apoio" icon={Layers} label={isCollapsed ? "" : "Materiais de apoio"} />
+                  <NavItem href="/modelos-checklists" icon={FileCheck} label={isCollapsed ? "" : "Modelo de Checklists"} />
               </ul>
             </Accordion>
            </nav>
