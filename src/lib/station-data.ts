@@ -95,7 +95,7 @@ export const allStations: ChecklistData[] = [
   },
   {
     title: "Trauma Abdominal Fechado",
-    area: "Cirurgia", // Padronizado
+    area: "Cirurgia", 
     code: "trauma-abdominal",
     scenario: {
       title: "Cenário Clínico: Politraumatizado Pós-Colisão Automobilística",
@@ -122,7 +122,7 @@ export const allStations: ChecklistData[] = [
         content: "<p><strong>FAST:</strong> Positivo - líquido livre em cavidade abdominal (espaço hepatorrenal e esplenorrenal).</p>",
         imageSrc: "https://placehold.co/600x400.png",
         imageAlt: "resultado FAST ultrasound",
-        isLocked: true, // Manager needs to reveal this
+        isLocked: true, 
       },
        {
         id: "pm2-trauma",
@@ -151,20 +151,6 @@ export const allStations: ChecklistData[] = [
       { id: "fc2-ta", question: "Quais são os 4 espaços avaliados no FAST abdominal?", answer: "Hepatorrenal (Morison), Esplenorrenal, Pélvico (fundo de saco de Douglas) e Pericárdico.", tag: "Diagnóstico" },
     ],
   },
-  // Você pode adicionar mais estações aqui, atribuindo a 'area' correta.
-  // Exemplo para Pediatria:
-  // {
-  //   title: "Crise Convulsiva Febril",
-  //   area: "Pediatria",
-  //   code: "convulsao-febril",
-  //   scenario: { ... },
-  //   tasks: { ... },
-  //   actorInstructions: { ... },
-  //   printedMaterials: [],
-  //   checklistItems: [],
-  //   references: [],
-  //   flashcards: [],
-  // }
 ];
 
     
