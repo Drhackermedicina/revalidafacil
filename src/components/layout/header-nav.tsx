@@ -8,6 +8,7 @@ import {
   Activity,
   TrendingUp,
   Search,
+  MessageSquare, // Added for Chat
   Lightbulb,
   LightbulbOff, 
   Bell
@@ -45,6 +46,10 @@ export function HeaderNav() {
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-16 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Recursos */}
               </div>
+              <div className="flex items-center space-x-1.5">
+                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+                <div className="w-10 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Chat */}
+              </div>
           </div>
           
           {/* Placeholder for Right side: Theme, Bell */}
@@ -81,6 +86,10 @@ export function HeaderNav() {
           <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
             <Search className="h-5 w-5" />
             <span>Recursos</span>
+          </div>
+          <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            <MessageSquare className="h-5 w-5" />
+            <span>Chat</span>
           </div>
         </nav>
         
