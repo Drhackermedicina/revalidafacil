@@ -48,7 +48,7 @@ export interface ChecklistData {
 export const allStations: ChecklistData[] = [
   {
     title: "Acidente por Água Viva",
-    area: "Clínica Médica", // Padronizado
+    area: "Clínica Médica",
     code: "agua-viva",
     scenario: {
       title: "Cenário Clínico: Queimadura por Água Viva",
@@ -166,3 +166,4 @@ export const allStations: ChecklistData[] = [
   //   flashcards: [],
   // }
 ];
+
