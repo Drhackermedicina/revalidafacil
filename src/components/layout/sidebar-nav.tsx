@@ -20,7 +20,7 @@ import {
   Laptop,
   TrendingUp,
   FileQuestion,
-  Trophy, // Adicionado para Ranking
+  Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -80,7 +80,8 @@ const NavAccordionItem: React.FC<{
   return (
     <AccordionItem value={value} className="border-none">
       <AccordionTrigger className={cn(
-        "py-2 px-6 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground/80 data-[state=open]:text-sidebar-accent-foreground data-[state=open]:font-semibold",
+        "py-2 px-6 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline rounded-md text-sidebar-foreground", // Alterado aqui
+        "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-[state=open]:font-semibold", // Adicionado/Confirmado
         isCollapsed && "px-2 justify-center"
         )}
         title={isCollapsed ? label : undefined}
@@ -108,9 +109,9 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
     )}>
       <Link href="/" className="flex items-center gap-2 group">
         <Logo 
-            width={isCollapsed ? 28 : 36} 
-            height={isCollapsed ? 28 : 36} 
-            className={cn("text-sidebar-foreground transition-colors duration-200 ease-in-out", isCollapsed ? "h-7 w-7" : "h-9 w-9")} 
+            width={isCollapsed ? 28 : 32} 
+            height={isCollapsed ? 28 : 32} 
+            className={cn("text-sidebar-foreground transition-colors duration-200 ease-in-out", isCollapsed ? "h-7 w-7" : "h-8 w-8")} 
         />
         {!isCollapsed && (
             <span className="font-semibold text-lg text-sidebar-foreground group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
@@ -129,15 +130,16 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
               <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed}/>
               <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed}/>
             </NavAccordionItem>
-            <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
             
+            <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
+              <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
+            </NavAccordionItem>
+
+            <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
             <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
             <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed}/>
             <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
-            <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
-              <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
-            </NavAccordionItem>
             <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
           </ul>
         </Accordion>
@@ -213,15 +215,16 @@ export function SidebarNav() {
                     <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed} />
                     <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
+
+                  <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
+                    <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
+                  </NavAccordionItem>
+
                   <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
-                  
                   <NavItem href="/performance" icon={TrendingUp} label={"Meus Desempenhos"} isCollapsed={isCollapsed} />
                   <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de apoio"} isCollapsed={isCollapsed} />
                   <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
-                  <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
-                    <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
-                  </NavAccordionItem>
                   <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
               </ul>
             </Accordion>
@@ -255,3 +258,5 @@ export function SidebarNav() {
     </>
   );
 }
+
+    
