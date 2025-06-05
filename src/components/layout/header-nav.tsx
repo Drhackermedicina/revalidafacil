@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import {
   Home,
   Activity,
-  TrendingUp,
+  Award, // Alterado de TrendingUp
   Search,
   MessageSquare,
-  Sparkles, // Added for Gemini
+  Sparkles,
   Lightbulb,
   LightbulbOff, 
   Bell
@@ -41,7 +41,7 @@ export function HeaderNav() {
               </div>
               <div className="flex items-center space-x-1.5">
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-16 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Evolução */}
+                <div className="w-16 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Mentoria */}
               </div>
               <div className="flex items-center space-x-1.5">
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
@@ -85,8 +85,8 @@ export function HeaderNav() {
             <span>Estatísticas</span>
           </div>
           <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-            <TrendingUp className="h-5 w-5" />
-            <span>Evolução</span>
+            <Award className="h-5 w-5" /> {/* Ícone alterado */}
+            <span>Mentoria</span> {/* Texto alterado */}
           </div>
           <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
             <Search className="h-5 w-5" />
