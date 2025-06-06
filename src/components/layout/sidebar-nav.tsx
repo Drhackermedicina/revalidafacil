@@ -35,6 +35,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext"; // Importar useAuth
+
+// Defina aqui o email do administrador. 
+// IMPORTANTE: Para um sistema em produção, use um método mais seguro para gerenciamento de papéis.
+const ADMIN_EMAIL = 'admin@revalidafacil.com';
 
 interface NavItemProps {
   href: string;
@@ -101,12 +106,12 @@ const NavAccordionItem: React.FC<{
   );
 };
 
-const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = false}) => {
+const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = ({ isCollapsed = false, isAdmin = false }) => {
   const pathname = usePathname();
   const getOpenAccordionValue = () => {
     if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
     if (pathname.startsWith("/history")) return "history";
-    if (pathname.startsWith("/admin")) return "admin";
+    if (isAdmin && pathname.startsWith("/admin")) return "admin"; // Só abre se for admin
     return undefined;
   };
 
@@ -121,13 +126,15 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             width={isCollapsed ? 28 : 32}
             height={isCollapsed ? 28 : 32}
             className={cn(
-              "transition-colors duration-200 ease-in-out text-accent dark:text-green-400", 
+              "transition-colors duration-200 ease-in-out",
+              "text-accent dark:text-sidebar-foreground", // Azul no tema claro, foreground no escuro
               isCollapsed ? "h-7 w-7" : "h-8 w-8"
             )}
         />
         {!isCollapsed && (
             <span className={cn(
-              "font-semibold text-lg text-accent dark:text-green-400 transition-colors duration-200 ease-in-out" 
+              "font-semibold text-lg transition-colors duration-200 ease-in-out",
+              "text-accent dark:text-sidebar-foreground" // Azul no tema claro, foreground no escuro
             )}>
               Revalida Fácil
             </span>
@@ -153,7 +160,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed}/>
             <NavItem href="/banco-questoes" icon={MessageCircleQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
             <NavItem
-              href="https://www.youtube.com"
+              href="https://www.youtube.com/"
               icon={Youtube}
               label={"Video Aulas"}
               isCollapsed={isCollapsed}
@@ -162,9 +169,11 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             />
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
             <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
-            <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
-                <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
-            </NavAccordionItem>
+            {isAdmin && (
+              <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
+                  <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
+              </NavAccordionItem>
+            )}
           </ul>
         </Accordion>
       </nav>
@@ -178,11 +187,19 @@ export function SidebarNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { user, isLoading: isAuthLoading } = useAuth(); // Obter usuário do contexto
+
+  // Determinar se o usuário é admin
+  const isAdmin = React.useMemo(() => {
+    if (isAuthLoading || !user || !user.email) return false;
+    return user.email === ADMIN_EMAIL;
+  }, [user, isAuthLoading]);
+
 
   const getOpenAccordionValue = () => {
     if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
     if (pathname.startsWith("/history")) return "history";
-    if (pathname.startsWith("/admin")) return "admin";
+    if (isAdmin && pathname.startsWith("/admin")) return "admin";
     return undefined;
   };
 
@@ -227,7 +244,8 @@ export function SidebarNav() {
                   className="h-8 w-8 text-accent dark:text-green-400 transition-colors duration-200 ease-in-out" 
                 />
                 <span className={cn(
-                  "font-semibold text-lg text-accent dark:text-green-400 transition-colors duration-200 ease-in-out" 
+                  "font-semibold text-lg transition-colors duration-200 ease-in-out",
+                  "text-accent dark:text-green-400"
                 )}>
                   Revalida Fácil
                 </span>
@@ -266,9 +284,11 @@ export function SidebarNav() {
                   />
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
                   <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
-                  <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
-                     <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
-                  </NavAccordionItem>
+                  {isAdmin && (
+                    <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
+                       <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
+                    </NavAccordionItem>
+                  )}
               </ul>
             </Accordion>
            </nav>
@@ -284,7 +304,7 @@ export function SidebarNav() {
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-72 bg-sidebar text-sidebar-foreground border-r-0 flex flex-col">
           <div className="flex-grow">
-            <SidebarNavContent isCollapsed={false} />
+            <SidebarNavContent isCollapsed={false} isAdmin={isAdmin} /> {/* Passar isAdmin para o conteúdo mobile */}
           </div>
         </SheetContent>
       </Sheet>
