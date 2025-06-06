@@ -1,30 +1,21 @@
-import type { Metadata } from 'next';
-import { Toaster } from "@/components/ui/toaster";
-import AppProviders from '@/components/layout/app-providers';
+// Localização: src/app/dashboard/layout.tsx
 
-export const metadata: Metadata = {
-  title: 'Revalida Fácil',
-  description: 'Plataforma de Treinamento de Checklist',
-};
+import { SidebarNav } from '@/components/layout/sidebar-nav'; // <-- CORRIGIDO
 
-export default function RootLayout({
+export default function DashboardLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="pt-br" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">
-        <AppProviders>
-          {children}
-          <Toaster />
-        </AppProviders>
-      </body>
-    </html>
+    <div className="flex h-screen">
+      {/* Usando o seu componente de menu lateral real */}
+      <SidebarNav /> {/* <-- CORRIGIDO */}
+      
+      {/* O conteúdo principal da página da dashboard */}
+      <main className="flex-1 p-6 overflow-auto">
+        {children} {/* Aqui é onde a sua app/dashboard/page.tsx vai entrar */}
+      </main>
+    </div>
   );
-}
+}}

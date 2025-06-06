@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 // Importa o tipo 'User' para tipagem e 'onAuthStateChanged' para observar o login.
 import { onAuthStateChanged, User } from 'firebase/auth';
 // Importa a instância de autenticação que configuramos no firebaseConfig.
-import { auth } from '@/lib/firebase/firebaseconfig'; // Caminho corrigido aqui
+import { auth } from '@/lib/firebase/firebase'; // Caminho corrigido aqui
 
 // Define como serão os dados que nosso contexto irá fornecer.
 interface AuthContextType {

@@ -1,11 +1,15 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /* Suas configurações existentes */
   typescript: {
+    // AVISO: Isso permite que a build seja gerada mesmo com erros de TypeScript.
+    // Recomenda-se remover no futuro e corrigir os erros.
     ignoreBuildErrors: true,
   },
   eslint: {
+    // AVISO: Isso ignora erros de ESLint durante a build.
+    // Recomenda-se remover no futuro.
     ignoreDuringBuilds: true,
   },
   images: {
@@ -13,21 +17,26 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'app.penserevalida.com',
-        port: '',
-        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'firebasestorage.googleapis.com',
-        port: '',
-        pathname: '/**',
-      }
+      },
+      // NOVO: Adicionado para permitir imagens de perfil de contas Google
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+    ],
+  },
+  // NOVO: Adicionado para corrigir o aviso de 'cross-origin' no seu ambiente de nuvem
+  experimental: {
+    allowedDevOrigins: [
+      "https://3000-firebase-studio-1749101155243.cluster-m7tpz3bmgjgoqrktlvd4ykrc2m.cloudworkstations.dev",
     ],
   },
 };
