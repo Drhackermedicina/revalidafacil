@@ -35,6 +35,26 @@ const WhatsAppIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+// Google Meet SVG Icon component
+const MeetIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <title>Google Meet</title>
+    <path d="M12.5799 13.4H19.3799C19.3799 15.91 18.3899 18.27 16.7199 19.94L14.7299 21.93C11.6299 23.56 7.7099 22.84 5.2299 20.35C2.7499 17.87 2.0299 13.95 3.6599 10.85L5.6499 8.86C6.6799 7.83 8.0199 7.16 9.4799 6.99L12.5799 6.6V13.4Z" fill="#00832D"/>
+    <path d="M12.5799 6.6L9.4799 6.99C8.0199 7.16 6.6799 7.83 5.6499 8.86L3.6599 10.85C2.0299 13.95 2.7499 17.87 5.2299 20.35L6.1899 19.39C4.5199 17.72 4.0299 15.21 4.9199 12.98L5.4499 11.78C6.5199 9.44 8.8699 7.91 11.3499 7.91H12.5799V6.6Z" fill="#0066DA"/>
+    <path d="M12.5799 13.4V7.91H11.3499C8.8699 7.91 6.5199 9.44 5.4499 11.78L4.9199 12.98C4.0299 15.21 4.5199 17.72 6.1899 19.39L8.1799 17.4C8.7299 15.97 9.7699 14.79 11.0999 14L12.5799 13.4Z" fill="#E94235"/>
+    <path d="M12.5799 6.6V13.4L11.0999 14C9.7699 14.79 8.7299 15.97 8.1799 17.4L6.1899 19.39C6.6799 19.88 7.2699 20.27 7.9199 20.54L10.4699 18C10.6999 17.11 10.6599 16.16 10.3599 15.29C9.8899 13.94 10.5099 12.42 11.7899 11.67L13.7799 10.42C14.7599 9.86 15.9999 9.82 17.0099 10.32L19.3799 9.28C17.6699 7.59 15.2199 6.6 12.5799 6.6Z" fill="#FFBA00"/>
+    <path d="M19.3802 9.28L17.0102 10.32C16.0002 9.82 14.7602 9.86 13.7802 10.42L11.7902 11.67C10.5102 12.42 9.89024 13.94 10.3602 15.29C10.6602 16.16 10.7002 17.11 10.4702 18L12.5802 20.53V13.4H19.3802V9.28Z" fill="#4285F4"/>
+  </svg>
+);
+
+
 export function HeaderNav() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -70,16 +90,19 @@ export function HeaderNav() {
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-10 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Chat */}
               </div>
+               <div className="flex items-center space-x-1.5"> {/* Meet Placeholder */}
+                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+                <div className="w-10 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+              </div>
+              <div className="flex items-center space-x-1.5"> {/* Report Problem placeholder */}
+                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+                <div className="w-28 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+              </div>
             </div>
             {/* Gemini placeholder, separated */}
             <div className="flex items-center space-x-1.5">
               <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
               <div className="w-14 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-            </div>
-             {/* Report Problem placeholder */}
-             <div className="flex items-center space-x-1.5">
-              <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-              <div className="w-28 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
             </div>
           </div>
 
@@ -123,7 +146,16 @@ export function HeaderNav() {
               <MessageSquare className="h-5 w-5" />
               <span className="hidden sm:inline">Chat</span>
             </div>
-             <Link
+            <Link
+              href="https://meet.google.com/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
+            >
+              <MeetIcon className="h-5 w-5" />
+              <span className="hidden sm:inline">Meet</span>
+            </Link>
+            <Link
               href="https://wa.me/5545998606685"
               target="_blank"
               rel="noopener noreferrer"
