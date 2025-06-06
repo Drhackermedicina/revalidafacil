@@ -5,7 +5,7 @@ import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-import { auth } from '@/lib/firebaseConfig'; // Importa nossa configuração de auth
+import { auth } from '@/lib/firebase/firebaseconfig'; // Importa nossa configuração de auth
 import { useAuth } from '@/context/AuthContext'; // Importa nosso hook de auth
 
 export default function LoginPage() {
@@ -118,4 +118,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
