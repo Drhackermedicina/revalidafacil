@@ -4,13 +4,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Home,
   Activity,
   Award,
@@ -28,7 +21,6 @@ import { useEffect, useState } from "react";
 export function HeaderNav() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [isGeminiModalOpen, setIsGeminiModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -111,33 +103,15 @@ export function HeaderNav() {
             </div>
           </div>
 
-          <Dialog open={isGeminiModalOpen} onOpenChange={setIsGeminiModalOpen}>
-            <DialogTrigger asChild>
-              <div
-                className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
-              >
-                <Sparkles className="h-5 w-5" />
-                <span>Gemini</span>
-              </div>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[85vw] md:max-w-[70vw] lg:max-w-[60vw] w-[90vw] h-[80vh] flex flex-col p-0">
-              <DialogHeader className="p-4 border-b flex-row items-center justify-between">
-                <DialogTitle className="flex items-center text-primary-foreground">
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Google Gemini
-                </DialogTitle>
-                {/* The X close button is automatically added by DialogContent */}
-              </DialogHeader>
-              <div className="flex-grow overflow-hidden bg-background">
-                <iframe
-                  src="https://gemini.google.com/app"
-                  title="Google Gemini"
-                  className="w-full h-full border-0"
-                  allow="clipboard-write; microphone"
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Link
+            href="https://gemini.google.com/app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
+          >
+            <Sparkles className="h-5 w-5" />
+            <span>Gemini</span>
+          </Link>
         </nav>
 
         {/* Right side: Theme, Notifications */}
