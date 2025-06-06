@@ -12,7 +12,8 @@ import {
   Sparkles,
   Lightbulb,
   LightbulbOff,
-  Bell
+  Bell,
+  Users // Ícone para Mentoria
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -88,10 +89,10 @@ export function HeaderNav() {
               <Activity className="h-5 w-5" />
               <span>Estatísticas</span>
             </div>
-            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-              <Award className="h-5 w-5" />
+            <Link href="/mentorship" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+              <Users className="h-5 w-5" />
               <span>Mentoria</span>
-            </div>
+            </Link>
             <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
               <Search className="h-5 w-5" />
               <span>Recursos</span>
