@@ -5,6 +5,10 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Suas credenciais do Firebase (do seu arquivo original)
+// IMPORTANTE: As credenciais abaixo (apiKey, authDomain, etc.)
+// DEVEM ser as credenciais REAIS do seu projeto Firebase para que a autenticação funcione.
+// Certifique-se de que este projeto Firebase está ativo e configurado corretamente,
+// incluindo os métodos de login que você deseja usar (Email/Senha, Google).
 const firebaseConfig = {
   apiKey: "AIzaSyDIVtTrioEtvHXGCcvNATsxbYxZrUZhqng", // <<< SUA API KEY REAL AQUI
   authDomain: "appestacoes.firebaseapp.com",
