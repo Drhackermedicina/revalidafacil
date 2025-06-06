@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,9 +7,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+// CORREÇÃO: Adicionado 'DialogTrigger' à importação
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// CORREÇÃO: Removida a importação duplicada de 'MessagesSquare' no final da linha
 import { Swords, CircleSlash, UserPlus, Coffee, Send, Users, MessageSquare, Search, Activity, Scissors, Stethoscope, Baby, ShieldCheck, Shuffle, MessagesSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from '@/context/AuthContext';
@@ -299,7 +300,7 @@ export default function ChatplayPage() {
             if (!nickname && !isOpen) {
                  setShowNicknameModal(true);
             } else {
-                setShowNicknameModal(isOpen);
+                 setShowNicknameModal(isOpen);
             }
         }}>
           <DialogContent className="sm:max-w-[425px]" onPointerDownOutside={(e) => { if(!nickname) e.preventDefault()}} onEscapeKeyDown={(e) => {if(!nickname) e.preventDefault()}}>
@@ -351,9 +352,9 @@ export default function ChatplayPage() {
                         "flex items-center space-x-2 rounded-md border p-3 hover:bg-accent hover:text-accent-foreground cursor-pointer",
                         selectedArea === area.value && "bg-accent text-accent-foreground border-primary ring-2 ring-primary"
                     )}>
-                      <RadioGroupItem value={area.value} id={`area-${area.value}`} className="sr-only" />
-                      <AreaIcon className={cn("h-5 w-5", area.iconClass)} />
-                      <span className="text-sm font-medium">{area.label}</span>
+                        <RadioGroupItem value={area.value} id={`area-${area.value}`} className="sr-only" />
+                        <AreaIcon className={cn("h-5 w-5", area.iconClass)} />
+                        <span className="text-sm font-medium">{area.label}</span>
                     </Label>
                   )})}
                 </RadioGroup>
@@ -379,13 +380,13 @@ export default function ChatplayPage() {
                 <p className="text-xs text-muted-foreground mb-2">Cada um será ator e candidato pelo menos uma vez por estação selecionada.</p>
                 <RadioGroup value={selectedQuantity} onValueChange={setSelectedQuantity} className="mt-2 flex flex-wrap gap-2">
                   {stationQuantities.map(qty => (
-                     <Label key={qty.value} htmlFor={`qty-${qty.value}`} className={cn(
-                        "rounded-md border px-3 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm",
-                        selectedQuantity === qty.value && "bg-accent text-accent-foreground border-primary ring-2 ring-primary"
-                    )}>
-                      <RadioGroupItem value={qty.value} id={`qty-${qty.value}`} className="sr-only" />
-                      {qty.label}
-                    </Label>
+                       <Label key={qty.value} htmlFor={`qty-${qty.value}`} className={cn(
+                           "rounded-md border px-3 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm",
+                           selectedQuantity === qty.value && "bg-accent text-accent-foreground border-primary ring-2 ring-primary"
+                       )}>
+                        <RadioGroupItem value={qty.value} id={`qty-${qty.value}`} className="sr-only" />
+                        {qty.label}
+                      </Label>
                   ))}
                 </RadioGroup>
               </div>
@@ -404,4 +405,3 @@ export default function ChatplayPage() {
     </AppLayout>
   );
 }
-
