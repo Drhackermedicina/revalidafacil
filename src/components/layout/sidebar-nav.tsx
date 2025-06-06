@@ -38,7 +38,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
-const ADMIN_EMAIL = 'admin@revalidafacil.com';
+const ADMIN_EMAIL = 'hellitoncechinel1@gmail.com';
 
 interface NavItemProps {
   href: string;
@@ -129,14 +129,14 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
             height={isCollapsed ? 28 : 32}
             className={cn(
               "transition-colors duration-200 ease-in-out",
-               "text-accent dark:text-green-400", // Azul no tema claro, Verde no tema escuro
+               "text-accent dark:text-sidebar-foreground",
               isCollapsed ? "h-7 w-7" : "h-8 w-8"
             )}
         />
         {!isCollapsed && (
             <span className={cn(
               "font-semibold text-lg transition-colors duration-200 ease-in-out",
-              "text-accent dark:text-green-400" // Azul no tema claro, Verde no tema escuro
+              "text-accent dark:text-sidebar-foreground"
             )}>
               Revalida Fácil
             </span>
@@ -152,8 +152,8 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
                 icon={MessagesSquare}
                 label="Chatplay"
                 isCollapsed={isCollapsed}
-                iconClassName={cn("h-7 w-7", isCollapsed ? "text-primary" : "text-primary dark:text-blue-400")} // Azul ou cor primária
-                labelClassName={cn(isCollapsed ? "" : "py-3 text-base font-semibold", isCollapsed ? "" : "text-primary dark:text-blue-400")} // Destaque no texto também
+                iconClassName={cn("h-7 w-7", isCollapsed ? "text-primary" : "text-primary dark:text-blue-400")}
+                labelClassName={cn(isCollapsed ? "" : "py-3 text-base font-semibold", isCollapsed ? "" : "text-primary dark:text-blue-400")}
             />
             <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
               <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed}/>
@@ -328,4 +328,6 @@ export function SidebarNav() {
     </>
   );
 }
+    
+
     
