@@ -16,7 +16,9 @@ export default function MarketingHomePage() {
           <div className="flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Image src={logoUrl} alt="Revalida Fácil Logo" width={48} height={48} className="rounded-md" data-ai-hint="brain logo" />
-              <span className="text-2xl font-bold text-primary">Revalida Fácil</span>
+              <span className="text-2xl font-bold">
+                <span className="text-primary">Revalida Fácil</span>
+              </span>
             </Link>
             <Link
               href="/login"
@@ -34,7 +36,7 @@ export default function MarketingHomePage() {
         <section className="w-full text-center py-20 sm:py-32 bg-gradient-to-b from-white to-slate-100">
           <div className="container mx-auto px-4">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 leading-tight">
-              Prepare-se para o <span className="text-primary">Revalida</span> com Confiança
+              Prepare-se para o <span className="text-primary">Revalida Fácil</span> com Confiança
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
               Simule as estações práticas do exame com checklists detalhados e um ambiente interativo que espelha a prova real. Domine cada etapa!
