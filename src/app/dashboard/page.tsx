@@ -6,7 +6,7 @@ import AppLayout from "@/components/layout/app-layout";
 import ProgressOverviewCard from "@/components/dashboard/progress-overview-card";
 import StrengthsWeaknessesCard from "@/components/dashboard/strengths-weaknesses-card";
 import PerformanceChartCard from "@/components/dashboard/performance-chart-card";
-import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
+import DailyGoalsCard from "@/components/layout/dashboard/daily-goals-card";
 import NextStepsCard from "@/components/dashboard/next-steps-card";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

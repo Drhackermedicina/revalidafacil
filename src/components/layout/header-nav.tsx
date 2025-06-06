@@ -1,10 +1,8 @@
-
 "use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  Home,
   Activity,
   Award,
   Search,
@@ -62,6 +60,7 @@ export function HeaderNav() {
     setMounted(true);
   }, []);
 
+  // Skeleton loader to prevent hydration mismatch
   if (!mounted) {
     return (
       <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-primary to-[hsl(var(--chart-2))] text-primary-foreground">
@@ -69,10 +68,6 @@ export function HeaderNav() {
           {/* Placeholder for Nav Items */}
           <div className="flex flex-1 items-center justify-between">
             <div className="flex items-center space-x-4 md:space-x-6">
-              <div className="flex items-center space-x-1.5">
-                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-12 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Início */}
-              </div>
               <div className="flex items-center space-x-1.5">
                 <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
                 <div className="w-20 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Estatísticas */}
@@ -121,27 +116,31 @@ export function HeaderNav() {
         {/* Nav Items */}
         <nav className="flex flex-1 items-center justify-between text-sm">
           <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4">
-            <Link href="/" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
-              <Home className="h-5 w-5" />
-              <span className="hidden sm:inline">Início</span>
-            </Link>
-            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            
+            {/* CORRIGIDO: O 'div' foi substituído por um 'Link' para permitir a navegação. */}
+            {/* Lembre-se de criar a página em 'app/estatisticas/page.tsx' */}
+            <Link href="/estatisticas" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
               <Activity className="h-5 w-5" />
               <span className="hidden sm:inline">Estatísticas</span>
-            </div>
+            </Link>
+            
             <Link href="/mentorship" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
               <Users className="h-5 w-5" />
               <span className="hidden sm:inline">Mentoria</span>
             </Link>
-            <div className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            
+            {/* CORRIGIDO: O 'div' também foi substituído por um 'Link' aqui. */}
+            {/* Lembre-se de criar a página em 'app/recursos/page.tsx' */}
+            <Link href="/recursos" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
               <Search className="h-5 w-5" />
               <span className="hidden sm:inline">Recursos</span>
-            </div>
+            </Link>
+            
             <Link
               href="https://meet.google.com/new"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
+              className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
             >
               <MeetIcon className="h-5 w-5" />
               <span className="hidden sm:inline">Meet</span>
@@ -150,7 +149,7 @@ export function HeaderNav() {
               href="https://wa.me/5545998606685"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
+              className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
             >
               <WhatsAppIcon className="h-5 w-5" />
               <span className="hidden md:inline">Relatar Problema/Sugestões</span>
@@ -162,7 +161,7 @@ export function HeaderNav() {
             href="https://gemini.google.com/app"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1.5 cursor-pointer hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
+            className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
           >
             <Sparkles className="h-5 w-5" />
             <span className="hidden sm:inline">Gemini</span>
