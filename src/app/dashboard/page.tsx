@@ -1,4 +1,6 @@
 
+"use client";
+
 import AppLayout from "@/components/layout/app-layout";
 import ProgressOverviewCard from "@/components/dashboard/progress-overview-card";
 import StrengthsWeaknessesCard from "@/components/dashboard/strengths-weaknesses-card";
@@ -7,10 +9,11 @@ import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
 import NextStepsCard from "@/components/dashboard/next-steps-card";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/context/AuthContext"; // Import useAuth
+import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
 
-const studentData = {
-  name: "Estudante Dedicado",
-  avatarUrl: "https://lh3.googleusercontent.com/a/ACg8ocJ8H_x94SYW29u_K1jP3xhkO_0U0_q1dJ6SgGjY0w=s100",
+// Placeholder data - some parts might still be static for now
+const dashboardStaticData = {
   progress: [
     { area: "Cirúrgica", completed: 7, total: 15 },
     { area: "Clínica Médica", completed: 12, total: 20 },
@@ -37,33 +40,57 @@ const studentData = {
 };
 
 export default function DashboardPage() {
+  const { user, isLoading: isAuthLoading } = useAuth();
+
+  const getUserInitials = (name?: string | null) => {
+    if (!name) return "??";
+    const nameParts = name.split(" ");
+    if (nameParts.length > 1) {
+      return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   return (
     <AppLayout>
       <div className="space-y-6 p-1 md:p-0">
         <Card className="shadow-lg">
           <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 pb-4">
-            <div>
-              <CardTitle className="text-2xl font-bold font-headline">{studentData.name}</CardTitle>
-              <CardDescription>Bem-vindo(a) de volta!</CardDescription>
-            </div>
-            <Avatar className="h-[100px] w-[100px]">
-              <AvatarImage src={studentData.avatarUrl} alt={studentData.name} data-ai-hint="google avatar profile" />
-              <AvatarFallback>{studentData.name.substring(0,2).toUpperCase()}</AvatarFallback>
-            </Avatar>
+            {isAuthLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            ) : (
+              <div>
+                <CardTitle className="text-2xl font-bold font-headline">
+                  {user?.displayName || "Estudante"}
+                </CardTitle>
+                <CardDescription>Bem-vindo(a) de volta!</CardDescription>
+              </div>
+            )}
+            {isAuthLoading ? (
+              <Skeleton className="h-[100px] w-[100px] rounded-full" />
+            ) : (
+              <Avatar className="h-[100px] w-[100px]">
+                <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || "Avatar"} data-ai-hint="google avatar profile" />
+                <AvatarFallback>{getUserInitials(user?.displayName)}</AvatarFallback>
+              </Avatar>
+            )}
           </CardHeader>
         </Card>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <ProgressOverviewCard progress={studentData.progress} />
-          <PerformanceChartCard data={studentData.performanceData} />
+          <ProgressOverviewCard progress={dashboardStaticData.progress} />
+          <PerformanceChartCard data={dashboardStaticData.performanceData} />
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            <StrengthsWeaknessesCard strengths={studentData.strengths} weaknesses={studentData.weaknesses} />
-            <DailyGoalsCard goals={studentData.dailyGoals} />
+            <StrengthsWeaknessesCard strengths={dashboardStaticData.strengths} weaknesses={dashboardStaticData.weaknesses} />
+            <DailyGoalsCard goals={dashboardStaticData.dailyGoals} />
         </div>
         
-        <NextStepsCard steps={studentData.nextSteps} />
+        <NextStepsCard steps={dashboardStaticData.nextSteps} />
       </div>
     </AppLayout>
   );
