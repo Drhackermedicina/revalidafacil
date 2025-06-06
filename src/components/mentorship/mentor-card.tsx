@@ -9,23 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Mail, Award, Briefcase, GraduationCap, Info } from "lucide-react"; // Added Info
 import { Badge } from "@/components/ui/badge";
 
-// WhatsApp SVG Icon component
+// WhatsApp SVG Icon component (Standard Green WhatsApp Icon)
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
+    role="img"
+    viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
+    fill="#25D366" // WhatsApp Green
     width="24"
     height="24"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
     {...props}
   >
-    <path d="M16.5 10.5A.5.5 0 0 0 16 11v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
-    <path d="M12 1a11 11 0 0 0-9.112 15.937L1.17 22.83a.804.804 0 0 0 1.002 1.002l5.893-1.716A11 11 0 1 0 12 1zm0 20a9 9 0 1 1-6.193-2.862l.299.178-4.02 1.174 1.174-4.02.178.299A9 9 0 0 1 12 21z"/>
-    <path d="M15.213 14.346a.5.5 0 0 1 .058.654l-.001.001-1.165 1.612a1.07 1.07 0 0 1-1.551.114l-1.83-1.331a5.83 5.83 0 0 1-2.515-.683l-.098-.058a7.11 7.11 0 0 1-2.48-2.145l-.063-.105a.5.5 0 0 1 .16-.668l.696-.504a.5.5 0 0 1 .613-.039l1.24.861a.5.5 0 0 0 .617-.058l.535-.594a.5.5 0 0 1 .638-.05l.001.001a8.45 8.45 0 0 0 2.48 1.092l.107.029a.5.5 0 0 0 .486-.194l.86-1.24a.5.5 0 0 1 .653-.058l.001.001z"/>
+    <title>WhatsApp</title>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.204-1.634a11.86 11.86 0 005.79 1.498h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-2.893-6.994z"/>
   </svg>
 );
 
@@ -122,7 +118,7 @@ export default function MentorCard({
       <CardFooter className="p-6 border-t flex flex-col sm:flex-row sm:justify-between gap-2 bg-muted/50">
         <Button variant="outline" size="sm" asChild className="w-full sm:w-auto hover:bg-green-500 hover:text-white hover:border-green-500 transition-colors">
           <Link href={contact.whatsappLink} target="_blank" rel="noopener noreferrer">
-            <WhatsAppIcon className="mr-2 h-4 w-4" /> WhatsApp
+            <WhatsAppIcon className="mr-2 h-5 w-5" /> WhatsApp
           </Link>
         </Button>
         <Button variant="outline" size="sm" asChild className="w-full sm:w-auto hover:bg-primary hover:text-primary-foreground transition-colors">
@@ -134,3 +130,4 @@ export default function MentorCard({
     </Card>
   );
 }
+

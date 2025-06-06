@@ -22,9 +22,7 @@ const mentorsData: MentorProps[] = [
     ],
     specialties: ["Clínica Médica", "Preparo Revalida"],
     bio: [
-        "Natural de Manaus, Amazonas, Brasil.",
-        "Antivacina.",
-        "Tem como inspiração Dr. Lair Ribeiro."
+        "Natural de Manaus, Amazonas, Brasil."
     ],
   },
   // Add more mentors here in the future
@@ -64,3 +62,4 @@ export default function MentorshipPage() {
     </AppLayout>
   );
 }
+
