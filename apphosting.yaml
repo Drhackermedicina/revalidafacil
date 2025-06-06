@@ -1,34 +1,43 @@
-# apphosting.yaml
+# Arquivo: apphosting.yaml (na raiz do seu projeto)
 
-# Configuração para o seu backend Node.js/Socket.IO
+# Define as configurações para os backends que você quer publicar.
+
 backends:
-  - id: my-revalida-backend # Um nome para o seu serviço de backend
-    region: southamerica-east1 # A mesma região do seu serviço atual
-    runConfig:
-      cpu: 1
-      memoryMiB: 512
-      minInstances: 0 # 0 para economizar custos, 1 para estar sempre "quente"
-    # Se o código do backend estiver na pasta 'server':
-    source: ./server # Indica que o código fonte do backend está na pasta 'server'
-    entryPoint: npm run start # Comando para iniciar seu servidor (usa o script do package.json dentro de /server)
-    env: # Variáveis de ambiente para o backend (melhor usar Secret Manager para segredos)
-      - variable: PORT
-        value: "8080" # Cloud Run espera que seu app escute na porta 8080 por padrão
-      # Adicione outras variáveis de ambiente que seu server.js possa precisar
 
-# Configuração para o seu frontend Next.js (se também for hospedado aqui)
-# Se o seu frontend Next.js estiver na raiz e for um app Next.js padrão para App Hosting:
-# A configuração pode ser mais simples ou gerada pela ferramenta.
-# Exemplo se o Next.js também usa App Hosting (ele detecta Next.js automaticamente):
+# 'id' é um nome que você dá para o seu serviço de backend.
+
+  - id: revalidafacil-backend
+    # 'region' é a localização do servidor.
+    # É importante usar a mesma que você já tem para evitar lentidão.
+    region: southamerica-east1
+    # 'source' é o passo mais crucial: diz ao Firebase onde está o código
+    # do seu backend. Apontamos para a pasta ./server.
+    source: ./server
+    # 'entryPoint' é o comando que o Firebase deve rodar no terminal
+    # para iniciar o seu servidor, depois de instalar as dependências.
+    # Ele vai rodar o script "start" do seu `server/package.json`.
+    entryPoint: npm run start
+
+# Esta seção é para o seu frontend Next.js.
+
+# O Firebase App Hosting é inteligente e geralmente detecta o Next.js
+
+# se ele estiver na raiz, então uma configuração mínima ou nenhuma pode ser necessária aqui.
+
+# Se precisar, seria algo assim, mas por enquanto foque no backend.
+
+# 
+
 # build:
-#   - command: npm install && npm run build # Comando para build do Next.js na raiz
 
-# staticAssets: # Para servir os assets estáticos do Next.js
-#   pattern: ".next/static/**"
+# command: npm install && npm run build
 
-# headers: # Cabeçalhos para o frontend
-#   # ...
+# staticAssets:
 
-# rewrites: # Regras de reescrita para o frontend (SPA/Next.js routing)
-#   - source: "**"
-#     destination: "/index.html" # Ou o entrypoint do Next.js SSR
+# pattern: ".next/static/\*\*"
+
+# rewrites:
+
+# \- source: "\*\*"
+
+# destination: "/index.html" \# ou a configuração de SSR do Next.js

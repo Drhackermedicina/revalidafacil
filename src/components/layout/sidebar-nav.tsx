@@ -9,8 +9,6 @@ import {
   BookMarked,
   Clock,
   History,
-  LightbulbOff,
-  Lightbulb,
   ChevronsLeft,
   ChevronsRight,
   Menu as MenuIcon,
@@ -20,13 +18,12 @@ import {
   UserCircle,
   Laptop,
   TrendingUp,
-  MessageCircleQuestion, // Ícone alterado/adicionado
+  MessageCircleQuestion,
   Trophy,
-  Youtube, 
-  Settings, 
+  Youtube,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 import Logo from "@/components/icons/logo";
 import {
   Accordion,
@@ -45,8 +42,8 @@ interface NavItemProps {
   label: string;
   isSubItem?: boolean;
   isCollapsed?: boolean;
-  target?: string; 
-  rel?: string; 
+  target?: string;
+  rel?: string;
 }
 
 const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed, target, rel }) => {
@@ -59,7 +56,7 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, i
           className={cn(
             "flex items-center w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm font-medium rounded-md",
             isCollapsed
-              ? (isSubItem ? "pl-6 justify-start h-9" : "px-0 justify-center h-9 w-9 mx-auto") 
+              ? (isSubItem ? "pl-6 justify-start h-9" : "px-0 justify-center h-9 w-9 mx-auto")
               : (isSubItem ? "pl-10 pr-6 py-2 h-9" : "px-6 py-2 h-9"),
           )}
           title={isCollapsed && !isSubItem ? label : undefined}
@@ -123,10 +120,10 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
         <Logo
             width={isCollapsed ? 28 : 32}
             height={isCollapsed ? 28 : 32}
-            className={cn("text-sidebar-foreground transition-colors duration-200 ease-in-out", isCollapsed ? "h-7 w-7" : "h-8 w-8")}
+            className={cn("transition-colors duration-200 ease-in-out text-green-500 dark:text-sidebar-foreground", isCollapsed ? "h-7 w-7" : "h-8 w-8")}
         />
         {!isCollapsed && (
-            <span className="font-semibold text-lg text-sidebar-foreground group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
+            <span className="font-semibold text-lg text-green-500 dark:text-sidebar-foreground group-hover:text-green-600 dark:group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
               Revalida Fácil
             </span>
         )}
@@ -144,18 +141,18 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
               <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
             </NavAccordionItem>
-            
+
             <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
             <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
             <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
             <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed}/>
             <NavItem href="/banco-questoes" icon={MessageCircleQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
-            <NavItem 
-              href="https://www.youtube.com" 
-              icon={Youtube} 
-              label={"Video Aulas"} 
-              isCollapsed={isCollapsed} 
-              target="_blank" 
+            <NavItem
+              href="https://www.youtube.com"
+              icon={Youtube}
+              label={"Video Aulas"}
+              isCollapsed={isCollapsed}
+              target="_blank"
               rel="noopener noreferrer"
             />
             <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
@@ -174,7 +171,6 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
 
 export function SidebarNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
@@ -190,7 +186,6 @@ export function SidebarNav() {
   if (!mounted) return null;
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
-  const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
 
   return (
     <>
@@ -211,7 +206,7 @@ export function SidebarNav() {
                 <Logo
                   width={28}
                   height={28}
-                  className="h-7 w-7 text-sidebar-foreground"
+                  className="h-7 w-7 text-green-500 dark:text-sidebar-foreground"
                 />
               </Link>
               <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8">
@@ -224,9 +219,9 @@ export function SidebarNav() {
                 <Logo
                   width={32}
                   height={32}
-                  className="h-8 w-8 text-sidebar-foreground transition-colors duration-200 ease-in-out"
+                  className="h-8 w-8 text-green-500 dark:text-sidebar-foreground transition-colors duration-200 ease-in-out"
                 />
-                <span className="font-semibold text-lg text-sidebar-foreground group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
+                <span className="font-semibold text-lg text-green-500 dark:text-sidebar-foreground group-hover:text-green-600 dark:group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
                   Revalida Fácil
                 </span>
               </Link>
@@ -248,18 +243,18 @@ export function SidebarNav() {
                   <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
                     <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
-                  
+
                   <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
                   <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
                   <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
                   <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed} />
                   <NavItem href="/banco-questoes" icon={MessageCircleQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
-                  <NavItem 
-                    href="https://www.youtube.com/" 
-                    icon={Youtube} 
-                    label={"Video Aulas"} 
-                    isCollapsed={isCollapsed} 
-                    target="_blank" 
+                  <NavItem
+                    href="https://www.youtube.com/"
+                    icon={Youtube}
+                    label={"Video Aulas"}
+                    isCollapsed={isCollapsed}
+                    target="_blank"
                     rel="noopener noreferrer"
                   />
                   <NavItem href="/modelos-checklists" icon={FilePlus2} label={"Modelo de Checklists"} isCollapsed={isCollapsed} />
@@ -271,13 +266,7 @@ export function SidebarNav() {
             </Accordion>
            </nav>
         </ScrollArea>
-        <div className="p-4 border-t border-sidebar-border mt-auto">
-          <Button variant="ghost" onClick={toggleTheme} className={cn("w-full text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                                                                    isCollapsed ? "justify-center px-0" : "justify-start px-2", "py-2 h-auto")}>
-            {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
-            {!isCollapsed && <span className="ml-2">{theme === "light" ? "Modo Noite" : "Modo Dia"}</span>}
-          </Button>
-        </div>
+        {/* Botão de tema removido daqui */}
       </aside>
 
       {/* Mobile Sidebar Trigger */}
@@ -291,16 +280,10 @@ export function SidebarNav() {
           <div className="flex-grow">
             <SidebarNavContent isCollapsed={false} />
           </div>
-           <div className="p-4 border-t border-sidebar-border mt-auto">
-            <Button variant="ghost" onClick={toggleTheme} className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground px-2 py-2 h-auto">
-              {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
-              <span className="ml-2">{theme === "light" ? "Modo Noite" : "Modo Dia"}</span>
-            </Button>
-          </div>
+           {/* Botão de tema removido daqui */}
         </SheetContent>
       </Sheet>
     </>
   );
 }
-
     
