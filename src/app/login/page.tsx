@@ -72,7 +72,8 @@ export default function LoginPage() {
     try {
       await signInWithPopup(auth, provider);
       // O redirecionamento também será feito pelo useEffect
-    } catch (err: any)      console.error('[Login Page] Falha no login com Google:', err);
+    } catch (err: any) { // Chave de abertura adicionada aqui
+      console.error('[Login Page] Falha no login com Google:', err);
       let errorMessage = "Falha no login com o Google. Tente novamente.";
       if (err.code) {
         switch (err.code) {
