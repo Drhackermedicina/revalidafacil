@@ -1,4 +1,3 @@
-
 // src/app/training/[code]/page.tsx
 import AppLayout from "@/components/layout/app-layout";
 import TrainingPageClient from "@/components/training/training-page-client";
@@ -26,13 +25,16 @@ async function getStationData(code: string): Promise<ChecklistData | undefined> 
 
 export default async function StationTrainingPage({ params }: StationPageProps) {
   // Address the error: "params should be awaited before using its properties"
-  const resolvedParams = await params;
+  // Note: params is not a Promise in Next.js 13+, so await is usually not needed here unless specifically used
+  // If you are using an older version or have specific middleware, keep it.
+  // Otherwise, you can simplify to: const stationCode = params.code;
+  const resolvedParams = await params; 
   const stationCode = resolvedParams.code;
-  
+
   const stationData = await getStationData(stationCode);
 
   if (!stationData) {
-    return 
+    return ( // <--- ADICIONADO ESTE PARÊNTESE DE ABERTURA AQUI!
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <Card className="w-full max-w-md shadow-lg">
@@ -49,7 +51,7 @@ export default async function StationTrainingPage({ params }: StationPageProps) 
             </Card>
         </div>
       </AppLayout>
-    );
+    ); // <--- ESTE PARÊNTESE DE FECHAMENTO AGORA TEM SEU PAR
   }
 
   return (
@@ -58,5 +60,3 @@ export default async function StationTrainingPage({ params }: StationPageProps) 
     </AppLayout>
   );
 }
-
-    

@@ -3,11 +3,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { auth, db } from '@/lib/firebase'
+// --- ADICIONADO: Importações necessárias do Firestore ---
+import { doc, getDoc } from 'firebase/firestore'; 
 
-// Nossas importações customizadas
+// Nossas importações customizadas (FIREBASE E SOCKET)
+import { auth, db } from '@/lib/firebase'; // Corrigido para '@/lib/firebase'
 import { useAuth } from '@/context/AuthContext';
-import socket from '@/lib/socket'; // <--- CORREÇÃO: Sem chaves e sem '/firebase'
+import socket from '@/lib/socket'; // Corrigido para '@/lib/socket' (sem chaves)
 import AppLayout from '@/components/layout/app-layout';
 
 // Ícones para feedback visual
@@ -64,6 +66,9 @@ export default function SimulationPage() {
         } catch (err) {
           setError('Falha ao buscar dados da estação.');
           console.error(err);
+        } finally {
+          // Garante que o loading seja falso mesmo em caso de erro, para evitar loop
+          // setIsLoading(false); // Se você tiver um estado isLoading global
         }
       };
       fetchStationData();
@@ -79,6 +84,12 @@ export default function SimulationPage() {
         try {
           const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
           
+          if (!backendUrl) { // Adicionado verificação para backendUrl
+              setError('Erro: URL do backend não configurada.');
+              console.error('NEXT_PUBLIC_BACKEND_URL não está definida no .env.local');
+              return;
+          }
+
           const response = await fetch(`${backendUrl}/api/create-session`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -107,6 +118,8 @@ export default function SimulationPage() {
         } catch (err) {
           setError('Falha ao criar a sessão de simulação.');
           console.error(err);
+        } finally {
+          // setIsLoading(false); // Se você tiver um estado isLoading global
         }
       };
       createSessionAndConnect();
