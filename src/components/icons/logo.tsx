@@ -14,7 +14,7 @@ const Logo = ({ width, height, className, ...rest }: LogoProps) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="1.5" // Ajustado para melhor visualização do texto
+    strokeWidth="1.5"
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
@@ -27,14 +27,13 @@ const Logo = ({ width, height, className, ...rest }: LogoProps) => (
     <rect x="2.5" y="4.5" width="19" height="11" rx="1" ry="1" fill="currentColor" strokeWidth="0" className="opacity-20 dark:opacity-30" />
     <text
       x="12"
-      y="10.5" // Ajustado para centralizar melhor na área da "tela"
+      y="10.2" // Ajustado para melhor centralização vertical
       fontFamily="Arial, sans-serif"
-      fontSize="4.5" // Ajustado para caber melhor
-      fill="currentColor" // Herda a cor do stroke principal (text-green-500 ou text-sidebar-foreground)
+      fontSize="4"   // Reduzido para melhor legibilidade
+      fill="currentColor" // Herda a cor do SVG pai
       textAnchor="middle"
       dominantBaseline="central"
-      fontWeight="bold"
-      className="text-green-500 dark:text-sidebar-foreground" // Garante que o texto siga as cores do tema
+      fontWeight="normal" // Alterado de bold para normal para ser mais fino
     >
       R.F
     </text>

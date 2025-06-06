@@ -120,10 +120,15 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
         <Logo
             width={isCollapsed ? 28 : 32}
             height={isCollapsed ? 28 : 32}
-            className={cn("transition-colors duration-200 ease-in-out text-green-500 dark:text-sidebar-foreground", isCollapsed ? "h-7 w-7" : "h-8 w-8")}
+            className={cn(
+              "transition-colors duration-200 ease-in-out text-accent dark:text-sidebar-foreground", // Azul no tema claro
+              isCollapsed ? "h-7 w-7" : "h-8 w-8"
+            )}
         />
         {!isCollapsed && (
-            <span className="font-semibold text-lg text-green-500 dark:text-sidebar-foreground group-hover:text-green-600 dark:group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
+            <span className={cn(
+              "font-semibold text-lg text-accent dark:text-sidebar-foreground transition-colors duration-200 ease-in-out" // Azul no tema claro, sem hover
+            )}>
               Revalida Fácil
             </span>
         )}
@@ -206,7 +211,7 @@ export function SidebarNav() {
                 <Logo
                   width={28}
                   height={28}
-                  className="h-7 w-7 text-green-500 dark:text-sidebar-foreground"
+                  className="h-7 w-7 text-accent dark:text-sidebar-foreground" // Azul no tema claro
                 />
               </Link>
               <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8">
@@ -219,9 +224,11 @@ export function SidebarNav() {
                 <Logo
                   width={32}
                   height={32}
-                  className="h-8 w-8 text-green-500 dark:text-sidebar-foreground transition-colors duration-200 ease-in-out"
+                  className="h-8 w-8 text-accent dark:text-sidebar-foreground transition-colors duration-200 ease-in-out" // Azul no tema claro
                 />
-                <span className="font-semibold text-lg text-green-500 dark:text-sidebar-foreground group-hover:text-green-600 dark:group-hover:text-sidebar-accent transition-colors duration-200 ease-in-out">
+                <span className={cn(
+                  "font-semibold text-lg text-accent dark:text-sidebar-foreground transition-colors duration-200 ease-in-out" // Azul no tema claro, sem hover
+                )}>
                   Revalida Fácil
                 </span>
               </Link>
@@ -266,7 +273,6 @@ export function SidebarNav() {
             </Accordion>
            </nav>
         </ScrollArea>
-        {/* Botão de tema removido daqui */}
       </aside>
 
       {/* Mobile Sidebar Trigger */}
@@ -280,10 +286,8 @@ export function SidebarNav() {
           <div className="flex-grow">
             <SidebarNavContent isCollapsed={false} />
           </div>
-           {/* Botão de tema removido daqui */}
         </SheetContent>
       </Sheet>
     </>
   );
 }
-    
