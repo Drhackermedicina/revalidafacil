@@ -1,7 +1,34 @@
-# Settings to manage and configure a Firebase App Hosting backend.
-# https://firebase.google.com/docs/app-hosting/configure
+# apphosting.yaml
 
-runConfig:
-  # Increase this value if you'd like to automatically spin up
-  # more instances in response to increased traffic.
-  maxInstances: 1
+# Configuração para o seu backend Node.js/Socket.IO
+backends:
+  - id: my-revalida-backend # Um nome para o seu serviço de backend
+    region: southamerica-east1 # A mesma região do seu serviço atual
+    runConfig:
+      cpu: 1
+      memoryMiB: 512
+      minInstances: 0 # 0 para economizar custos, 1 para estar sempre "quente"
+    # Se o código do backend estiver na pasta 'server':
+    source: ./server # Indica que o código fonte do backend está na pasta 'server'
+    entryPoint: npm run start # Comando para iniciar seu servidor (usa o script do package.json dentro de /server)
+    env: # Variáveis de ambiente para o backend (melhor usar Secret Manager para segredos)
+      - variable: PORT
+        value: "8080" # Cloud Run espera que seu app escute na porta 8080 por padrão
+      # Adicione outras variáveis de ambiente que seu server.js possa precisar
+
+# Configuração para o seu frontend Next.js (se também for hospedado aqui)
+# Se o seu frontend Next.js estiver na raiz e for um app Next.js padrão para App Hosting:
+# A configuração pode ser mais simples ou gerada pela ferramenta.
+# Exemplo se o Next.js também usa App Hosting (ele detecta Next.js automaticamente):
+# build:
+#   - command: npm install && npm run build # Comando para build do Next.js na raiz
+
+# staticAssets: # Para servir os assets estáticos do Next.js
+#   pattern: ".next/static/**"
+
+# headers: # Cabeçalhos para o frontend
+#   # ...
+
+# rewrites: # Regras de reescrita para o frontend (SPA/Next.js routing)
+#   - source: "**"
+#     destination: "/index.html" # Ou o entrypoint do Next.js SSR

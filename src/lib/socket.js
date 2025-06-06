@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 
 // A URL do seu backend é lida a partir das variáveis de ambiente.
 // Garanta que o arquivo .env.local na raiz do seu frontend tenha a linha:
-// NEXT_PUBLIC_BACKEND_URL=https://sua-url-do-backend.run.app
+// NEXT_PUBLIC_BACKEND_URL=https://revalidafacil-backend-160232798179.southamerica-east1.run.app
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // Esta verificação é importante. Se a URL não for encontrada, um erro claro
