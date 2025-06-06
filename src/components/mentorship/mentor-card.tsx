@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Award, Briefcase, GraduationCap, Info } from "lucide-react"; // Added Info
+import { Award, Briefcase, GraduationCap, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 // WhatsApp SVG Icon component (Standard Green WhatsApp Icon)
@@ -25,6 +25,26 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+// Gmail SVG Icon component
+const GmailIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    role="img"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    {...props}
+  >
+    <title>Gmail</title>
+    <path
+      d="M24 4.5v15c0 .85-.65 1.5-1.5 1.5H1.5C.649 21 0 20.35 0 19.5v-15C0 3.65.649 3 1.5 3h21C23.35 3 24 3.65 24 4.5zM12 12.75L2.25 6.469V18h19.5V6.469L12 12.75zM3.164 4.5l8.836 6.094L20.836 4.5H3.164z"
+      fill="#EA4335" // Gmail Red for the M shape, approximating overall feel
+    />
+    {/* Simplified: For a full colored Gmail icon, more paths for blue, green, yellow would be needed */}
+    {/* This SVG provides the main 'M' shape envelope in red */}
+  </svg>
+);
+
 
 export interface MentorProps {
   name: string;
@@ -39,7 +59,7 @@ export interface MentorProps {
   graduationYear: string;
   experience: string[];
   specialties?: string[];
-  bio?: string[]; // Added bio field
+  bio?: string[];
 }
 
 export default function MentorCard({
@@ -51,7 +71,7 @@ export default function MentorCard({
   graduationYear,
   experience,
   specialties,
-  bio, // Added bio prop
+  bio,
 }: MentorProps) {
   const getInitials = (name: string) => {
     const parts = name.split(" ");
@@ -121,13 +141,12 @@ export default function MentorCard({
             <WhatsAppIcon className="mr-2 h-5 w-5" /> WhatsApp
           </Link>
         </Button>
-        <Button variant="outline" size="sm" asChild className="w-full sm:w-auto hover:bg-primary hover:text-primary-foreground transition-colors">
+        <Button variant="outline" size="sm" asChild className="w-full sm:w-auto hover:bg-red-500 hover:text-white hover:border-red-500 transition-colors">
           <Link href={`mailto:${contact.email}`}>
-            <Mail className="mr-2 h-4 w-4" /> Email
+            <GmailIcon className="mr-2 h-4 w-4" /> Email
           </Link>
         </Button>
       </CardFooter>
     </Card>
   );
 }
-
