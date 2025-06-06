@@ -149,7 +149,7 @@ export function HeaderNav() {
         {/* Right side: Theme, Notifications */}
         <div className="flex items-center space-x-1">
           <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Alternar tema" className="hover:bg-primary-foreground/10 focus-visible:ring-primary-foreground/50 text-primary-foreground">
-            {theme === "light" ? <LightbulbOff className="h-5 w-5" /> : <Lightbulb className="h-5 w-5" />}
+            {theme === "light" ? <Lightbulb className="h-5 w-5" /> : <LightbulbOff className="h-5 w-5" />}
             <span className="sr-only">Alternar tema</span>
           </Button>
 
@@ -162,5 +162,3 @@ export function HeaderNav() {
     </header>
   );
 }
-
-    

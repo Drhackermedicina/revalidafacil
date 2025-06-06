@@ -121,13 +121,13 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             width={isCollapsed ? 28 : 32}
             height={isCollapsed ? 28 : 32}
             className={cn(
-              "transition-colors duration-200 ease-in-out text-accent dark:text-sidebar-foreground", // Azul no tema claro
+              "transition-colors duration-200 ease-in-out text-accent dark:text-green-400", 
               isCollapsed ? "h-7 w-7" : "h-8 w-8"
             )}
         />
         {!isCollapsed && (
             <span className={cn(
-              "font-semibold text-lg text-accent dark:text-sidebar-foreground transition-colors duration-200 ease-in-out" // Azul no tema claro, sem hover
+              "font-semibold text-lg text-accent dark:text-green-400 transition-colors duration-200 ease-in-out" 
             )}>
               Revalida Fácil
             </span>
@@ -211,7 +211,7 @@ export function SidebarNav() {
                 <Logo
                   width={28}
                   height={28}
-                  className="h-7 w-7 text-accent dark:text-sidebar-foreground" // Azul no tema claro
+                  className="h-7 w-7 text-accent dark:text-green-400" 
                 />
               </Link>
               <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8">
@@ -224,10 +224,10 @@ export function SidebarNav() {
                 <Logo
                   width={32}
                   height={32}
-                  className="h-8 w-8 text-accent dark:text-sidebar-foreground transition-colors duration-200 ease-in-out" // Azul no tema claro
+                  className="h-8 w-8 text-accent dark:text-green-400 transition-colors duration-200 ease-in-out" 
                 />
                 <span className={cn(
-                  "font-semibold text-lg text-accent dark:text-sidebar-foreground transition-colors duration-200 ease-in-out" // Azul no tema claro, sem hover
+                  "font-semibold text-lg text-accent dark:text-green-400 transition-colors duration-200 ease-in-out" 
                 )}>
                   Revalida Fácil
                 </span>
