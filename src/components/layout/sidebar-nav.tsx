@@ -35,10 +35,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext"; // Importar useAuth
+import { useAuth } from "@/context/AuthContext";
 
-// Defina aqui o email do administrador. 
-// IMPORTANTE: Para um sistema em produção, use um método mais seguro para gerenciamento de papéis.
 const ADMIN_EMAIL = 'admin@revalidafacil.com';
 
 interface NavItemProps {
@@ -111,7 +109,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
   const getOpenAccordionValue = () => {
     if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
     if (pathname.startsWith("/history")) return "history";
-    if (isAdmin && pathname.startsWith("/admin")) return "admin"; // Só abre se for admin
+    if (isAdmin && pathname.startsWith("/admin")) return "admin";
     return undefined;
   };
 
@@ -121,25 +119,25 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
         "p-4 border-b border-sidebar-border flex items-center gap-2",
         isCollapsed ? "justify-center" : "justify-between"
     )}>
-      <Link href="/" className="flex items-center gap-2 group">
+      <div className="flex items-center gap-2 group cursor-default"> {/* Removido Link e adicionado cursor-default */}
         <Logo
             width={isCollapsed ? 28 : 32}
             height={isCollapsed ? 28 : 32}
             className={cn(
               "transition-colors duration-200 ease-in-out",
-              "text-accent dark:text-sidebar-foreground", // Azul no tema claro, foreground no escuro
+              "text-accent dark:text-green-400",
               isCollapsed ? "h-7 w-7" : "h-8 w-8"
             )}
         />
         {!isCollapsed && (
             <span className={cn(
               "font-semibold text-lg transition-colors duration-200 ease-in-out",
-              "text-accent dark:text-sidebar-foreground" // Azul no tema claro, foreground no escuro
+              "text-accent dark:text-green-400"
             )}>
               Revalida Fácil
             </span>
         )}
-      </Link>
+      </div>
     </div>
     <ScrollArea className="flex-grow">
       <nav className="py-2">
@@ -187,9 +185,8 @@ export function SidebarNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { user, isLoading: isAuthLoading } = useAuth(); // Obter usuário do contexto
+  const { user, isLoading: isAuthLoading } = useAuth(); 
 
-  // Determinar se o usuário é admin
   const isAdmin = React.useMemo(() => {
     if (isAuthLoading || !user || !user.email) return false;
     return user.email === ADMIN_EMAIL;
@@ -224,20 +221,20 @@ export function SidebarNav() {
         )}>
           {isCollapsed ? (
             <>
-              <Link href="/" className="flex justify-center w-full py-1">
+              <div className="flex justify-center w-full py-1 cursor-default"> {/* Removido Link */}
                 <Logo
                   width={28}
                   height={28}
                   className="h-7 w-7 text-accent dark:text-green-400" 
                 />
-              </Link>
+              </div>
               <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8">
                 <ChevronsRight className="h-5 w-5" />
               </Button>
             </>
           ) : (
             <>
-              <Link href="/" className="flex items-center gap-2 group">
+              <div className="flex items-center gap-2 group cursor-default"> {/* Removido Link */}
                 <Logo
                   width={32}
                   height={32}
@@ -249,7 +246,7 @@ export function SidebarNav() {
                 )}>
                   Revalida Fácil
                 </span>
-              </Link>
+              </div>
               <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8">
                 <ChevronsLeft className="h-5 w-5" />
               </Button>
@@ -304,10 +301,12 @@ export function SidebarNav() {
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-72 bg-sidebar text-sidebar-foreground border-r-0 flex flex-col">
           <div className="flex-grow">
-            <SidebarNavContent isCollapsed={false} isAdmin={isAdmin} /> {/* Passar isAdmin para o conteúdo mobile */}
+            <SidebarNavContent isCollapsed={false} isAdmin={isAdmin} />
           </div>
         </SheetContent>
       </Sheet>
     </>
   );
 }
+
+    
