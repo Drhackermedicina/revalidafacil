@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { Book, User, Lock, Mail, Home, MessageSquare, BriefcaseMedical, TrendingUp, Compass, Newspaper, ArrowRight, Check, XCircle, PlayCircle } from 'lucide-react';
 

@@ -1,23 +1,21 @@
 // Localização: src/app/dashboard/page.tsx
 "use client";
 
-// --- SUAS IMPORTAÇÕES EXISTENTES ---
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 import AppLayout from "@/components/layout/app-layout";
 import ProgressOverviewCard from "@/components/dashboard/progress-overview-card";
 import StrengthsWeaknessesCard from "@/components/dashboard/strengths-weaknesses-card";
 import PerformanceChartCard from "@/components/dashboard/performance-chart-card";
-import DailyGoalsCard from "@/components/layout/dashboard/daily-goals-card";
+import DailyGoalsCard from "@/components/dashboard/daily-goals-card";
 import NextStepsCard from "@/components/dashboard/next-steps-card";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// --- [NOVA IMPORTAÇÃO] Importa o useRouter para fazer o redirecionamento ---
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-// Seus dados estáticos existentes...
+// Dados estáticos para prototipação
 const dashboardStaticData = {
   progress: [
     { area: "Cirúrgica", completed: 7, total: 15 },
@@ -46,17 +44,13 @@ const dashboardStaticData = {
 
 export default function DashboardPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
-  // --- [NOVA LINHA] Pega o hook de roteamento ---
   const router = useRouter(); 
 
-  // --- [NOVO BLOCO DE CÓDIGO] Este é o "guarda de segurança" ---
   useEffect(() => {
-    // Se a verificação de auth terminou E não há usuário logado...
     if (!isAuthLoading && !user) {
-      // ...redireciona para a página de login.
       router.push('/login');
     }
-  }, [user, isAuthLoading, router]); // Dependências do efeito
+  }, [user, isAuthLoading, router]);
 
   const getUserInitials = (name?: string | null) => {
     if (!name) return "??";
@@ -67,47 +61,56 @@ export default function DashboardPage() {
     return name.substring(0, 2).toUpperCase();
   };
   
-  // --- [NOVA LÓGICA DE RENDERIZAÇÃO] ---
-  // Se estiver carregando ou se o usuário não existir (e o redirect ainda não aconteceu),
-  // mostramos uma tela de carregamento para evitar "piscar" o conteúdo.
   if (isAuthLoading || !user) {
     return (
-        <div className="flex h-screen w-full items-center justify-center">
-            <p>Carregando Dashboard...</p>
-        </div>
+        <AppLayout>
+            <div className="space-y-6 p-1 md:p-0">
+                <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                        <Skeleton className="h-8 w-48" />
+                        <Skeleton className="h-4 w-32" />
+                    </div>
+                    <Skeleton className="h-[100px] w-[100px] rounded-full" />
+                </div>
+                <div className="grid gap-6 md:grid-cols-2">
+                    <Skeleton className="h-64 w-full rounded-lg" />
+                    <Skeleton className="h-64 w-full rounded-lg" />
+                </div>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+                    <Skeleton className="h-48 w-full rounded-lg" />
+                    <Skeleton className="h-48 w-full rounded-lg" />
+                </div>
+                <Skeleton className="h-32 w-full rounded-lg" />
+            </div>
+        </AppLayout>
     );
   }
 
-  // Se passou por tudo, o usuário está logado, então renderizamos seu ótimo dashboard.
   return (
     <AppLayout>
       <div className="space-y-6 p-1 md:p-0">
         <Card className="shadow-lg">
           <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 pb-4">
-            {/* O resto do seu código JSX continua aqui, sem alterações */}
             <div>
                 <CardTitle className="text-2xl font-bold font-headline">
-                    {user?.displayName || "Estudante"}
+                    {user.displayName || "Estudante"}
                 </CardTitle>
                 <CardDescription>Bem-vindo(a) de volta!</CardDescription>
             </div>
             <Avatar className="h-[100px] w-[100px]">
-                <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || "Avatar"} data-ai-hint="google avatar profile" />
-                <AvatarFallback>{getUserInitials(user?.displayName)}</AvatarFallback>
+                <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "Avatar"} />
+                <AvatarFallback>{getUserInitials(user.displayName)}</AvatarFallback>
             </Avatar>
           </CardHeader>
         </Card>
-
         <div className="grid gap-6 md:grid-cols-2">
           <ProgressOverviewCard progress={dashboardStaticData.progress} />
           <PerformanceChartCard data={dashboardStaticData.performanceData} />
         </div>
-
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
             <StrengthsWeaknessesCard strengths={dashboardStaticData.strengths} weaknesses={dashboardStaticData.weaknesses} />
             <DailyGoalsCard goals={dashboardStaticData.dailyGoals} />
         </div>
-        
         <NextStepsCard steps={dashboardStaticData.nextSteps} />
       </div>
     </AppLayout>

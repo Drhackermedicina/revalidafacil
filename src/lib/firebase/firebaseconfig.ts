@@ -10,12 +10,12 @@ import { getFirestore } from "firebase/firestore";
 // Certifique-se de que este projeto Firebase está ativo e configurado corretamente,
 // incluindo os métodos de login que você deseja usar (Email/Senha, Google).
 const firebaseConfig = {
-  apiKey: "AIzaSyDIVtTrioEtvHXGCcvNATsxbYxZrUZhqng", // <<< SUA API KEY REAL AQUI
+  apiKey: "AIzaSyADjhlT58gttZ3GzJH5odgbExlxBg6XikI", // <<< SUA API KEY REAL AQUI
   authDomain: "appestacoes.firebaseapp.com",
-  projectId: "appestacoes",
+  projectId: "revaida-fcil-app",
   storageBucket: "appestacoes.firebasestorage.app",
   messagingSenderId: "160232798179",
-  appId: "1:160232798179:web:f9ce1140035c5f4ea312d6",
+  appId: " ",
   measurementId: "G-1MLQKNX03Y" // Este é opcional
 };
 
