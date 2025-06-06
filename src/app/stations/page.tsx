@@ -1,16 +1,17 @@
-// Localização: src/app/stations/page.tsx
+/ Localização: src/app/stations/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
-// Nossas importações customizadas
-import { db } from '@/lib/firebaseConfig';
-import { useAuth } from '@/context/AuthContext';
-import AppLayout from '@/components/layout/app-layout'; // Usando o mesmo layout do dashboard
+// --- CAMINHOS RELATIVOS CORRIGIDOS ---
+// Para sair de /app/stations/ e chegar em /lib, etc., precisamos voltar 2 níveis.
+import { db } from '../../lib/firebaseConfig';
+import { useAuth } from '../../context/AuthContext';
+import AppLayout from '../../components/layout/app-layout';
 
-// Importando ícones para a UI (instale com: npm install lucide-react)
+// Ícones para a UI
 import { BookText, ChevronRight, Loader2 } from 'lucide-react';
 
 // Define a "forma" dos dados de uma estação para o TypeScript
@@ -25,36 +26,28 @@ export default function StationsListPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
 
-  // Estados para armazenar a lista de estações e controlar o carregamento
   const [stations, setStations] = useState<Station[]>([]);
   const [isLoadingStations, setIsLoadingStations] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Efeito para proteção da rota (igual ao do dashboard)
+  // Efeito para proteção da rota
   useEffect(() => {
     if (!isAuthLoading && !user) {
       router.push('/login');
     }
   }, [isAuthLoading, user, router]);
 
-  // Efeito para buscar os dados do Firestore quando a página carregar
+  // Efeito para buscar os dados do Firestore
   useEffect(() => {
-    // Só busca os dados se o usuário estiver logado
     if (user) {
       const fetchStations = async () => {
         setIsLoadingStations(true);
         try {
-          // 1. Define qual coleção do Firestore queremos acessar
-          //    IMPORTANTE: O nome deve ser "stations" (plural) ou o nome que você usou no seu script seedStations.js
+          // Lembre-se: alteramos isso para usar o nome correto da sua coleção
           const stationsCollectionRef = collection(db, "estacoes_clinicas");
-
-          // 2. Cria uma consulta para buscar os documentos, ordenados por título
           const q = query(stationsCollectionRef, orderBy("title"));
-          
-          // 3. Executa a consulta para pegar os documentos
           const querySnapshot = await getDocs(q);
 
-          // 4. Mapeia os resultados para o formato que nosso componente espera
           const stationsData = querySnapshot.docs.map(doc => ({
             id: doc.id,
             title: doc.data().title || 'Título não encontrado',
@@ -74,9 +67,8 @@ export default function StationsListPage() {
 
       fetchStations();
     }
-  }, [user]); // Depende do 'user' para rodar
+  }, [user]);
 
-  // Se a autenticação estiver acontecendo, mostra um loader geral
   if (isAuthLoading || !user) {
     return (
       <AppLayout>
@@ -88,7 +80,6 @@ export default function StationsListPage() {
     );
   }
 
-  // O usuário está autenticado, agora lidamos com o carregamento das estações
   return (
     <AppLayout>
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -110,8 +101,8 @@ export default function StationsListPage() {
                     {stations.map((station) => (
                         <li key={station.id}>
                             <div 
-                                // Ação temporária para simular o clique
-                                onClick={() => alert(`Próximo passo: Criar a sala de simulação para: ${station.title}`)} 
+                                // Ação para navegar para a página de simulação (que criaremos a seguir)
+                                onClick={() => router.push(`/station/${station.id}/simulate`)} 
                                 className="flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 cursor-pointer transition-colors"
                             >
                                 <div className="flex items-center min-w-0">
