@@ -20,10 +20,10 @@ import {
   UserCircle,
   Laptop,
   TrendingUp,
-  FileQuestion,
+  MessageCircleQuestion, // Ícone alterado/adicionado
   Trophy,
-  Youtube, // Ícone adicionado
-  Settings, // Ícone para Admin
+  Youtube, 
+  Settings, 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -45,8 +45,8 @@ interface NavItemProps {
   label: string;
   isSubItem?: boolean;
   isCollapsed?: boolean;
-  target?: string; // Adicionado para links externos
-  rel?: string; // Adicionado para links externos
+  target?: string; 
+  rel?: string; 
 }
 
 const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed, target, rel }) => {
@@ -149,7 +149,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean}> = ({ isCollapsed = fa
             <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
             <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
             <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed}/>
-            <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
+            <NavItem href="/banco-questoes" icon={MessageCircleQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
             <NavItem 
               href="https://www.youtube.com" 
               icon={Youtube} 
@@ -253,7 +253,7 @@ export function SidebarNav() {
                   <NavItem href="/simulados" icon={Laptop} label={"Simulados"} isCollapsed={isCollapsed} />
                   <NavItem href="/performance" icon={TrendingUp} label={"Performance"} isCollapsed={isCollapsed} />
                   <NavItem href="/materiais-apoio" icon={Library} label={"Materiais de Apoio"} isCollapsed={isCollapsed} />
-                  <NavItem href="/banco-questoes" icon={FileQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
+                  <NavItem href="/banco-questoes" icon={MessageCircleQuestion} label={"Banco de Questões"} isCollapsed={isCollapsed}/>
                   <NavItem 
                     href="https://www.youtube.com/" 
                     icon={Youtube} 
