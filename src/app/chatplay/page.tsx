@@ -10,9 +10,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Swords, CircleSlash, UserPlus, Coffee, Send, Users, MessageSquare } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Swords, CircleSlash, UserPlus, Coffee, Send, Users, MessageSquare, Search, Activity, Scissors, Stethoscope, Baby, ShieldCheck, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from '@/context/AuthContext'; // Para pegar o usuário logado futuramente
+import { useAuth } from '@/context/AuthContext';
+import { toast } from "@/hooks/use-toast";
 
 type UserStatus = "training" | "busy" | "looking" | "inactive";
 
@@ -53,6 +55,37 @@ const mockUsers: ChatUser[] = [
   { id: '5', nickname: 'CirurgiãoRaiz', status: 'looking', avatarUrl: 'https://placehold.co/40x40.png?text=CR' },
 ];
 
+interface AreaOption {
+  value: string;
+  label: string;
+  icon: React.ElementType;
+  iconClass: string;
+}
+
+const medicalAreas: AreaOption[] = [
+  { value: "CM", label: "Clínica Médica", icon: Activity, iconClass: "text-sky-500" },
+  { value: "CR", label: "Cirurgia", icon: Scissors, iconClass: "text-purple-500" },
+  { value: "GO", label: "G.O", icon: Stethoscope, iconClass: "text-pink-500" },
+  { value: "PE", label: "Pediatria", icon: Baby, iconClass: "text-green-500" },
+  { value: "PR", label: "Preventiva", icon: ShieldCheck, iconClass: "text-orange-500" },
+  { value: "ALEATORIO", label: "Aleatório", icon: Shuffle, iconClass: "text-muted-foreground" },
+];
+
+const difficulties = [
+  { value: "FACIL", label: "Fácil" },
+  { value: "MODERADO", label: "Moderado" },
+  { value: "DIFICIL", label: "Difícil" },
+];
+
+const stationQuantities = [
+  { value: "1", label: "x1" },
+  { value: "2", label: "x2" },
+  { value: "3", label: "x3" },
+  { value: "4", label: "x4" },
+  { value: "5", label: "x5" },
+];
+
+
 export default function ChatplayPage() {
   const { user: authUser, isLoading: authLoading } = useAuth();
   const [nickname, setNickname] = useState<string | null>(null);
@@ -62,36 +95,38 @@ export default function ChatplayPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
 
+  const [showPartnerSearchModal, setShowPartnerSearchModal] = useState(false);
+  const [selectedArea, setSelectedArea] = useState<string | undefined>(medicalAreas[0].value);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | undefined>(difficulties[0].value);
+  const [selectedQuantity, setSelectedQuantity] = useState<string | undefined>(stationQuantities[0].value);
+
+
   useEffect(() => {
-    // Simulação: Verificar se o nickname já foi definido (ex: localStorage)
-    // Por enquanto, sempre mostra o modal se não houver nickname
     const storedNickname = localStorage.getItem('chatplayNickname');
     if (storedNickname) {
       setNickname(storedNickname);
     } else if (!authLoading && authUser) {
-        // Se não tem no localStorage mas tem usuário autenticado, sugere o displayName
         setTempNickname(authUser.displayName || '');
         setShowNicknameModal(true);
     } else if (!authLoading && !authUser){
-        // Se não tem usuário logado e nem nickname, força modal
         setShowNicknameModal(true);
     }
   }, [authUser, authLoading]);
 
   const handleSetNickname = () => {
     if (tempNickname.trim()) {
-      setNickname(tempNickname.trim());
-      localStorage.setItem('chatplayNickname', tempNickname.trim()); // Simula persistência
+      const finalNickname = tempNickname.trim();
+      setNickname(finalNickname);
+      localStorage.setItem('chatplayNickname', finalNickname);
       setShowNicknameModal(false);
-       // Adiciona o usuário atual à lista (ou atualiza se já existir com base no authUser.uid)
       if (authUser) {
         setUsers(prevUsers => {
           const existingUserIndex = prevUsers.findIndex(u => u.id === authUser.uid);
           const currentUser: ChatUser = {
             id: authUser.uid,
-            nickname: tempNickname.trim(),
-            avatarUrl: authUser.photoURL || `https://placehold.co/40x40.png?text=${tempNickname.trim().substring(0,2).toUpperCase()}`,
-            status: 'looking', // Status inicial
+            nickname: finalNickname,
+            avatarUrl: authUser.photoURL || `https://placehold.co/40x40.png?text=${finalNickname.substring(0,2).toUpperCase()}`,
+            status: 'looking',
           };
           if (existingUserIndex > -1) {
             const updatedUsers = [...prevUsers];
@@ -101,7 +136,6 @@ export default function ChatplayPage() {
           return [currentUser, ...prevUsers.filter(u => u.id !== authUser.uid)];
         });
       }
-
     }
   };
 
@@ -109,7 +143,7 @@ export default function ChatplayPage() {
     if (currentMessage.trim() && nickname) {
       const newMessage: ChatMessage = {
         id: Date.now().toString(),
-        userId: authUser?.uid || 'guest', // Usar ID do usuário logado ou 'guest'
+        userId: authUser?.uid || 'guest',
         nickname: nickname,
         text: currentMessage.trim(),
         timestamp: new Date(),
@@ -127,10 +161,24 @@ export default function ChatplayPage() {
     return name.substring(0, 2).toUpperCase();
   };
 
+  const handleStartPartnerSearch = () => {
+    console.log("Iniciando busca de parceiro com os seguintes filtros:", {
+      area: selectedArea,
+      difficulty: selectedDifficulty,
+      quantity: selectedQuantity,
+    });
+    toast({
+      title: "Busca Iniciada!",
+      description: `Procurando parceiro para área ${selectedArea}, dificuldade ${selectedDifficulty}, ${selectedQuantity} estação(ões).`,
+    });
+    // Aqui viria a lógica de busca real (backend)
+    setShowPartnerSearchModal(false);
+  };
+
 
   return (
     <AppLayout>
-      <div className="flex flex-col h-[calc(100vh-var(--header-height,10rem))] md:h-[calc(100vh-var(--header-height,8rem))]"> {/* Ajustar altura */}
+      <div className="flex flex-col h-[calc(100vh-var(--header-height,10rem))] md:h-[calc(100vh-var(--header-height,8rem))]">
         <Card className="mb-6 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold font-headline flex items-center">
@@ -144,7 +192,6 @@ export default function ChatplayPage() {
         </Card>
 
         <div className="flex-grow grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-hidden">
-          {/* Painel de Usuários */}
           <Card className="md:col-span-1 lg:col-span-1 flex flex-col overflow-hidden shadow-md">
             <CardHeader className="py-3 px-4 border-b">
               <CardTitle className="text-lg flex items-center">
@@ -177,10 +224,13 @@ export default function ChatplayPage() {
                 </div>
               </ScrollArea>
             </CardContent>
-             <CardFooter className="p-2 border-t">
+             <CardFooter className="p-2 border-t flex flex-col gap-2">
+                <Button variant="default" size="sm" className="w-full" onClick={() => setShowPartnerSearchModal(true)} disabled={!nickname}>
+                  <Search className="mr-2 h-4 w-4" /> Buscar Parceiro
+                </Button>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="w-full">Mudar Status</Button>
+                        <Button variant="outline" size="sm" className="w-full" disabled={!nickname}>Mudar Status</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
@@ -190,7 +240,6 @@ export default function ChatplayPage() {
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
-                           {/* Aqui viriam os botões para mudar o status */}
                            <Button variant="outline"> <UserPlus className="mr-2 h-4 w-4 text-green-500"/> Procurando parceiro</Button>
                            <Button variant="outline"> <CircleSlash className="mr-2 h-4 w-4 text-red-500"/> Ocupado</Button>
                         </div>
@@ -199,7 +248,6 @@ export default function ChatplayPage() {
             </CardFooter>
           </Card>
 
-          {/* Painel de Chat */}
           <Card className="md:col-span-2 lg:col-span-3 flex flex-col overflow-hidden shadow-md">
             <CardHeader className="py-3 px-4 border-b">
               <CardTitle className="text-lg flex items-center">
@@ -249,8 +297,6 @@ export default function ChatplayPage() {
 
         <Dialog open={showNicknameModal} onOpenChange={(isOpen) => {
             if (!nickname && !isOpen) {
-                 // Se o usuário tentar fechar sem definir um nickname, mantemos aberto ou redirecionamos.
-                 // Por simplicidade, vamos apenas manter aberto forçando.
                  setShowNicknameModal(true);
             } else {
                 setShowNicknameModal(isOpen);
@@ -282,7 +328,80 @@ export default function ChatplayPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Modal de Busca de Parceiro */}
+        <Dialog open={showPartnerSearchModal} onOpenChange={setShowPartnerSearchModal}>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center">
+                <Search className="mr-2 h-5 w-5" /> Buscar Parceiro de Treinamento
+              </DialogTitle>
+              <DialogDescription>
+                Configure suas preferências para encontrar um parceiro.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6 py-4">
+              <div>
+                <Label className="text-sm font-medium">Área da Medicina</Label>
+                <RadioGroup value={selectedArea} onValueChange={setSelectedArea} className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {medicalAreas.map(area => {
+                    const AreaIcon = area.icon;
+                    return (
+                    <Label key={area.value} htmlFor={`area-${area.value}`} className={cn(
+                        "flex items-center space-x-2 rounded-md border p-3 hover:bg-accent hover:text-accent-foreground cursor-pointer",
+                        selectedArea === area.value && "bg-accent text-accent-foreground border-primary ring-2 ring-primary"
+                    )}>
+                      <RadioGroupItem value={area.value} id={`area-${area.value}`} className="sr-only" />
+                      <AreaIcon className={cn("h-5 w-5", area.iconClass)} />
+                      <span className="text-sm font-medium">{area.label}</span>
+                    </Label>
+                  )})}
+                </RadioGroup>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium">Dificuldade da Estação</Label>
+                 <RadioGroup value={selectedDifficulty} onValueChange={setSelectedDifficulty} className="mt-2 flex flex-wrap gap-2">
+                  {difficulties.map(diff => (
+                    <Label key={diff.value} htmlFor={`diff-${diff.value}`} className={cn(
+                        "rounded-md border px-3 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm",
+                        selectedDifficulty === diff.value && "bg-accent text-accent-foreground border-primary ring-2 ring-primary"
+                    )}>
+                      <RadioGroupItem value={diff.value} id={`diff-${diff.value}`} className="sr-only" />
+                      {diff.label}
+                    </Label>
+                  ))}
+                </RadioGroup>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium">Quantidade de Estações (por rodada)</Label>
+                <p className="text-xs text-muted-foreground mb-2">Cada um será ator e candidato pelo menos uma vez por estação selecionada.</p>
+                <RadioGroup value={selectedQuantity} onValueChange={setSelectedQuantity} className="mt-2 flex flex-wrap gap-2">
+                  {stationQuantities.map(qty => (
+                     <Label key={qty.value} htmlFor={`qty-${qty.value}`} className={cn(
+                        "rounded-md border px-3 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm",
+                        selectedQuantity === qty.value && "bg-accent text-accent-foreground border-primary ring-2 ring-primary"
+                    )}>
+                      <RadioGroupItem value={qty.value} id={`qty-${qty.value}`} className="sr-only" />
+                      {qty.label}
+                    </Label>
+                  ))}
+                </RadioGroup>
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </DialogClose>
+              <Button onClick={handleStartPartnerSearch} disabled={!selectedArea || !selectedDifficulty || !selectedQuantity}>
+                <Search className="mr-2 h-4 w-4" /> Iniciar Busca
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
 }
+
