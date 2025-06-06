@@ -1,18 +1,18 @@
 
 import AppLayout from "@/components/layout/app-layout";
 import MentorCard, { type MentorProps } from "@/components/mentorship/mentor-card";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Users } from "lucide-react";
 
 const mentorsData: MentorProps[] = [
   {
     name: "Dr. Alan dos Santos",
-    photoUrl: "https://placehold.co/150x150.png",
-    photoAiHint: "doctor profile",
+    photoUrl: "https://firebasestorage.googleapis.com/v0/b/appestacoes.firebasestorage.app/o/Dr.%20Alan.jpg?alt=media&token=c9031f67-1652-452b-8838-923238d548e5",
+    photoAiHint: "doctor portrait",
     contact: {
       phone: "(92) 99231-1092",
       whatsappLink: "https://wa.me/5592992311092",
-      email: "dralan.santos@example.com", // Placeholder email
+      email: "alanslumbeats@gmail.com",
     },
     education: "UPE CDE - Ciudad Del Este Paraguay",
     graduationYear: "2023",
@@ -20,7 +20,12 @@ const mentorsData: MentorProps[] = [
       "Mentoria para a Prova Prática INEP Revalida 2ª Fase",
       "Mentoria para a Prova Objetiva INEP Revalida 1ª Fase",
     ],
-    specialties: ["Clínica Médica", "Preparo Revalida"], // Example specialties
+    specialties: ["Clínica Médica", "Preparo Revalida"],
+    bio: [
+        "Natural de Manaus, Amazonas, Brasil.",
+        "Antivacina.",
+        "Tem como inspiração Dr. Lair Ribeiro."
+    ],
   },
   // Add more mentors here in the future
 ];

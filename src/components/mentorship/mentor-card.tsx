@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Award, Briefcase, CalendarDays, GraduationCap } from "lucide-react";
+import { Mail, Award, Briefcase, GraduationCap, Info } from "lucide-react"; // Added Info
 import { Badge } from "@/components/ui/badge";
 
 // WhatsApp SVG Icon component
@@ -43,6 +43,7 @@ export interface MentorProps {
   graduationYear: string;
   experience: string[];
   specialties?: string[];
+  bio?: string[]; // Added bio field
 }
 
 export default function MentorCard({
@@ -54,6 +55,7 @@ export default function MentorCard({
   graduationYear,
   experience,
   specialties,
+  bio, // Added bio prop
 }: MentorProps) {
   const getInitials = (name: string) => {
     const parts = name.split(" ");
@@ -101,6 +103,19 @@ export default function MentorCard({
                 <Badge key={index} variant="secondary">{spec}</Badge>
               ))}
             </div>
+          </div>
+        )}
+
+        {bio && bio.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold text-muted-foreground mb-1 flex items-center">
+              <Info className="mr-2 h-4 w-4" /> Sobre
+            </h4>
+            <ul className="list-disc list-inside text-sm space-y-0.5">
+              {bio.map((info, index) => (
+                <li key={index}>{info}</li>
+              ))}
+            </ul>
           </div>
         )}
       </CardContent>
