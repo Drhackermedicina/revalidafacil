@@ -22,6 +22,7 @@ import {
   Trophy,
   Youtube,
   Settings,
+  MessagesSquare, // Ícone para Chatplay
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/icons/logo";
@@ -47,9 +48,11 @@ interface NavItemProps {
   isCollapsed?: boolean;
   target?: string;
   rel?: string;
+  iconClassName?: string;
+  labelClassName?: string;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed, target, rel }) => {
+const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, isCollapsed, target, rel, iconClassName, labelClassName }) => {
   const linkProps = target ? { target, rel } : {};
   return (
     <li>
@@ -61,10 +64,11 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, i
             isCollapsed
               ? (isSubItem ? "pl-6 justify-start h-9" : "px-0 justify-center h-9 w-9 mx-auto")
               : (isSubItem ? "pl-10 pr-6 py-2 h-9" : "px-6 py-2 h-9"),
+            labelClassName
           )}
           title={isCollapsed && !isSubItem ? label : undefined}
         >
-          <Icon className={cn("mr-2 h-5 w-5", isCollapsed && !isSubItem && "mr-0")} />
+          <Icon className={cn("mr-2 h-5 w-5", isCollapsed && !isSubItem && "mr-0", iconClassName)} />
           {(!isCollapsed || (isSubItem && isCollapsed)) && label}
         </a>
       </Link>
@@ -116,23 +120,23 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
   return (
   <>
     <div className={cn(
-        "p-4 border-b border-sidebar-border flex items-center gap-2",
+        "p-4 border-b border-sidebar-border flex items-center gap-2 group",
         isCollapsed ? "justify-center" : "justify-between"
     )}>
-      <div className="flex items-center gap-2 group cursor-default"> {/* Removido Link e adicionado cursor-default */}
+      <div className="flex items-center gap-2 cursor-default">
         <Logo
             width={isCollapsed ? 28 : 32}
             height={isCollapsed ? 28 : 32}
             className={cn(
               "transition-colors duration-200 ease-in-out",
-              "text-accent dark:text-green-400",
+               "text-accent dark:text-green-400", // Azul no tema claro, Verde no tema escuro
               isCollapsed ? "h-7 w-7" : "h-8 w-8"
             )}
         />
         {!isCollapsed && (
             <span className={cn(
               "font-semibold text-lg transition-colors duration-200 ease-in-out",
-              "text-accent dark:text-green-400"
+              "text-accent dark:text-green-400" // Azul no tema claro, Verde no tema escuro
             )}>
               Revalida Fácil
             </span>
@@ -142,7 +146,15 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
     <ScrollArea className="flex-grow">
       <nav className="py-2">
         <Accordion type="multiple" defaultValue={getOpenAccordionValue()} className={cn("w-full", isCollapsed && "px-0")}>
-          <ul className={cn("space-y-1", isCollapsed ? "px-0" : "px-2")}>
+          <ul className={cn("space-y-1", isCollapsed ? "px-1" : "px-2")}>
+            <NavItem
+                href="/chatplay"
+                icon={MessagesSquare}
+                label="Chatplay"
+                isCollapsed={isCollapsed}
+                iconClassName={cn("h-7 w-7", isCollapsed ? "text-primary" : "text-primary dark:text-blue-400")} // Azul ou cor primária
+                labelClassName={cn(isCollapsed ? "" : "py-3 text-base font-semibold", isCollapsed ? "" : "text-primary dark:text-blue-400")} // Destaque no texto também
+            />
             <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
               <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed}/>
               <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed}/>
@@ -185,7 +197,7 @@ export function SidebarNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { user, isLoading: isAuthLoading } = useAuth(); 
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   const isAdmin = React.useMemo(() => {
     if (isAuthLoading || !user || !user.email) return false;
@@ -221,11 +233,11 @@ export function SidebarNav() {
         )}>
           {isCollapsed ? (
             <>
-              <div className="flex justify-center w-full py-1 cursor-default"> {/* Removido Link */}
+              <div className="flex justify-center w-full py-1 cursor-default">
                 <Logo
                   width={28}
                   height={28}
-                  className="h-7 w-7 text-accent dark:text-green-400" 
+                  className="h-7 w-7 text-accent dark:text-green-400"
                 />
               </div>
               <Button variant="ghost" size="icon" onClick={toggleSidebar} className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 w-8">
@@ -234,11 +246,11 @@ export function SidebarNav() {
             </>
           ) : (
             <>
-              <div className="flex items-center gap-2 group cursor-default"> {/* Removido Link */}
+              <div className="flex items-center gap-2 group cursor-default">
                 <Logo
                   width={32}
                   height={32}
-                  className="h-8 w-8 text-accent dark:text-green-400 transition-colors duration-200 ease-in-out" 
+                  className="h-8 w-8 text-accent dark:text-green-400 transition-colors duration-200 ease-in-out"
                 />
                 <span className={cn(
                   "font-semibold text-lg transition-colors duration-200 ease-in-out",
@@ -257,6 +269,14 @@ export function SidebarNav() {
            <nav className="py-2">
             <Accordion type="multiple" defaultValue={getOpenAccordionValue()} className={cn("w-full", isCollapsed && "px-0")}>
               <ul className={cn("space-y-1", isCollapsed ? "px-1" : "px-2")}>
+                  <NavItem
+                    href="/chatplay"
+                    icon={MessagesSquare}
+                    label="Chatplay"
+                    isCollapsed={isCollapsed}
+                    iconClassName={cn("h-7 w-7", isCollapsed ? "text-primary" : "text-primary dark:text-blue-400")}
+                    labelClassName={cn(isCollapsed ? "" : "py-3 text-base font-semibold", isCollapsed ? "" : "text-primary dark:text-blue-400")}
+                  />
                   <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
                     <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed} />
                     <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed} />
@@ -308,5 +328,4 @@ export function SidebarNav() {
     </>
   );
 }
-
     
