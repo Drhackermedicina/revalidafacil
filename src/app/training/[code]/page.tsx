@@ -32,7 +32,7 @@ export default async function StationTrainingPage({ params }: StationPageProps) 
   const stationData = await getStationData(stationCode);
 
   if (!stationData) {
-    return (
+    return 
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <Card className="w-full max-w-md shadow-lg">

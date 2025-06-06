@@ -1,117 +1,150 @@
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+// Localização: src/app/register/page.tsx
+"use client";
+
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
+import { Book, Lock, Mail, User } from 'lucide-react';
 
-// Nossas importações customizadas
+// Importações REAIS do Firebase para autenticação e cadastro
+import { 
+  createUserWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider, 
+  signInWithPopup 
+} from "firebase/auth";
+import { auth } from "@/lib/firebase"; // Nossa instância auth configurada
 
-import { auth, db } from '../../lib/firebaseConfig';
-
+// Componente da Página de Cadastro
 export default function RegisterPage() {
-  const [nome, setNome] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Para desabilitar o botão durante o envio
   const router = useRouter();
 
-  const handleRegister = async (event: FormEvent) => {
-    event.preventDefault();
+  // Lógica REAL de cadastro com Firebase
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    // 1. Validação básica
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
     setIsLoading(true);
-    setError(null);
 
+    // 2. Tenta criar o usuário no Firebase
     try {
-      // 1. Cria o usuário no Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // 2. Adiciona o nome do usuário ao perfil de autenticação
-      await updateProfile(user, { displayName: nome });
-
-      // 3. Cria um documento para este usuário no Firestore
-      //    O ID do documento será o mesmo ID do usuário na autenticação (user.uid)
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        displayName: nome,
-        email: user.email,
-        createdAt: serverTimestamp(), // Data de criação do registro
-        role: "subscriber", // Define um papel padrão para o novo usuário
-        subscriptionStatus: "pending", // Status inicial da assinatura
-        // Adicione aqui outros campos que você mencionou (país, cpf, etc.)
-        // ou deixe para o usuário preencher depois em uma página de perfil.
+      
+      // 3. Salva o nome do usuário no perfil do Firebase
+      await updateProfile(userCredential.user, {
+        displayName: name,
       });
 
-      console.log('Usuário registrado com sucesso e perfil criado no Firestore!');
-      
-      // 4. Redireciona o usuário para o dashboard após o registro
+      // 4. Redireciona para a dashboard após o sucesso
       router.push('/dashboard');
 
-    } catch (err: any) {
-      console.error("Erro no registro:", err);
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Este email já está em uso.');
+    } catch (firebaseError: any) {
+      console.error("Erro no cadastro:", firebaseError.code);
+      if (firebaseError.code === 'auth/email-already-in-use') {
+        setError('Este endereço de e-mail já está em uso.');
       } else {
         setError('Ocorreu um erro ao criar a conta. Tente novamente.');
       }
-      setIsLoading(false);
+    } finally {
+      setIsLoading(false); // Reabilita o botão
+    }
+  };
+
+  // Lógica REAL para login/cadastro com Google
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await signInWithPopup(auth, provider);
+      // Login/Cadastro bem-sucedido!
+      router.push('/dashboard');
+    } catch (googleError) {
+      console.error("Erro com Google:", googleError);
+      setError("Falha ao se conectar com o Google. Tente novamente.");
+    } finally {
+        setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <h2 className="mb-6 text-center text-3xl font-bold text-gray-900">Criar Nova Conta</h2>
-        
-        <form onSubmit={handleRegister}>
-          <div className="mb-4">
-            <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome Completo</label>
-            <input
-              id="nome"
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 text-gray-900"
-              placeholder="Seu Nome Completo"
-            />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-100 p-4 font-sans text-gray-800">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+        <div className="text-center mb-8">
+          <Book className="h-12 w-12 text-blue-600 mx-auto mb-3" />
+          <h2 className="text-3xl font-bold text-blue-800">Crie sua Conta Grátis</h2>
+          <p className="text-gray-500 mt-2">Junte-se à comunidade Revalida Fácil!</p>
+        </div>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm" role="alert">
+            {error}
           </div>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 text-gray-900"
-              placeholder="seuemail@exemplo.com"
-            />
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+            <div className="relative">
+              <User className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+            </div>
           </div>
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Senha</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 text-gray-900"
-              placeholder="Mínimo 6 caracteres"
-            />
+          <div>
+            <label htmlFor="email-register" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <div className="relative">
+                <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input type="email" id="email-register" value={email} onChange={(e) => setEmail(e.target.value)} required className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+            </div>
           </div>
-          {error && <p className="mb-4 text-center text-sm text-red-600">{error}</p>}
-          <button type="submit" disabled={isLoading} className="w-full flex justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50">
-            {isLoading ? 'Criando conta...' : 'Registrar'}
+          <div>
+            <label htmlFor="password-register" className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+            <div className="relative">
+                <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input type="password" id="password-register" value={password} onChange={(e) => setPassword(e.target.value)} required className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+            </div>
+          </div>
+          <div>
+            <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">Confirmar Senha</label>
+            <div className="relative">
+                <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input type="password" id="confirm-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+            </div>
+          </div>
+          
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
+          >
+            {isLoading ? 'Criando conta...' : 'Cadastrar'}
           </button>
         </form>
 
-        <div className="mt-4 text-center text-sm">
-          Já tem uma conta?{' '}
-          <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-500">
-            Faça o login
-          </Link>
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Já tem uma conta?{' '}
+            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 hover:underline">
+              Faça Login!
+            </Link>
+          </p>
         </div>
       </div>
     </div>

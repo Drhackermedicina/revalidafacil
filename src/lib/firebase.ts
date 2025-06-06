@@ -4,7 +4,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// As credenciais são lidas de forma segura do seu arquivo .env.local
+// 1. Define a estrutura do objeto de configuração, lendo as chaves do .env.local
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -14,10 +14,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Inicializa o Firebase de forma segura, evitando recarregar em desenvolvimento
+// 2. Inicializa o app de forma segura usando o objeto 'firebaseConfig'
+//    A sintaxe !getApps().length ? ... evita erros no ambiente de desenvolvimento
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Exporta os serviços que você vai usar no resto da sua aplicação
+// 3. Exporta os serviços de Autenticação (auth) e Banco de Dados (db)
 const auth = getAuth(app);
 const db = getFirestore(app);
 

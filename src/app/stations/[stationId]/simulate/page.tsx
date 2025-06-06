@@ -3,12 +3,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase'
 
 // Nossas importações customizadas
-import { auth, db } from '../../lib/firebaseConfig';
 import { useAuth } from '@/context/AuthContext';
-import { socket } from '@/lib/socket';
+import socket from '@/lib/socket'; // <--- CORREÇÃO: Sem chaves e sem '/firebase'
 import AppLayout from '@/components/layout/app-layout';
 
 // Ícones para feedback visual

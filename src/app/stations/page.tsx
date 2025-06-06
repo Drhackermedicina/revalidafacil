@@ -1,15 +1,18 @@
-/ Localização: src/app/stations/page.tsx
+// Localização: src/app/stations/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+// Importações corretas do Firestore
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
-// --- CAMINHOS RELATIVOS CORRIGIDOS ---
-// Para sair de /app/stations/ e chegar em /lib, etc., precisamos voltar 2 níveis.
-import { db } from '../../lib/firebaseConfig';
-import { useAuth } from '../../context/AuthContext';
-import AppLayout from '../../components/layout/app-layout';
+// --- CAMINHOS DE IMPORTAÇÃO CORRETOS ---
+// Use o alias '@/lib/firebase/firebase' para o seu firebase.ts
+// Use o alias '@/lib/firebase/socket' para o seu socket.ts
+// Para o AppLayout e useAuth, use o alias '@/' que aponta para src/
+import { db } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext'; // <--- CORRIGIDO: usa o alias correto
+import AppLayout from '@/components/layout/app-layout'; // <--- CORRIGIDO: usa o alias correto
 
 // Ícones para a UI
 import { BookText, ChevronRight, Loader2 } from 'lucide-react';
@@ -54,7 +57,7 @@ export default function StationsListPage() {
             area: doc.data().area || 'Área não definida',
             caseSummary: doc.data().caseSummary || 'Resumo indisponível',
           }));
-          
+
           setStations(stationsData);
           setError(null);
         } catch (err) {
@@ -87,7 +90,7 @@ export default function StationsListPage() {
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Estações Práticas</h1>
             <p className="mt-2 text-lg text-gray-600">Selecione uma estação abaixo para iniciar a simulação.</p>
         </div>
-        
+
         {isLoadingStations ? (
             <div className="flex h-64 w-full items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
