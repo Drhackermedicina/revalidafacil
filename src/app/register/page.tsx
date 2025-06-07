@@ -2,21 +2,16 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Book, Lock, Mail, User } from 'lucide-react';
+import Link from 'next/link'; // Certifique-se de que Link está importado se for usado
+import { useRouter } from 'next/navigation'; // Certifique-se de que useRouter está importado
 
-// Importações REAIS do Firebase para autenticação e cadastro
-import { 
-  createUserWithEmailAndPassword,
-  updateProfile,
-  GoogleAuthProvider, 
-  signInWithPopup 
-} from "firebase/auth";
-import { auth } from "@/lib/firebase"; // Nossa instância auth configurada
+import { getAuth, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { firebaseApp } from "@/lib/firebase"; // Importe sua instância do Firebase
 
 // Componente da Página de Cadastro
 export default function RegisterPage() {
+  // Mantenha os estados existentes
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,9 +21,9 @@ export default function RegisterPage() {
   const router = useRouter();
 
   // Lógica REAL de cadastro com Firebase
+  // Modifique a função handleSubmit para usar a autenticação do Firebase
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     // 1. Validação básica
     if (password !== confirmPassword) {
@@ -42,14 +37,26 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
+    // Limpa qualquer erro anterior
+    setError(''); 
+
     // 2. Tenta criar o usuário no Firebase
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
+      // Use getAuth com firebaseApp para obter a instância de autenticação
+      const authInstance = getAuth(firebaseApp);
+      const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
+
       // 3. Salva o nome do usuário no perfil do Firebase
+      // Verifique se userCredential.user não é nulo antes de chamar updateProfile
       await updateProfile(userCredential.user, {
         displayName: name,
       });
+
+      // Opcional: Exibir uma mensagem de sucesso antes de redirecionar
+      // setStatusMessage('Usuário registrado com sucesso!');
+
+      // Tempo pequeno para a mensagem ser vista (opcional)
+      // await new Promise(resolve => setTimeout(resolve, 1000));
 
       // 4. Redireciona para a dashboard após o sucesso
       router.push('/dashboard');
@@ -60,6 +67,8 @@ export default function RegisterPage() {
         setError('Este endereço de e-mail já está em uso.');
       } else {
         setError('Ocorreu um erro ao criar a conta. Tente novamente.');
+        // Exibe o erro completo no console para depuração
+        console.error("Detalhes do erro Firebase:", firebaseError); 
       }
     } finally {
       setIsLoading(false); // Reabilita o botão

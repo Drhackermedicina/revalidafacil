@@ -34,10 +34,6 @@ const nextConfig: NextConfig = {
     ],
   },
   // NOVO: Adicionado para corrigir o aviso de 'cross-origin' no seu ambiente de nuvem
-  experimental: {
-    allowedDevOrigins: [
-    ],
-  },
 };
 
 export default nextConfig;

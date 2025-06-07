@@ -1,5 +1,8 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Importe useRouter do Next.js
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"; // Importe as funções do Firebase Auth
+import { firebaseApp } from "@/lib/firebase"; // Importe sua instância do Firebase
 import { Book, User, Lock, Mail, Home, MessageSquare, BriefcaseMedical, TrendingUp, Compass, Newspaper, ArrowRight, Check, XCircle, PlayCircle } from 'lucide-react';
 
 // Componente do Modal de Mensagem: Usado para exibir informações ao usuário
@@ -283,16 +286,25 @@ const LoginPage = ({ onNavigate, onShowMessage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Adicionar estado de carregamento
+
+  const router = useRouter(); // Inicialize o useRouter
 
   // Função para lidar com o envio do formulário de login (simulado)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // Tornar a função assíncrona
     e.preventDefault();
     setError(''); // Limpa erros anteriores
-    // Lógica de login simulada: credenciais fixas para demonstração
-    if (email === 'teste@email.com' && password === '12345') {
-      onShowMessage('Login bem-sucedido! (Simulado)');
-      onNavigate('home'); // Redireciona para a home após login
-    } else {
+
+    setIsLoading(true); // Inicia o estado de carregamento
+
+    try {
+      const auth = getAuth(firebaseApp); // Obtenha a instância de autenticação
+      await signInWithEmailAndPassword(auth, email, password); // Chame a função de login do Firebase
+
+      // Login bem-sucedido, redirecionar para o dashboard
+      router.push('/dashboard'); // Use router.push para navegar
+
+    } catch (error) {
       setError('Email ou senha incorretos.'); // Mensagem de erro
     }
   };
@@ -363,7 +375,8 @@ const LoginPage = ({ onNavigate, onShowMessage }) => {
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105"
           >
-            Entrar
+            {isLoading ? 'Entrando...' : 'Entrar'} {/* Texto do botão muda durante o carregamento */}
+
           </button>
         </form>
 
