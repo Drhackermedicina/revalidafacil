@@ -36,7 +36,6 @@ const nextConfig: NextConfig = {
   // NOVO: Adicionado para corrigir o aviso de 'cross-origin' no seu ambiente de nuvem
   experimental: {
     allowedDevOrigins: [
-      "https://3000-firebase-studio-1749101155243.cluster-m7tpz3bmgjgoqrktlvd4ykrc2m.cloudworkstations.dev",
     ],
   },
 };

@@ -1,7 +1,7 @@
 // Localização: src/app/dashboard/page.tsx
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'; // useEffect não será mais usado para redirecionamento, mas pode ser útil para outras coisas.
 import { useRouter } from 'next/navigation';
 
 import AppLayout from "@/components/layout/app-layout";
@@ -44,13 +44,14 @@ const dashboardStaticData = {
 
 export default function DashboardPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
-  const router = useRouter(); 
+  // const router = useRouter(); // Não será mais usado para redirecionamento obrigatório
 
-  useEffect(() => {
-    if (!isAuthLoading && !user) {
-      router.push('/login');
-    }
-  }, [user, isAuthLoading, router]);
+  // REMOVIDO O useEffect QUE FORÇAVA O LOGIN:
+  // useEffect(() => {
+  //   if (!isAuthLoading && !user) {
+  //     router.push('/login');
+  //   }
+  // }, [user, isAuthLoading, router]);
 
   const getUserInitials = (name?: string | null) => {
     if (!name) return "??";
@@ -61,7 +62,8 @@ export default function DashboardPage() {
     return name.substring(0, 2).toUpperCase();
   };
   
-  if (isAuthLoading || !user) {
+  // Mostra o Skeleton apenas durante o carregamento inicial da autenticação
+  if (isAuthLoading) {
     return (
         <AppLayout>
             <div className="space-y-6 p-1 md:p-0">
@@ -86,6 +88,7 @@ export default function DashboardPage() {
     );
   }
 
+  // Se não estiver carregando, mostra o dashboard, adaptando para usuário logado ou não
   return (
     <AppLayout>
       <div className="space-y-6 p-1 md:p-0">
@@ -93,13 +96,15 @@ export default function DashboardPage() {
           <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 pb-4">
             <div>
                 <CardTitle className="text-2xl font-bold font-headline">
-                    {user.displayName || "Estudante"}
+                    {user?.displayName || "Visitante"}
                 </CardTitle>
-                <CardDescription>Bem-vindo(a) de volta!</CardDescription>
+                <CardDescription>
+                  {user ? "Bem-vindo(a) de volta!" : "Explorando como visitante."}
+                </CardDescription>
             </div>
             <Avatar className="h-[100px] w-[100px]">
-                <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "Avatar"} />
-                <AvatarFallback>{getUserInitials(user.displayName)}</AvatarFallback>
+                <AvatarImage src={user?.photoURL || "https://placehold.co/100x100.png?text=Vis"} alt={user?.displayName || "Visitante"} data-ai-hint="profile avatar" />
+                <AvatarFallback>{getUserInitials(user?.displayName || "Visitante")}</AvatarFallback>
             </Avatar>
           </CardHeader>
         </Card>
