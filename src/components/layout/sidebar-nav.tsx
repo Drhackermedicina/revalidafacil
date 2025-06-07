@@ -181,6 +181,7 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
             <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
             {isAdmin && (
               <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
+                  <NavItem href="/admin/create-stations" icon={FilePlus2} label="Criação de Estações" isSubItem isCollapsed={isCollapsed}/>
                   <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
               </NavAccordionItem>
             )}

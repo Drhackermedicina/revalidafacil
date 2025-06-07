@@ -1,74 +1,73 @@
-// Localização: src/app/station/[stationId]/simulate/page.tsx
+
+// Localização: src/app/stations/[stationId]/simulate/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-// --- ADICIONADO: Importações necessárias do Firestore ---
-import { doc, getDoc } from 'firebase/firestore'; 
-
-// Nossas importações customizadas (FIREBASE E SOCKET)
-import { auth, db } from '@/lib/firebase'; // Corrigido para '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
-import socket from '@/lib/socket'; // Corrigido para '@/lib/socket' (sem chaves)
+import socket from '@/lib/socket';
 import AppLayout from '@/components/layout/app-layout';
+import { Loader2, AlertTriangle, Wifi, WifiOff, PlayCircle, PauseCircle, Eye, Users, ClipboardList } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import type { ChecklistData, ChecklistItem, PrintedMaterial } from '@/lib/station-data'; // Usando tipos de station-data
 
-// Ícones para feedback visual
-import { Loader2, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
-
-// Define a "forma" dos dados de uma estação
-interface Station {
-  id: string;
-  title: string;
-  area: string;
-  caseSummary: string;
-  checklistDocId?: string; // ID do checklist associado
+// Interface para os dados da estação, baseada em ChecklistData
+// Renomeado para StationDetails para evitar conflito com o tipo Station de station-data se houver
+interface StationFullData extends ChecklistData {
+  id: string; // Adiciona o ID do documento Firestore
 }
+
+const INITIAL_TIMER_SECONDS = 10 * 60; // 10 minutos
 
 export default function SimulationPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
-  const params = useParams(); // Pega o [stationId] da URL
-  const searchParams = useSearchParams(); // Pega o ?role=...
+  const params = useParams();
+  const searchParams = useSearchParams();
 
-  // Extrai os dados da URL
   const stationId = params.stationId as string;
-  const role = searchParams.get('role') || 'candidate';
-  const userId = user?.uid; // Pega o UID do usuário logado
+  const role = searchParams.get('role') || 'candidate'; // Default to candidate
+  const userId = user?.uid;
 
-  // Estados para gerenciar o fluxo da página
-  const [stationData, setStationData] = useState<Station | null>(null);
+  const [stationData, setStationData] = useState<StationFullData | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState('Verificando autenticação...');
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [isConnectedToSocket, setIsConnectedToSocket] = useState(socket.connected);
+
+  const [timer, setTimer] = useState(INITIAL_TIMER_SECONDS);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   // --- EFEITO 1: Proteção da Rota e Busca dos Dados da Estação ---
   useEffect(() => {
-    // Se não estiver carregando a auth e não houver usuário, volta para o login
     if (!isAuthLoading && !user) {
       router.push('/login');
       return;
     }
 
-    // Se temos um usuário e um ID de estação, busca os dados da estação
     if (user && stationId) {
       const fetchStationData = async () => {
         setStatusMessage('Carregando dados da estação...');
         try {
-          const stationRef = doc(db, 'estacoes_clinicas', stationId); // << Lembre-se que sua coleção é "estacoes_clinicas"
+          const stationRef = doc(db, 'estacoes_clinicas', stationId);
           const docSnap = await getDoc(stationRef);
 
           if (docSnap.exists()) {
-            setStationData({ id: docSnap.id, ...docSnap.data() } as Station);
+            // Assume que os dados no Firestore são compatíveis com ChecklistData
+            setStationData({ id: docSnap.id, ...docSnap.data() } as StationFullData);
+            setError(null);
           } else {
             setError(`Estação com ID "${stationId}" não encontrada.`);
+            setStationData(null);
           }
         } catch (err) {
           setError('Falha ao buscar dados da estação.');
           console.error(err);
-        } finally {
-          // Garante que o loading seja falso mesmo em caso de erro, para evitar loop
-          // setIsLoading(false); // Se você tiver um estado isLoading global
+          setStationData(null);
         }
       };
       fetchStationData();
@@ -77,17 +76,15 @@ export default function SimulationPage() {
 
   // --- EFEITO 2: Criação da Sessão e Conexão do Socket ---
   useEffect(() => {
-    // Roda somente se tivermos usuário, dados da estação e ainda não tivermos um sessionId
-    if (user && stationData && !sessionId) {
+    if (user && stationData && !sessionId && !error) { // Só tenta criar sessão se não houver erro no fetch da estação
       const createSessionAndConnect = async () => {
         setStatusMessage('Criando sessão de simulação...');
         try {
           const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-          
-          if (!backendUrl) { // Adicionado verificação para backendUrl
-              setError('Erro: URL do backend não configurada.');
-              console.error('NEXT_PUBLIC_BACKEND_URL não está definida no .env.local');
-              return;
+          if (!backendUrl) {
+            setError('Erro: URL do backend não configurada.');
+            console.error('NEXT_PUBLIC_BACKEND_URL não está definida no .env.local');
+            return;
           }
 
           const response = await fetch(`${backendUrl}/api/create-session`, {
@@ -95,116 +92,247 @@ export default function SimulationPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               stationId: stationData.id,
-              checklistId: stationData.checklistDocId || 'default-checklist', // Usa o ID do checklist da estação
+              // checklistId: stationData.checklistDocId || 'default-checklist', // Se você tiver um checklistId separado
             }),
           });
 
-          if (!response.ok) throw new Error('Falha ao criar sessão no backend.');
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Falha ao criar sessão no backend.');
+          }
 
           const session = await response.json();
           setSessionId(session.sessionId);
 
-          // Configura os dados para a conexão do socket
           socket.auth = {
             sessionId: session.sessionId,
             userId,
             role,
             stationId: stationData.id,
+            nickname: user.displayName || 'Usuário Anônimo'
           };
-
-          // Conecta o socket
           socket.connect();
 
         } catch (err) {
-          setError('Falha ao criar a sessão de simulação.');
+          setError((err as Error).message || 'Falha ao criar a sessão de simulação.');
           console.error(err);
-        } finally {
-          // setIsLoading(false); // Se você tiver um estado isLoading global
         }
       };
       createSessionAndConnect();
     }
-  }, [user, stationData, sessionId, userId, role]); // Dependências deste efeito
+  }, [user, stationData, sessionId, userId, role, error]);
 
-  // --- EFEITO 3: Configuração dos Ouvintes (Listeners) do Socket ---
+  // --- EFEITO 3: Listeners do Socket e Timer ---
   useEffect(() => {
     function onConnect() {
-      setStatusMessage('Conectado à simulação!');
-      setIsConnected(true);
+      setStatusMessage(`Conectado à simulação! Sessão: ${socket.auth?.sessionId}`);
+      setIsConnectedToSocket(true);
+      socket.emit('joinSession', { sessionId: socket.auth?.sessionId, userId, role });
     }
-    function onDisconnect() {
-      setStatusMessage('Desconectado da simulação.');
-      setIsConnected(false);
+    function onDisconnect(reason: string) {
+      setStatusMessage(`Desconectado da simulação: ${reason}`);
+      setIsConnectedToSocket(false);
+    }
+    function onSessionError(data: { message: string }) {
+      setError(`Erro na sessão: ${data.message}`);
+    }
+    // Exemplo de listener para atualização do timer vindo do servidor
+    function onTimerUpdate(data: { remainingSeconds: number, running: boolean }) {
+      setTimer(data.remainingSeconds);
+      setIsTimerRunning(data.running);
     }
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('sessionError', onSessionError);
+    socket.on('timerUpdate', onTimerUpdate); // Ouvir atualizações do timer
 
-    // Função de limpeza para remover os listeners quando o componente for desmontado
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
+      socket.off('sessionError', onSessionError);
+      socket.off('timerUpdate', onTimerUpdate);
+      // socket.disconnect(); // Desconectar ao sair da página pode ser uma opção
     };
-  }, []); // Roda apenas uma vez para configurar os listeners
+  }, [userId, role]); // Adicionado userId e role para garantir que o joinSession tenha os dados corretos
+
+  // --- EFEITO 4: Lógica do Timer (se controlado pelo cliente) ---
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+    if (isTimerRunning && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setIsTimerRunning(false);
+      // Adicionar lógica para quando o tempo acaba
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning, timer]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+  };
+
+  const handleToggleTimer = () => {
+    // Em uma implementação real, isso provavelmente emitiria um evento para o servidor
+    // socket.emit('toggleTimer', { sessionId, running: !isTimerRunning });
+    setIsTimerRunning(!isTimerRunning); // Controle local por enquanto
+  };
 
   // --- Renderização ---
-  if (error) {
+  if (isAuthLoading) {
     return (
       <AppLayout>
-        <div className="flex flex-col h-64 items-center justify-center text-red-600">
-          <AlertTriangle className="h-12 w-12 mb-4" />
-          <h2 className="text-xl font-bold">Ocorreu um Erro</h2>
-          <p>{error}</p>
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="ml-4 text-muted-foreground">Verificando autenticação...</p>
         </div>
       </AppLayout>
     );
   }
   
-  // Tela de Carregamento Genérica
-  if (!sessionId || !stationData) {
+  if (error) {
     return (
       <AppLayout>
-        <div className="flex h-64 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <p className="ml-4 text-gray-600">{statusMessage}</p>
+        <div className="flex flex-col h-64 items-center justify-center text-destructive p-4">
+          <AlertTriangle className="h-12 w-12 mb-4" />
+          <h2 className="text-xl font-bold">Ocorreu um Erro</h2>
+          <p className="text-center">{error}</p>
+          <Button onClick={() => router.back()} className="mt-4">Voltar</Button>
         </div>
       </AppLayout>
     );
   }
 
-  // A tela principal da simulação quando tudo está conectado
+  if (!stationData || !sessionId) {
+    return (
+      <AppLayout>
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="ml-4 text-muted-foreground">{statusMessage}</p>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // UI Principal da Simulação
   return (
     <AppLayout>
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <header className="mb-8 p-4 bg-white shadow rounded-lg">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{stationData.title}</h1>
-              <p className="text-gray-500">{stationData.area}</p>
+      <div className="container mx-auto max-w-full px-2 sm:px-4 lg:px-6 py-6">
+        <Card className="mb-6 shadow-md">
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div>
+                <Badge variant="secondary" className="mb-1">{stationData.area}</Badge>
+                <CardTitle className="text-xl md:text-2xl font-bold text-primary">{stationData.title}</CardTitle>
+                <CardDescription>Papel: <span className="font-semibold capitalize">{role}</span> | Sessão: <span className="font-semibold">{sessionId.substring(0,8)}...</span></CardDescription>
+              </div>
+              <div className={`flex items-center space-x-2 p-2 rounded-md text-xs ${isConnectedToSocket ? 'bg-green-100 text-green-700 dark:bg-green-700/20 dark:text-green-300' : 'bg-red-100 text-red-700 dark:bg-red-700/20 dark:text-red-300'}`}>
+                {isConnectedToSocket ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
+                <span>{isConnectedToSocket ? 'Conectado' : 'Desconectado'}</span>
+              </div>
             </div>
-            <div className={`flex items-center space-x-2 p-2 rounded-full ${isConnected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-              {isConnected ? <Wifi className="h-5 w-5" /> : <WifiOff className="h-5 w-5" />}
-              <span className="text-sm font-semibold">{isConnected ? 'Conectado' : 'Desconectado'}</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <h3 className="font-semibold text-gray-800">Resumo do Caso:</h3>
-            <p className="text-gray-600 mt-1">{stationData.caseSummary}</p>
-          </div>
-        </header>
+          </CardHeader>
+          <CardContent>
+            <h3 className="font-semibold text-foreground mb-1">Cenário: {stationData.scenario.title}</h3>
+            <p className="text-sm text-muted-foreground prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: stationData.scenario.description }}/>
+          </CardContent>
+        </Card>
 
-        {/* ÁREA PRINCIPAL DA SIMULAÇÃO */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Coluna do Checklist (para o Candidato/Avaliador) */}
-          <div className="lg:col-span-2 bg-white p-6 shadow rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Checklist da Estação</h2>
-            <p>(Aqui virá a lista de tarefas do checklist interativo)</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Coluna Esquerda/Principal: Checklist (Candidato) ou Instruções (Ator) */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  {role === 'candidate' ? <ClipboardList className="mr-2 h-5 w-5 text-primary"/> : <Users className="mr-2 h-5 w-5 text-primary"/>}
+                  {role === 'candidate' ? 'Checklist da Estação' : 'Instruções do Ator'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {role === 'candidate' && stationData.checklistItems && (
+                  <ul className="space-y-2 text-sm">
+                    {stationData.checklistItems.map((item: ChecklistItem) => (
+                      <li key={item.id} className="p-2 border rounded-md">
+                        <span dangerouslySetInnerHTML={{ __html: item.description }} />
+                         {/* Placeholder para botões de avaliação */}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {role === 'actor' && (
+                   <div className="text-sm prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: stationData.actorInstructions.content }} />
+                )}
+                {!stationData.checklistItems && role === 'candidate' && <p className="text-muted-foreground">Checklist não disponível.</p>}
+              </CardContent>
+            </Card>
+
+            {role === 'candidate' && stationData.printedMaterials && stationData.printedMaterials.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center"><Eye className="mr-2 h-5 w-5 text-primary"/>Materiais Impressos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* Lógica para exibir materiais impressos (o ator os liberaria) */}
+                  <p className="text-muted-foreground text-sm">Materiais impressos aparecerão aqui quando liberados pelo ator.</p>
+                  {stationData.printedMaterials.map((material: PrintedMaterial) => (
+                     <div key={material.id} className="p-2 border rounded-md mt-2">
+                        <p className="font-semibold">{material.title} {material.isLocked ? "(Bloqueado)" : "(Liberado)"}</p>
+                        {!material.isLocked && <div className="text-xs prose prose-xs" dangerouslySetInnerHTML={{__html: material.content}}/>}
+                     </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          {/* Coluna de Ações (para o Ator) e Timer */}
-          <div className="bg-white p-6 shadow rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Painel de Controle</h2>
-            <p>(Aqui virá o timer e os botões para o ator liberar dados)</p>
+          {/* Coluna Direita: Timer e Controles do Ator */}
+          <div className="space-y-6 lg:sticky lg:top-[calc(theme(spacing.16)+theme(spacing.4))] lg:h-fit">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-center text-2xl font-bold text-primary">{formatTime(timer)}</CardTitle>
+                <CardDescription className="text-center">Tempo da Estação</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {role === 'actor' && ( // Apenas o ator controla o timer, ou é sincronizado pelo servidor
+                  <Button onClick={handleToggleTimer} className="w-full" variant={isTimerRunning ? "destructive" : "default"}>
+                    {isTimerRunning ? <PauseCircle className="mr-2 h-4 w-4"/> : <PlayCircle className="mr-2 h-4 w-4"/>}
+                    {isTimerRunning ? 'Pausar Timer' : 'Iniciar Timer'}
+                  </Button>
+                )}
+                 {role === 'candidate' && (
+                   <p className="text-center text-sm text-muted-foreground">{isTimerRunning ? "Tempo correndo..." : "Timer pausado."}</p>
+                 )}
+              </CardContent>
+            </Card>
+
+            {role === 'actor' && stationData.printedMaterials && stationData.printedMaterials.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center"><Eye className="mr-2 h-5 w-5 text-primary"/>Controle de Materiais</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {stationData.printedMaterials.map((material: PrintedMaterial) => (
+                    <Button key={material.id} variant="outline" className="w-full justify-between">
+                      {material.title}
+                      {/* Lógica para botão de liberar/bloquear material */}
+                      <Badge variant={material.isLocked ? "destructive" : "default"}>{material.isLocked ? "Bloqueado" : "Liberado"}</Badge>
+                    </Button>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+             <Card>
+                <CardHeader><CardTitle className="flex items-center"><Users className="mr-2 h-5 w-5"/>Participantes</CardTitle></CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">Usuário: {user?.displayName || user?.email}</p>
+                    {/*  Aqui você listaria outros participantes na sessão */}
+                    <p className="text-sm text-muted-foreground mt-1">Outro participante: Aguardando...</p>
+                </CardContent>
+             </Card>
           </div>
         </div>
       </div>
