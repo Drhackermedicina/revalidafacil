@@ -3,6 +3,10 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "functions": {
+    "source": "server",
+    "runtime": "nodejs22"
+  },
   "hosting": {
     "public": "public",
     "ignore": [
@@ -13,10 +17,7 @@
     "rewrites": [
       {
         "source": "**",
-        "function": {
-          "functionId": "server",
-          "region": "southamerica-east1"
-        }
+        "function": "api"
       }
     ]
   }

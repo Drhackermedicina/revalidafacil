@@ -1,45 +1,23 @@
-# Arquivo: apphosting.yaml (na raiz do seu projeto)
+# Settings for Backend (on Cloud Run).
+# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
+runConfig:
+  minInstances: 0
+  # maxInstances: 100
+  # concurrency: 80
+  # cpu: 1
+  # memoryMiB: 512
 
-# Define as configurações para os backends que você quer publicar.
+# Environment variables and secrets.
+# env:
+  # Configure environment variables.
+  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
+  # - variable: MESSAGE
+  #   value: Hello world!
+  #   availability:
+  #     - BUILD
+  #     - RUNTIME
 
-backends:
-
-# 'id' é um nome que você dá para o seu serviço de backend.
-
-  - id: revalidafacil-backend
-    # 'region' é a localização do servidor.
-    # É importante usar a mesma que você já tem para evitar lentidão.
-    region: southamerica-east1
-    # 'source' é o passo mais crucial: diz ao Firebase onde está o código
-    # do seu backend. Apontamos para a pasta ./server.
-    source: ./server
-    # 'entryPoint' é o comando que o Firebase deve rodar no terminal
-    # para iniciar o seu servidor, depois de instalar as dependências.
-    # Ele vai rodar o script "start" do seu `server/package.json`.
-    entryPoint: npm run start
-
-# Esta seção é para o seu frontend Next.js.
-
-# O Firebase App Hosting é inteligente e geralmente detecta o Next.js
-
-# se ele estiver na raiz, então uma configuração mínima ou nenhuma pode ser necessária aqui.
-
-# Se precisar, seria algo assim, mas por enquanto foque no backend.
-
-# 
-
-# build:
-
-# command: npm install && npm run build
-
-# staticAssets:
-
-# pattern: ".next/static/\*\*"
-
-# rewrites:
-
-# \- source: "\*\*"
-
-# destination: "/index.html" \# ou a configuração de SSR do Next.js
-
-</immersive>
+  # Grant access to secrets in Cloud Secret Manager.
+  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
+  # - variable: MY_SECRET
+  #   secret: mySecretRef
