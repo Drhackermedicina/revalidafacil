@@ -101,3 +101,13 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-headline);
   }
 }
+
+/* Animation for logo pulse */
+@keyframes pulse-logo {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}

@@ -250,7 +250,7 @@ export function SidebarNav() {
                 <Logo
                   width={32}
                   height={32}
-                  className="h-8 w-8 text-accent dark:text-green-400 transition-colors duration-200 ease-in-out"
+                  className="h-8 w-8 text-accent dark:text-green-400 transition-colors duration-200 ease-in-out animate-pulse-logo"
                 />
                 <span className={cn(
                   "font-semibold text-lg transition-colors duration-200 ease-in-out",
