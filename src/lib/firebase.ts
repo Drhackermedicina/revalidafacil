@@ -11,7 +11,7 @@ const firebaseConfig = {
   // IMPORTANT: Replace "YOUR_API_KEY_HERE_FROM_FIREBASE_CONSOLE" with your actual Firebase project API key.
   // You can find this in your Firebase project settings:
   // Project Settings > General > Web API Key
-  apiKey: "YOUR_API_KEY_HERE_FROM_FIREBASE_CONSOLE", // <<< COLOQUE SUA API KEY AQUI
+  apiKey: "AIzaSyDuakOooHv9a5slO0I3o3gttSBlSXD0aWw", // <<< CHAVE DE API ATUALIZADA
   authDomain: "revaida-fcil-app.firebaseapp.com",
   projectId: "revaida-fcil-app",
   storageBucket: "revaida-fcil-app.firebasestorage.app",
@@ -31,3 +31,4 @@ const auth = getAuth(firebaseApp);
 const storage = getStorage(firebaseApp); // Inicializar Firebase Storage
 
 export { firebaseApp, db, auth, storage }; // Exportar storage
+
