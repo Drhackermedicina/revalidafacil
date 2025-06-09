@@ -11,7 +11,10 @@ const firebaseConfig = {
   authDomain: "revaida-fcil-app.firebaseapp.com",
   projectId: "revaida-fcil-app",
   storageBucket: "revaida-fcil-app.firebasestorage.app",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // Lembre-se de substituir se for usar Messaging
+  // Se você for usar o Firebase Cloud Messaging (FCM) no futuro,
+  // substitua "YOUR_MESSAGING_SENDER_ID" pelo valor real do seu projeto.
+  // Isso NÃO afeta a autenticação ou o Firestore.
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
   appId: "1:185404830586:web:c0f8ee056cb153de445cc3"
 };
 
