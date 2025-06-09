@@ -18,7 +18,7 @@ const firebaseConfig = {
   // Se você for usar o Firebase Cloud Messaging (FCM) no futuro,
   // substitua "YOUR_MESSAGING_SENDER_ID" pelo valor real do seu projeto.
   // Isso NÃO afeta a autenticação ou o Firestore.
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // Pode manter ou substituir se for usar FCM
+  messagingSenderId: "185404830586",
   appId: "1:185404830586:web:c0f8ee056cb153de445cc3"
 };
 
@@ -31,4 +31,3 @@ const auth = getAuth(firebaseApp);
 const storage = getStorage(firebaseApp); // Inicializar Firebase Storage
 
 export { firebaseApp, db, auth, storage }; // Exportar storage
-
