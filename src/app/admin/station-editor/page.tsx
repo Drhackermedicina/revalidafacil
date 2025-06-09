@@ -4,6 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useState } from "react"; // Adicionado useState
 import AppLayout from "@/components/layout/app-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,8 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { FilePlus2, UserCog, FileText, ListChecks, Info } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"; // Removido CardFooter não usado aqui diretamente
+import { FilePlus2, UserCog, FileText, ListChecks, Info, Save, Loader2 } from "lucide-react"; // Adicionado Save, Loader2
+import { useToast } from "@/hooks/use-toast"; // Adicionado useToast
+import { db } from "@/lib/firebase"; // Adicionado db
+import { doc, setDoc } from "firebase/firestore"; // Adicionado setDoc, doc
+import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data'; // Adicionado tipos
 
 // Zod schema for station fields
 const stationFormSchema = z.object({
@@ -44,7 +49,6 @@ const stationFormSchema = z.object({
 
 type StationFormValues = z.infer<typeof stationFormSchema>;
 
-// Medical areas for the select component
 const medicalAreas = [
   { name: "Clínica Médica", displayName: "Clínica Médica" },
   { name: "Cirurgia", displayName: "Cirurgia" },
@@ -54,6 +58,9 @@ const medicalAreas = [
 ];
 
 export default function StationEditorPage() {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<StationFormValues>({
     resolver: zodResolver(stationFormSchema),
     defaultValues: {
@@ -66,13 +73,78 @@ export default function StationEditorPage() {
       printedMaterialsDescription: "",
       pepItemsDescription: "",
     },
-    mode: "onChange", 
+    mode: "onChange",
   });
 
-  function onSubmit(data: StationFormValues) {
-    console.log("Dados da Estação:", data);
-    alert("Estação 'salva' no console! Verifique o console do navegador.");
-    // form.reset(); // Optionally reset the form
+  async function onSubmit(data: StationFormValues) {
+    setIsLoading(true);
+    try {
+      const printedMaterials: PrintedMaterial[] = [];
+      if (data.printedMaterialsDescription && data.printedMaterialsDescription.trim() !== "") {
+        printedMaterials.push({
+          id: `editor-pm-${data.code}-1`,
+          title: "Material Impresso Principal (Editor)",
+          content: data.printedMaterialsDescription,
+          isLocked: false, // Default para desbloqueado
+        });
+      }
+
+      const checklistItems: ChecklistItem[] = [];
+      if (data.pepItemsDescription && data.pepItemsDescription.trim() !== "") {
+        // Simplificação: cria um item de checklist geral com a descrição fornecida.
+        // Uma UI mais complexa seria necessária para criar múltiplos itens estruturados.
+        checklistItems.push({
+          id: `editor-pep-${data.code}-1`,
+          description: data.pepItemsDescription,
+          points: { inadequate: 0, partial: 0.5, adequate: 1 }, // Pontos de exemplo
+          type: "geral", // Tipo genérico
+          observation: "Item gerado pelo editor de estações.",
+        });
+      }
+
+      // Mapeando para uma estrutura mais próxima de ChecklistData
+      const stationDoc: Partial<ChecklistData> & { code: string; editorVersion?: number } = {
+        code: data.code, // Usado como ID do documento
+        title: data.title,
+        area: data.area,
+        scenario: {
+          title: data.scenarioTitle,
+          description: data.scenarioDescription,
+        },
+        actorInstructions: {
+          title: "Instruções para o Ator/Atriz (Editor)", // Título padrão
+          content: data.actorInstructions,
+        },
+        // Tarefas, Referências, Flashcards seriam vazios ou com placeholders
+        tasks: { title: "Tarefas (Editor)", timeLimit: "10 minutos", items: ["Realizar anamnese", "Realizar exame físico", "Definir diagnóstico e conduta"] },
+        printedMaterials: printedMaterials,
+        checklistItems: checklistItems,
+        references: [{ text: "Referências a serem adicionadas (Editor)", url: "#" }],
+        flashcards: [],
+        editorVersion: 1, // Para identificar que foi criado/editado aqui
+        // Adicionar um timestamp
+        lastUpdatedAt: new Date().toISOString(),
+      };
+
+      await setDoc(doc(db, "estacoes_clinicas", data.code), stationDoc, { merge: true });
+
+      toast({
+        title: "Estação Salva!",
+        description: `A estação "${data.title}" foi salva com sucesso no Firestore.`,
+        variant: "default",
+      });
+      // form.reset(); // Descomente se quiser resetar o formulário após salvar
+
+    } catch (error) {
+      console.error("Erro ao salvar estação:", error);
+      toast({
+        title: "Erro ao Salvar",
+        description: (error as Error).message || "Ocorreu um problema ao salvar a estação.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -95,7 +167,7 @@ export default function StationEditorPage() {
           <CardContent className="pt-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                
+
                 <div className="space-y-4 p-4 border rounded-md shadow-sm">
                   <h3 className="text-lg font-medium text-primary flex items-center">
                     <Info className="mr-2 h-5 w-5" />
@@ -108,7 +180,7 @@ export default function StationEditorPage() {
                       <FormItem>
                         <FormLabel>Título da Estação</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: Atendimento ao Politraumatizado" {...field} />
+                          <Input placeholder="Ex: Atendimento ao Politraumatizado" {...field} disabled={isLoading} />
                         </FormControl>
                         <FormDescription>O nome principal da estação clínica.</FormDescription>
                         <FormMessage />
@@ -122,7 +194,7 @@ export default function StationEditorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Área Médica</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione a área médica" />
@@ -147,9 +219,9 @@ export default function StationEditorPage() {
                         <FormItem>
                           <FormLabel>Código da Estação</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ex: politrauma-adulto-cm" {...field} />
+                            <Input placeholder="Ex: politrauma-adulto-cm" {...field} disabled={isLoading} />
                           </FormControl>
-                          <FormDescription>Identificador único (letras minúsculas, números, hífens).</FormDescription>
+                          <FormDescription>Identificador único (letras minúsculas, números, hífens). Será o ID no Firestore.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -169,7 +241,7 @@ export default function StationEditorPage() {
                       <FormItem>
                         <FormLabel>Título do Cenário</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: Paciente vítima de colisão automobilística" {...field} />
+                          <Input placeholder="Ex: Paciente vítima de colisão automobilística" {...field} disabled={isLoading} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -186,6 +258,7 @@ export default function StationEditorPage() {
                             placeholder="Descreva a situação inicial do paciente, ambiente, queixas, etc."
                             className="min-h-[120px]"
                             {...field}
+                            disabled={isLoading}
                           />
                         </FormControl>
                         <FormDescription>Este texto será apresentado ao participante no início da estação.</FormDescription>
@@ -211,6 +284,7 @@ export default function StationEditorPage() {
                             placeholder="Descreva o comportamento esperado, falas específicas, história pregressa, etc."
                             className="min-h-[150px]"
                             {...field}
+                            disabled={isLoading}
                           />
                         </FormControl>
                         <FormDescription>Estas são as instruções completas para o paciente simulado.</FormDescription>
@@ -219,11 +293,11 @@ export default function StationEditorPage() {
                     )}
                   />
                 </div>
-                
+
                 <div className="space-y-4 p-4 border rounded-md shadow-sm">
                   <h3 className="text-lg font-medium text-primary flex items-center">
                     <FileText className="mr-2 h-5 w-5" />
-                    Materiais Impressos Disponíveis
+                    Materiais Impressos Disponíveis (Descrição Textual)
                   </h3>
                   <FormField
                     control={form.control}
@@ -233,13 +307,14 @@ export default function StationEditorPage() {
                         <FormLabel>Descrição dos Materiais</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Descreva cada material impresso. Ex: 'Título: ECG do Paciente | Conteúdo: Ritmo sinusal... | Imagem: ecg_normal.png | Bloqueado: Sim'. Separe múltiplos materiais com uma linha em branco ou numeração."
+                            placeholder="Descreva os materiais impressos textualmente. Para uma estrutura completa, use a criação por template ou edite o JSON. Ex: 'ECG: Ritmo sinusal...' "
                             className="min-h-[120px]"
                             {...field}
+                            disabled={isLoading}
                           />
                         </FormControl>
                         <FormDescription>
-                          Liste e descreva os materiais que serão disponibilizados. No futuro, poderá anexar imagens diretamente.
+                          Uma descrição textual. Para múltiplos materiais estruturados, considere editar o JSON no Storage após salvar.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -250,7 +325,7 @@ export default function StationEditorPage() {
                 <div className="space-y-4 p-4 border rounded-md shadow-sm">
                   <h3 className="text-lg font-medium text-primary flex items-center">
                     <ListChecks className="mr-2 h-5 w-5" />
-                    Padrão Esperado de Procedimento (PEP) / Itens de Checklist
+                    Padrão Esperado de Procedimento (PEP) / Itens de Checklist (Descrição Textual)
                   </h3>
                   <FormField
                     control={form.control}
@@ -260,25 +335,38 @@ export default function StationEditorPage() {
                         <FormLabel>Itens do Checklist</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Liste cada item do checklist. Ex: 'Descrição: Realizou higiene das mãos | Pontos(I/P/A): 0/0.5/1 | Tipo: ac | Observação: (opcional)'. Separe múltiplos itens com uma linha em branco ou numeração."
+                            placeholder="Liste os itens do checklist textualmente. Para uma estrutura completa com pontuações, use a criação por template ou edite o JSON. Ex: '1. Higienizou as mãos. 2. Apresentou-se ao paciente...'"
                             className="min-h-[200px]"
                             {...field}
+                            disabled={isLoading}
                           />
                         </FormControl>
                         <FormDescription>
-                          Detalhe cada item que será avaliado, incluindo descrição, critérios de pontuação (Inadequado/Parcial/Adequado) e o tipo de ação.
+                          Uma descrição textual dos itens. A estrutura detalhada de pontuação não é capturada aqui.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                
+
                 <div className="p-4 border border-dashed rounded-md text-center text-muted-foreground">
-                  <p>Campos para Tarefas, Flashcards e Referências serão adicionados em futuras interações.</p>
+                  <p>Campos detalhados para Tarefas, Flashcards e Referências podem ser adicionados editando o JSON no Storage ou via template.</p>
                 </div>
 
-                <Button type="submit" className="w-full md:w-auto">Salvar Estação (Log no Console)</Button>
+                <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar Estação no Firestore
+                    </>
+                  )}
+                </Button>
               </form>
             </Form>
           </CardContent>
