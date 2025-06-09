@@ -109,7 +109,7 @@ export default function PenseChecklistsPage() {
             </CardTitle>
             <CardDescription>
               Acesse nossas estações práticas simuladas para treinar suas habilidades para o Revalida.
-              Filtre por área ou navegue por todas as estações disponíveis. Os dados são carregados do Firestore.
+              Filtre por área ou navegue por todas as estações disponíveis.
             </CardDescription>
           </CardHeader>
         </Card>
