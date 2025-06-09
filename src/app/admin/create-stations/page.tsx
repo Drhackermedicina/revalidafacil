@@ -49,63 +49,76 @@ const CreateStationFromTemplatePage = () => {
     }
 
     setIsLoading(true);
+    let generatedStationId = '';
 
     try {
       const newStationData = JSON.parse(JSON.stringify(stationTemplate));
-      const stationId = generateStationId(selectedArea, stationName);
+      generatedStationId = generateStationId(selectedArea, stationName);
 
       // Populate the template with form data
-      newStationData.id = stationId; // stationId used as code in some contexts
-      newStationData.title = stationName; // User-friendly title
-      newStationData.area = selectedArea; // Area médica
-      newStationData.especialidade = selectedArea; // Keeping for compatibility if template uses it
+      newStationData.id = generatedStationId; 
+      newStationData.title = stationName; 
+      newStationData.area = selectedArea; 
+      newStationData.especialidade = selectedArea; 
       
-      newStationData.nomeEstacao = stationName; // Custom field for display name
+      newStationData.nomeEstacao = stationName; 
       newStationData.instrucoesParticipante.descricaoCompletaCaso = `Paciente com quadro clínico sugestivo de ${stationName}. Detalhes a serem preenchidos.`;
       newStationData.palavrasChave = [stationName, selectedArea, "modelo", ...newStationData.palavrasChave.slice(0,2)];
 
-      // 1. Save to Firebase Storage (as JSON file)
       const stationJsonString = JSON.stringify(newStationData, null, 2);
       const areaSlug = selectedArea.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-      const filePath = `estacoes_modelos_geradas/${areaSlug}/${stationId}.json`;
+      const filePath = `estacoes_modelos_geradas/${areaSlug}/${generatedStationId}.json`;
       const storageRef = ref(storage, filePath);
       await uploadString(storageRef, stationJsonString, 'raw', { contentType: 'application/json' });
       
-      // 2. Save to Firestore (document in 'revalidafacio' collection)
       const firestoreStationDoc = {
-        code: stationId, 
+        code: generatedStationId, 
         title: stationName,
         area: selectedArea,
         scenario: {
-          title: newStationData.instrucoesParticipante.descricaoCompletaCaso.substring(0, 100) + "..." 
+          title: newStationData.instrucoesParticipante.descricaoCompletaCaso.substring(0, 100) + "...",
+          description: newStationData.instrucoesParticipante.descricaoCompletaCaso,
         },
-        ...newStationData 
+        actorInstructions: {
+          title: "Instruções para o Ator/Atriz (Modelo)",
+          content: "Instruções detalhadas para o ator/atriz devem ser preenchidas aqui.",
+        },
+        tasks: {
+            title: "Tarefas do Candidato (Modelo)",
+            timeLimit: "10 minutos",
+            items: ["Realizar anamnese", "Realizar exame físico", "Definir diagnóstico e conduta"],
+        },
+        printedMaterials: [],
+        checklistItems: [],
+        references: [{ text: "Referências a serem adicionadas (Modelo)", url: "#" }],
+        flashcards: [],
+        // ...newStationData // Spread other fields from the template if needed, but ensure it matches editor structure
       };
-      await setDoc(doc(db, "revalidafacio", stationId), firestoreStationDoc);
+      await setDoc(doc(db, "revalidafacio", generatedStationId), firestoreStationDoc);
       
       toast({
-        title: "Estação Gerada e Salva!",
-        description: `Modelo para "${stationName}" salvo no Storage e Firestore.`,
+        title: "Estação Gerada!",
+        description: `Modelo para "${stationName}" criado. Redirecionando para edição...`,
         variant: "default",
       });
-      console.log('Estação Gerada:', newStationData);
-      console.log('Salva no Firebase Storage em:', filePath);
-      console.log('Salva no Firestore na coleção "revalidafacio" com ID:', stationId);
+      
+      // Redirect to the station editor page with the new station's ID
+      router.push(`/admin/station-editor?stationId=${generatedStationId}`);
 
-      setStationName('');
-      setSelectedArea(undefined);
+      // No longer clearing fields here as we redirect
+      // setStationName('');
+      // setSelectedArea(undefined);
 
-    } catch (error)
-     {
+    } catch (error) {
       console.error('Erro ao gerar ou salvar estação:', error);
       toast({
         title: "Erro ao Salvar",
         description: (error as Error).message || "Ocorreu um problema ao salvar o modelo da estação.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Only set isLoading to false on error, as redirect handles success
     }
+    // setIsLoading(false); // Removed from here, handled in error or by redirect
   };
 
   return (
@@ -117,8 +130,8 @@ const CreateStationFromTemplatePage = () => {
             Criar Modelo de Estação
           </CardTitle>
           <CardDescription>
-            Preencha os campos abaixo para gerar um novo modelo de estação clínica.
-            Será salvo um arquivo JSON no Storage e um documento no Firestore.
+            Preencha os campos abaixo para gerar um novo modelo.
+            Ele será salvo e você será redirecionado para o editor.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -162,7 +175,7 @@ const CreateStationFromTemplatePage = () => {
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                Gerar e Salvar Estação
+                Gerar e Ir para Editor
               </>
             )}
           </Button>

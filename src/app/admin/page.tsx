@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button'; // ShadCN Button
-import { FilePlus2, Edit } from 'lucide-react'; // Ícones
+import { Button } from '@/components/ui/button'; 
+import { FilePlus2, Edit } from 'lucide-react'; 
 
 const AdminPage: React.FC = () => {
   return (
@@ -9,18 +9,13 @@ const AdminPage: React.FC = () => {
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <CardLink
-          href="/admin/create-station-template"
+          href="/admin/create-stations" // Updated href to reflect the new page name
           icon={<FilePlus2 className="h-8 w-8 text-primary" />}
-          title="Criar Modelo de Estação"
-          description="Gere um novo modelo de estação clínica a partir de um gabarito."
+          title="Criar Nova Estação"
+          description="Gere um novo modelo de estação clínica e edite-o em seguida."
         />
-        <CardLink
-          href="/admin/station-editor"
-          icon={<Edit className="h-8 w-8 text-primary" />}
-          title="Editor de Estações"
-          description="Acesse o editor avançado para modificar ou criar estações detalhadas."
-        />
-        {/* Adicione mais cards de links para outras ferramentas administrativas aqui */}
+        {/* O CardLink para o Editor de Estações foi removido daqui */}
+        {/* Adicione mais cards de links para outras ferramentas administrativas aqui, se necessário */}
       </div>
     </div>
   );

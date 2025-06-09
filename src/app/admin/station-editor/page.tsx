@@ -4,7 +4,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react"; // Added Suspense
+import { useSearchParams } from 'next/navigation'; // Added useSearchParams
 import AppLayout from "@/components/layout/app-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,10 +27,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { FilePlus2, UserCog, FileText, ListChecks, Info, Save, Loader2, ClipboardList } from "lucide-react";
+import { FilePlus2, UserCog, FileText, ListChecks, Info, Save, Loader2, ClipboardList, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore"; // Added getDoc
 import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data';
 import { goEditorTemplate } from "@/lib/station-data/editor-templates/go-template";
 import { pediatricsEditorTemplate } from "@/lib/station-data/editor-templates/pediatrics-template";
@@ -38,7 +39,6 @@ import { surgeryEditorTemplate } from "@/lib/station-data/editor-templates/surge
 import { clinicalMedicineEditorTemplate } from "@/lib/station-data/editor-templates/clinical-medicine-template";
 
 
-// Zod schema for station fields
 const stationFormSchema = z.object({
   title: z.string().min(5, { message: "O título deve ter pelo menos 5 caracteres." }),
   area: z.enum(["Clínica Médica", "Cirurgia", "G.O", "Pediatria", "Preventiva"], {
@@ -76,9 +76,12 @@ const initialStationValues: StationFormValues = {
   pepItemsDescription: "",
 };
 
-export default function StationEditorPage() {
+function StationEditorContent() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingStation, setIsLoadingStation] = useState(false);
+  const searchParams = useSearchParams();
+  const stationIdFromQuery = searchParams.get('stationId');
 
   const form = useForm<StationFormValues>({
     resolver: zodResolver(stationFormSchema),
@@ -89,30 +92,75 @@ export default function StationEditorPage() {
   const selectedArea = form.watch("area");
 
   useEffect(() => {
+    const loadStationData = async (stationId: string) => {
+      setIsLoadingStation(true);
+      try {
+        const stationRef = doc(db, "revalidafacio", stationId);
+        const docSnap = await getDoc(stationRef);
+
+        if (docSnap.exists()) {
+          const stationData = docSnap.data() as Partial<ChecklistData> & { code: string; title: string; area: string };
+          form.reset({
+            title: stationData.title || "",
+            area: stationData.area as any || undefined,
+            code: stationData.code || stationId,
+            scenarioTitle: stationData.scenario?.title || "",
+            scenarioDescription: stationData.scenario?.description || "",
+            actorInstructions: stationData.actorInstructions?.content || "",
+            candidateTasksDescription: stationData.tasks?.items?.join('\n') || "",
+            printedMaterialsDescription: stationData.printedMaterials?.[0]?.content || "",
+            pepItemsDescription: stationData.checklistItems?.map(item => item.description).join('\n') || "",
+          });
+          toast({
+            title: "Estação Carregada",
+            description: `Estação "${stationData.title}" pronta para edição.`,
+            variant: "default"
+          });
+        } else {
+          toast({
+            title: "Erro ao Carregar",
+            description: `Estação com ID "${stationId}" não encontrada.`,
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao buscar estação:", error);
+        toast({
+          title: "Erro ao Carregar Estação",
+          description: (error as Error).message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingStation(false);
+      }
+    };
+
+    if (stationIdFromQuery) {
+      loadStationData(stationIdFromQuery);
+    }
+  }, [stationIdFromQuery, form, toast]);
+
+
+  useEffect(() => {
+    if (stationIdFromQuery && !isLoadingStation) return; // Don't apply template if loading a specific station
+
     const currentValues = form.getValues();
     let templateToApply = null;
 
-    if (selectedArea === "G.O") {
-      templateToApply = goEditorTemplate;
-    } else if (selectedArea === "Pediatria") {
-      templateToApply = pediatricsEditorTemplate;
-    } else if (selectedArea === "Preventiva") {
-      templateToApply = preventiveEditorTemplate;
-    } else if (selectedArea === "Cirurgia") {
-      templateToApply = surgeryEditorTemplate;
-    } else if (selectedArea === "Clínica Médica") {
-      templateToApply = clinicalMedicineEditorTemplate;
-    }
-
+    if (selectedArea === "G.O") templateToApply = goEditorTemplate;
+    else if (selectedArea === "Pediatria") templateToApply = pediatricsEditorTemplate;
+    else if (selectedArea === "Preventiva") templateToApply = preventiveEditorTemplate;
+    else if (selectedArea === "Cirurgia") templateToApply = surgeryEditorTemplate;
+    else if (selectedArea === "Clínica Médica") templateToApply = clinicalMedicineEditorTemplate;
 
     if (templateToApply) {
       form.reset({
-        title: currentValues.title, // Preserve user-entered title
-        code: currentValues.code,   // Preserve user-entered code
-        area: selectedArea,         // Keep selected area
-        ...templateToApply,         // Apply template for other fields
+        title: currentValues.title, 
+        code: currentValues.code,   
+        area: selectedArea,         
+        ...templateToApply,         
       });
-    } else if (selectedArea) { // Reset fields if an area is selected but no template exists (or for fallback)
+    } else if (selectedArea && !stationIdFromQuery) { 
       form.reset({
         title: currentValues.title,
         code: currentValues.code,
@@ -125,8 +173,8 @@ export default function StationEditorPage() {
         pepItemsDescription: "",
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedArea, form.reset]); // form.reset was added to dependency array
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedArea, form.reset, stationIdFromQuery, isLoadingStation]); 
 
 
   async function onSubmit(data: StationFormValues) {
@@ -138,21 +186,19 @@ export default function StationEditorPage() {
           id: `editor-pm-${data.code}-1`,
           title: "Material Impresso Principal (Editor)",
           content: data.printedMaterialsDescription,
-          isLocked: false, // Default to unlocked from editor
+          isLocked: false, 
         });
       }
 
       const checklistItems: ChecklistItem[] = [];
       if (data.pepItemsDescription && data.pepItemsDescription.trim() !== "") {
-        // Basic parsing of PEP items, assuming one item per line
-        // A more robust solution would involve a structured input method for PEP items
         const pepDescriptions = data.pepItemsDescription.split('\n').filter(line => line.trim() !== "");
         pepDescriptions.forEach((desc, index) => {
           checklistItems.push({
             id: `editor-pep-${data.code}-${index + 1}`,
             description: desc,
-            points: { inadequate: 0, partial: 0.5, adequate: 1 }, // Default points
-            type: "geral", // Default type
+            points: { inadequate: 0, partial: 0.5, adequate: 1 }, 
+            type: "geral", 
             observation: "Item gerado pelo editor de estações.",
           });
         });
@@ -161,7 +207,6 @@ export default function StationEditorPage() {
       const taskItems = data.candidateTasksDescription
         ? data.candidateTasksDescription.split('\n').map(task => task.trim()).filter(task => task)
         : ["Realizar anamnese", "Realizar exame físico", "Definir diagnóstico e conduta"];
-
 
       const stationDoc: Partial<ChecklistData> & { code: string; title: string; area: string; editorVersion?: number; lastUpdatedAt?: string; } = {
         code: data.code,
@@ -177,14 +222,14 @@ export default function StationEditorPage() {
         },
         tasks: {
           title: "Tarefas do Candidato (Editor)",
-          timeLimit: "10 minutos", // Default time limit
+          timeLimit: "10 minutos", 
           items: taskItems,
         },
         printedMaterials: printedMaterials,
         checklistItems: checklistItems,
-        references: [{ text: "Referências a serem adicionadas (Editor)", url: "#" }], // Placeholder
-        flashcards: [], // Placeholder
-        editorVersion: 1, // Versioning for editor-created stations
+        references: [{ text: "Referências a serem adicionadas (Editor)", url: "#" }], 
+        flashcards: [], 
+        editorVersion: 1, 
         lastUpdatedAt: new Date().toISOString(),
       };
 
@@ -196,9 +241,6 @@ export default function StationEditorPage() {
         variant: "default",
       });
       
-      // Optionally reset form or redirect
-      // form.reset(initialStationValues); 
-
     } catch (error) {
       console.error("Erro ao salvar estação:", error);
       toast({
@@ -211,18 +253,26 @@ export default function StationEditorPage() {
     }
   }
 
+  if (isLoadingStation) {
+    return (
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground">Carregando dados da estação...</p>
+        </div>
+    );
+  }
+
   return (
     <AppLayout>
       <div className="space-y-6">
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold font-headline flex items-center">
-              <FilePlus2 className="mr-3 h-7 w-7 text-primary" />
+              <Edit className="mr-3 h-7 w-7 text-primary" /> {/* Changed Icon */}
               Editor de Estações Clínicas
             </CardTitle>
             <CardDescription>
-              Crie ou modifique estações para treinamento de habilidades clínicas.
-              Selecionar uma Área Médica (G.O, Pediatria, Preventiva, Cirurgia, Clínica Médica) preencherá um modelo correspondente.
+              Crie ou modifique estações para treinamento. {stationIdFromQuery ? `Editando: ${form.getValues('title') || stationIdFromQuery}` : "Selecionar uma Área Médica preencherá um modelo."}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -244,7 +294,7 @@ export default function StationEditorPage() {
                       <FormItem>
                         <FormLabel>Título da Estação</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: Atendimento ao Politraumatizado" {...field} disabled={isLoading} />
+                          <Input placeholder="Ex: Atendimento ao Politraumatizado" {...field} disabled={isLoading || isLoadingStation} />
                         </FormControl>
                         <FormDescription>O nome principal da estação clínica.</FormDescription>
                         <FormMessage />
@@ -258,7 +308,7 @@ export default function StationEditorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Área Médica</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value || ""} disabled={isLoading}>
+                          <Select onValueChange={field.onChange} value={field.value || ""} disabled={isLoading || isLoadingStation}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione a área médica" />
@@ -283,9 +333,9 @@ export default function StationEditorPage() {
                         <FormItem>
                           <FormLabel>Código da Estação</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ex: politrauma-adulto-cm" {...field} disabled={isLoading} />
+                            <Input placeholder="Ex: politrauma-adulto-cm" {...field} disabled={isLoading || isLoadingStation || !!stationIdFromQuery} />
                           </FormControl>
-                          <FormDescription>Identificador único (letras minúsculas, números, hífens). Será o ID no Firestore.</FormDescription>
+                          <FormDescription>Identificador único (letras minúsculas, números, hífens). Será o ID no Firestore. {!!stationIdFromQuery && "(Não editável para estações existentes)"}</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -305,7 +355,7 @@ export default function StationEditorPage() {
                       <FormItem>
                         <FormLabel>Título do Cenário</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: Paciente vítima de colisão automobilística" {...field} disabled={isLoading} />
+                          <Input placeholder="Ex: Paciente vítima de colisão automobilística" {...field} disabled={isLoading || isLoadingStation} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -322,7 +372,7 @@ export default function StationEditorPage() {
                             placeholder="Descreva a situação inicial do paciente, ambiente, queixas, etc."
                             className="min-h-[120px]"
                             {...field}
-                            disabled={isLoading}
+                            disabled={isLoading || isLoadingStation}
                           />
                         </FormControl>
                         <FormDescription>Este texto será apresentado ao participante no início da estação.</FormDescription>
@@ -348,7 +398,7 @@ export default function StationEditorPage() {
                             placeholder="Descreva o comportamento esperado, falas específicas, história pregressa, etc."
                             className="min-h-[150px]"
                             {...field}
-                            disabled={isLoading}
+                            disabled={isLoading || isLoadingStation}
                           />
                         </FormControl>
                         <FormDescription>Estas são as instruções completas para o paciente simulado.</FormDescription>
@@ -374,7 +424,7 @@ export default function StationEditorPage() {
                             placeholder="Liste as tarefas que o candidato deve realizar, uma por linha. Ex:&#10;1. Realizar anamnese completa.&#10;2. Efetuar exame físico direcionado.&#10;3. Solicitar exames complementares."
                             className="min-h-[120px]"
                             {...field}
-                            disabled={isLoading}
+                            disabled={isLoading || isLoadingStation}
                           />
                         </FormControl>
                         <FormDescription>
@@ -402,7 +452,7 @@ export default function StationEditorPage() {
                             placeholder="Descreva os materiais impressos textualmente. Para uma estrutura completa, use a criação por template ou edite o JSON. Ex: 'ECG: Ritmo sinusal...' "
                             className="min-h-[120px]"
                             {...field}
-                            disabled={isLoading}
+                            disabled={isLoading || isLoadingStation}
                           />
                         </FormControl>
                         <FormDescription>
@@ -430,7 +480,7 @@ export default function StationEditorPage() {
                             placeholder="Liste os itens do checklist textualmente. Para uma estrutura completa com pontuações, use a criação por template ou edite o JSON. Ex: '1. Higienizou as mãos. 2. Apresentou-se ao paciente...'"
                             className="min-h-[200px]"
                             {...field}
-                            disabled={isLoading}
+                            disabled={isLoading || isLoadingStation}
                           />
                         </FormControl>
                         <FormDescription>
@@ -446,7 +496,7 @@ export default function StationEditorPage() {
                   <p>Campos detalhados para Flashcards e Referências podem ser adicionados editando o JSON no Storage ou via template.</p>
                 </div>
 
-                <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
+                <Button type="submit" className="w-full md:w-auto" disabled={isLoading || isLoadingStation}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -465,5 +515,21 @@ export default function StationEditorPage() {
         </Card>
       </div>
     </AppLayout>
+  );
+}
+
+// Suspense wrapper for pages using useSearchParams
+export default function StationEditorPage() {
+  return (
+    <Suspense fallback={
+        <AppLayout>
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
+                <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground">Carregando editor...</p>
+            </div>
+        </AppLayout>
+    }>
+      <StationEditorContent />
+    </Suspense>
   );
 }
