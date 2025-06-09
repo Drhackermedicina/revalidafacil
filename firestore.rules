@@ -2,11 +2,22 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permite que qualquer usuário autenticado leia e escreva em qualquer documento.
-    // Para produção, você deve restringir isso ainda mais com base nas suas necessidades.
-    // Exemplo: permitir que um usuário leia/escreva apenas seus próprios dados.
+
+    // Coleção para estações clínicas/modelos
+    match /estacoes_clinicas/{stationId} {
+      // Qualquer um pode ler as estações (para a listagem)
+      allow read: if true;
+      // Apenas usuários autenticados podem criar, atualizar ou deletar estações.
+      // Para um controle mais granular, você pode adicionar: if request.auth.uid == 'SEU_ADMIN_UID';
+      // ou verificar um custom claim de admin: if request.auth.token.admin == true;
+      allow write: if request.auth != null;
+    }
+
+    // Regra padrão para bloquear todos os outros acessos não especificados.
+    // IMPORTANTE: Certifique-se de que outras coleções que seu app possa usar
+    // tenham suas próprias regras explícitas, ou serão bloqueadas por esta.
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }

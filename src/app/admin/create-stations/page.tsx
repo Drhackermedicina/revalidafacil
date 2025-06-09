@@ -9,12 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { FilePlus2, Save } from 'lucide-react';
+import { FilePlus2, Save, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// Firebase Storage imports
+// Firebase imports
 import { getStorage, ref, uploadString } from "firebase/storage";
-import { storage } from '@/lib/firebase'; // Ensure storage is exported from your firebase config
+import { doc, setDoc } from "firebase/firestore"; // Firestore imports
+import { storage, db } from '@/lib/firebase'; // Ensure storage and db are exported
 
 const medicalAreas = [
   "Clínica Médica",
@@ -34,7 +35,7 @@ const CreateStationFromTemplatePage = () => {
   const generateStationId = (area: string, name: string) => {
     const areaSlug = area.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     const nameSlug = name.toLowerCase().replace(/[^a-z0-9áéíóúàèìòùâêîôûãõç]+/gi, '-').replace(/^-+|-+$/g, '');
-    return `${areaSlug}-${nameSlug}`;
+    return `${areaSlug}-${nameSlug}-${Date.now().toString().slice(-5)}`; // Add timestamp for uniqueness
   };
 
   const handleGenerateAndSaveStation = async () => {
@@ -50,46 +51,60 @@ const CreateStationFromTemplatePage = () => {
     setIsLoading(true);
 
     try {
-      // 1. Create a deep copy of the template
-      const newStation = JSON.parse(JSON.stringify(stationTemplate));
-
-      // 2. Populate the template with form data
+      const newStationData = JSON.parse(JSON.stringify(stationTemplate));
       const stationId = generateStationId(selectedArea, stationName);
-      newStation.id = stationId;
-      newStation.especialidade = selectedArea;
+
+      // Populate the template with form data
+      newStationData.id = stationId; // stationId used as code in some contexts
+      newStationData.title = stationName; // User-friendly title
+      newStationData.area = selectedArea; // Area médica
+      newStationData.especialidade = selectedArea; // Keeping for compatibility if template uses it
       
-      // Add/Update a title field for easier identification, if not already in template
-      // For example, directly in the root or within instrucoesParticipante
-      newStation.nomeEstacao = stationName; // Custom field for display name
-      newStation.instrucoesParticipante.descricaoCompletaCaso = `Paciente com quadro clínico sugestivo de ${stationName}. Detalhes a serem preenchidos.`;
-      newStation.palavrasChave = [stationName, selectedArea, "modelo", ...newStation.palavrasChave.slice(0,2)];
+      newStationData.nomeEstacao = stationName; // Custom field for display name
+      newStationData.instrucoesParticipante.descricaoCompletaCaso = `Paciente com quadro clínico sugestivo de ${stationName}. Detalhes a serem preenchidos.`;
+      newStationData.palavrasChave = [stationName, selectedArea, "modelo", ...newStationData.palavrasChave.slice(0,2)];
 
-
-      // 3. Convert to JSON string for saving
-      const stationJsonString = JSON.stringify(newStation, null, 2);
-
-      // 4. Define Firebase Storage path
+      // 1. Save to Firebase Storage (as JSON file)
+      const stationJsonString = JSON.stringify(newStationData, null, 2);
       const areaSlug = selectedArea.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       const filePath = `estacoes_modelos_geradas/${areaSlug}/${stationId}.json`;
       const storageRef = ref(storage, filePath);
-
-      // 5. Upload to Firebase Storage
       await uploadString(storageRef, stationJsonString, 'raw', { contentType: 'application/json' });
+      
+      // 2. Save to Firestore (document in 'estacoes_clinicas' collection)
+      // We save a summary or the necessary fields for listing and direct access.
+      // For simplicity, saving the whole newStationData, but you might optimize this.
+      const firestoreStationDoc = {
+        code: stationId, // This will be the document ID and the 'code' for routing
+        title: stationName,
+        area: selectedArea,
+        // Add other fields from newStationData that are essential for listing or quick access
+        // For example:
+        scenario: {
+          title: newStationData.instrucoesParticipante.descricaoCompletaCaso.substring(0, 100) + "..." // A summary
+        },
+        // It's often better to store the full JSON in Storage and only metadata/summary in Firestore
+        // But for now, we'll store the whole object for simplicity, aligning with ChecklistData type
+        ...newStationData // Storing the full station data, can be large.
+      };
+      // The document ID in Firestore will be stationId
+      await setDoc(doc(db, "estacoes_clinicas", stationId), firestoreStationDoc);
       
       toast({
         title: "Estação Gerada e Salva!",
-        description: `Modelo para "${stationName}" salvo em: ${filePath}`,
+        description: `Modelo para "${stationName}" salvo no Storage e Firestore.`,
         variant: "default",
       });
-      console.log('Estação Gerada:', newStation);
+      console.log('Estação Gerada:', newStationData);
       console.log('Salva no Firebase Storage em:', filePath);
+      console.log('Salva no Firestore na coleção "estacoes_clinicas" com ID:', stationId);
 
-      // Optionally reset form or navigate
       setStationName('');
       setSelectedArea(undefined);
       // router.push('/admin'); // Or to a list of generated templates
 
-    } catch (error) {
+    } catch (error)
+     {
       console.error('Erro ao gerar ou salvar estação:', error);
       toast({
         title: "Erro ao Salvar",
@@ -110,8 +125,8 @@ const CreateStationFromTemplatePage = () => {
             Criar Modelo de Estação
           </CardTitle>
           <CardDescription>
-            Preencha os campos abaixo para gerar um novo modelo de estação clínica baseado no gabarito padrão.
-            O arquivo JSON será salvo no Firebase Storage.
+            Preencha os campos abaixo para gerar um novo modelo de estação clínica.
+            Será salvo um arquivo JSON no Storage e um documento no Firestore.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -165,8 +180,4 @@ const CreateStationFromTemplatePage = () => {
   );
 };
 
-// Renomeando o export default para evitar conflito se houver outro com mesmo nome no escopo global da página.
 export default CreateStationFromTemplatePage;
-
-// Loader2 icon for loading state (if not already imported, add to lucide-react imports)
-import { Loader2 } from 'lucide-react';
