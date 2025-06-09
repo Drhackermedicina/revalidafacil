@@ -47,13 +47,10 @@ const generatePlaceholderData = (stationCode: string) => {
   return { media, nota };
 };
 
-// Define a type for stations fetched from Firestore, based on ChecklistData
-// but ensuring 'code', 'title', and 'area' are present for this page.
 interface FirestoreStation extends Partial<ChecklistData> {
-  code: string; // Document ID from Firestore will be used as code
+  code: string; 
   title: string;
   area: string;
-  // Add other fields if needed for display or filtering
 }
 
 export default function PenseChecklistsPage() {
@@ -67,7 +64,7 @@ export default function PenseChecklistsPage() {
       setIsLoading(true);
       setError(null);
       try {
-        const stationsCollectionRef = collection(db, "estacoes_clinicas");
+        const stationsCollectionRef = collection(db, "revalidafacio");
         let q;
         if (selectedArea === "Todas") {
           q = query(stationsCollectionRef, orderBy("title"));
@@ -76,10 +73,10 @@ export default function PenseChecklistsPage() {
         }
         const querySnapshot = await getDocs(q);
         const stationsData = querySnapshot.docs.map(doc => ({
-          ...(doc.data() as Partial<ChecklistData>), // Spread all data
-          code: doc.id, // Use Firestore document ID as the code
-          title: doc.data().title || 'Título Indisponível', // Ensure title exists
-          area: doc.data().area || 'Área Indisponível', // Ensure area exists
+          ...(doc.data() as Partial<ChecklistData>), 
+          code: doc.id, 
+          title: doc.data().title || 'Título Indisponível', 
+          area: doc.data().area || 'Área Indisponível', 
         })) as FirestoreStation[];
         setStations(stationsData);
       } catch (err) {

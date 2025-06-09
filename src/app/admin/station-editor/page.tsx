@@ -131,7 +131,7 @@ export default function StationEditorPage() {
         lastUpdatedAt: new Date().toISOString(),
       };
 
-      await setDoc(doc(db, "estacoes_clinicas", data.code), stationDoc, { merge: true });
+      await setDoc(doc(db, "revalidafacio", data.code), stationDoc, { merge: true });
 
       toast({
         title: "Estação Salva!",

@@ -1,25 +1,19 @@
+
 // Localização: src/app/stations/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-// Importações corretas do Firestore
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
-// --- CAMINHOS DE IMPORTAÇÃO CORRETOS ---
-// Use o alias '@/lib/firebase/firebase' para o seu firebase.ts
-// Use o alias '@/lib/firebase/socket' para o seu socket.ts
-// Para o AppLayout e useAuth, use o alias '@/' que aponta para src/
 import { db } from '@/lib/firebase';
-import { useAuth } from '@/context/AuthContext'; // <--- CORRIGIDO: usa o alias correto
-import AppLayout from '@/components/layout/app-layout'; // <--- CORRIGIDO: usa o alias correto
+import { useAuth } from '@/context/AuthContext'; 
+import AppLayout from '@/components/layout/app-layout'; 
 
-// Ícones para a UI
 import { BookText, ChevronRight, Loader2 } from 'lucide-react';
 
-// Define a "forma" dos dados de uma estação para o TypeScript
 interface Station {
-  id: string; // O ID do documento no Firestore
+  id: string; 
   title: string;
   area: string;
   caseSummary: string;
@@ -33,21 +27,18 @@ export default function StationsListPage() {
   const [isLoadingStations, setIsLoadingStations] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Efeito para proteção da rota
   useEffect(() => {
     if (!isAuthLoading && !user) {
       router.push('/login');
     }
   }, [isAuthLoading, user, router]);
 
-  // Efeito para buscar os dados do Firestore
   useEffect(() => {
     if (user) {
       const fetchStations = async () => {
         setIsLoadingStations(true);
         try {
-          // Lembre-se: alteramos isso para usar o nome correto da sua coleção
-          const stationsCollectionRef = collection(db, "estacoes_clinicas");
+          const stationsCollectionRef = collection(db, "revalidafacio"); // <- NOME DA COLEÇÃO ATUALIZADO
           const q = query(stationsCollectionRef, orderBy("title"));
           const querySnapshot = await getDocs(q);
 
@@ -55,7 +46,7 @@ export default function StationsListPage() {
             id: doc.id,
             title: doc.data().title || 'Título não encontrado',
             area: doc.data().area || 'Área não definida',
-            caseSummary: doc.data().caseSummary || 'Resumo indisponível',
+            caseSummary: doc.data().caseSummary || 'Resumo indisponível', // Mantido, mas pode não existir no novo modelo
           }));
 
           setStations(stationsData);
@@ -104,8 +95,7 @@ export default function StationsListPage() {
                     {stations.map((station) => (
                         <li key={station.id}>
                             <div 
-                                // Ação para navegar para a página de simulação (que criaremos a seguir)
-                                onClick={() => router.push(`/station/${station.id}/simulate`)} 
+                                onClick={() => router.push(`/stations/${station.id}/simulate`)} 
                                 className="flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 cursor-pointer transition-colors"
                             >
                                 <div className="flex items-center min-w-0">
@@ -126,7 +116,7 @@ export default function StationsListPage() {
                 </ul>
             </div>
         ) : (
-            <p className="text-center text-gray-500 mt-10">Nenhuma estação encontrada.</p>
+            <p className="text-center text-gray-500 mt-10">Nenhuma estação encontrada na coleção "revalidafacio".</p>
         )}
       </div>
     </AppLayout>

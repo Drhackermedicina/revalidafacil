@@ -1,21 +1,18 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Coleção para estações clínicas/modelos
-    match /estacoes_clinicas/{stationId} {
-      // Qualquer um pode ler as estações (para a listagem)
+    // Permite leitura pública na coleção 'revalidafacio'
+    match /revalidafacio/{stationId} {
       allow read: if true;
-      // Apenas usuários autenticados podem criar, atualizar ou deletar estações.
-      // Para um controle mais granular, você pode adicionar: if request.auth.uid == 'SEU_ADMIN_UID';
-      // ou verificar um custom claim de admin: if request.auth.token.admin == true;
+      // Permite escrita (criação, atualização, exclusão) apenas para usuários autenticados
+      // Em um cenário de produção, você pode querer restringir isso a administradores.
       allow write: if request.auth != null;
     }
 
-    // Regra padrão para bloquear todos os outros acessos não especificados.
-    // IMPORTANTE: Certifique-se de que outras coleções que seu app possa usar
-    // tenham suas próprias regras explícitas, ou serão bloqueadas por esta.
+    // Regra mais genérica para outras coleções (se houver), mantendo-as privadas por padrão.
+    // Certifique-se de adicionar regras específicas para outras coleções que seu app possa usar.
     match /{document=**} {
       allow read, write: if false;
     }

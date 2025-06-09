@@ -13,12 +13,10 @@ import { Loader2, AlertTriangle, Wifi, WifiOff, PlayCircle, PauseCircle, Eye, Us
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import type { ChecklistData, ChecklistItem, PrintedMaterial } from '@/lib/station-data'; // Usando tipos de station-data
+import type { ChecklistData, ChecklistItem, PrintedMaterial } from '@/lib/station-data'; 
 
-// Interface para os dados da estação, baseada em ChecklistData
-// Renomeado para StationDetails para evitar conflito com o tipo Station de station-data se houver
 interface StationFullData extends ChecklistData {
-  id: string; // Adiciona o ID do documento Firestore
+  id: string; 
 }
 
 const INITIAL_TIMER_SECONDS = 10 * 60; // 10 minutos
@@ -30,7 +28,7 @@ export default function SimulationPage() {
   const searchParams = useSearchParams();
 
   const stationId = params.stationId as string;
-  const role = searchParams.get('role') || 'candidate'; // Default to candidate
+  const role = searchParams.get('role') || 'candidate'; 
   const userId = user?.uid;
 
   const [stationData, setStationData] = useState<StationFullData | null>(null);
@@ -42,7 +40,6 @@ export default function SimulationPage() {
   const [timer, setTimer] = useState(INITIAL_TIMER_SECONDS);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-  // --- EFEITO 1: Proteção da Rota e Busca dos Dados da Estação ---
   useEffect(() => {
     if (!isAuthLoading && !user) {
       router.push('/login');
@@ -53,11 +50,10 @@ export default function SimulationPage() {
       const fetchStationData = async () => {
         setStatusMessage('Carregando dados da estação...');
         try {
-          const stationRef = doc(db, 'estacoes_clinicas', stationId);
+          const stationRef = doc(db, 'revalidafacio', stationId); // <- NOME DA COLEÇÃO ATUALIZADO
           const docSnap = await getDoc(stationRef);
 
           if (docSnap.exists()) {
-            // Assume que os dados no Firestore são compatíveis com ChecklistData
             setStationData({ id: docSnap.id, ...docSnap.data() } as StationFullData);
             setError(null);
           } else {
@@ -74,9 +70,8 @@ export default function SimulationPage() {
     }
   }, [isAuthLoading, user, stationId, router]);
 
-  // --- EFEITO 2: Criação da Sessão e Conexão do Socket ---
   useEffect(() => {
-    if (user && stationData && !sessionId && !error) { // Só tenta criar sessão se não houver erro no fetch da estação
+    if (user && stationData && !sessionId && !error) { 
       const createSessionAndConnect = async () => {
         setStatusMessage('Criando sessão de simulação...');
         try {
@@ -92,7 +87,6 @@ export default function SimulationPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               stationId: stationData.id,
-              // checklistId: stationData.checklistDocId || 'default-checklist', // Se você tiver um checklistId separado
             }),
           });
 
@@ -122,7 +116,6 @@ export default function SimulationPage() {
     }
   }, [user, stationData, sessionId, userId, role, error]);
 
-  // --- EFEITO 3: Listeners do Socket e Timer ---
   useEffect(() => {
     function onConnect() {
       setStatusMessage(`Conectado à simulação! Sessão: ${socket.auth?.sessionId}`);
@@ -136,7 +129,6 @@ export default function SimulationPage() {
     function onSessionError(data: { message: string }) {
       setError(`Erro na sessão: ${data.message}`);
     }
-    // Exemplo de listener para atualização do timer vindo do servidor
     function onTimerUpdate(data: { remainingSeconds: number, running: boolean }) {
       setTimer(data.remainingSeconds);
       setIsTimerRunning(data.running);
@@ -145,18 +137,16 @@ export default function SimulationPage() {
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('sessionError', onSessionError);
-    socket.on('timerUpdate', onTimerUpdate); // Ouvir atualizações do timer
+    socket.on('timerUpdate', onTimerUpdate); 
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('sessionError', onSessionError);
       socket.off('timerUpdate', onTimerUpdate);
-      // socket.disconnect(); // Desconectar ao sair da página pode ser uma opção
     };
-  }, [userId, role]); // Adicionado userId e role para garantir que o joinSession tenha os dados corretos
+  }, [userId, role]); 
 
-  // --- EFEITO 4: Lógica do Timer (se controlado pelo cliente) ---
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
     if (isTimerRunning && timer > 0) {
@@ -165,7 +155,6 @@ export default function SimulationPage() {
       }, 1000);
     } else if (timer === 0) {
       setIsTimerRunning(false);
-      // Adicionar lógica para quando o tempo acaba
     }
     return () => clearInterval(interval);
   }, [isTimerRunning, timer]);
@@ -177,12 +166,9 @@ export default function SimulationPage() {
   };
 
   const handleToggleTimer = () => {
-    // Em uma implementação real, isso provavelmente emitiria um evento para o servidor
-    // socket.emit('toggleTimer', { sessionId, running: !isTimerRunning });
-    setIsTimerRunning(!isTimerRunning); // Controle local por enquanto
+    setIsTimerRunning(!isTimerRunning); 
   };
 
-  // --- Renderização ---
   if (isAuthLoading) {
     return (
       <AppLayout>
@@ -218,7 +204,6 @@ export default function SimulationPage() {
     );
   }
 
-  // UI Principal da Simulação
   return (
     <AppLayout>
       <div className="container mx-auto max-w-full px-2 sm:px-4 lg:px-6 py-6">
@@ -243,7 +228,6 @@ export default function SimulationPage() {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Coluna Esquerda/Principal: Checklist (Candidato) ou Instruções (Ator) */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
@@ -258,7 +242,6 @@ export default function SimulationPage() {
                     {stationData.checklistItems.map((item: ChecklistItem) => (
                       <li key={item.id} className="p-2 border rounded-md">
                         <span dangerouslySetInnerHTML={{ __html: item.description }} />
-                         {/* Placeholder para botões de avaliação */}
                       </li>
                     ))}
                   </ul>
@@ -276,7 +259,6 @@ export default function SimulationPage() {
                   <CardTitle className="flex items-center"><Eye className="mr-2 h-5 w-5 text-primary"/>Materiais Impressos</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* Lógica para exibir materiais impressos (o ator os liberaria) */}
                   <p className="text-muted-foreground text-sm">Materiais impressos aparecerão aqui quando liberados pelo ator.</p>
                   {stationData.printedMaterials.map((material: PrintedMaterial) => (
                      <div key={material.id} className="p-2 border rounded-md mt-2">
@@ -289,7 +271,6 @@ export default function SimulationPage() {
             )}
           </div>
 
-          {/* Coluna Direita: Timer e Controles do Ator */}
           <div className="space-y-6 lg:sticky lg:top-[calc(theme(spacing.16)+theme(spacing.4))] lg:h-fit">
             <Card>
               <CardHeader>
@@ -297,7 +278,7 @@ export default function SimulationPage() {
                 <CardDescription className="text-center">Tempo da Estação</CardDescription>
               </CardHeader>
               <CardContent>
-                {role === 'actor' && ( // Apenas o ator controla o timer, ou é sincronizado pelo servidor
+                {role === 'actor' && ( 
                   <Button onClick={handleToggleTimer} className="w-full" variant={isTimerRunning ? "destructive" : "default"}>
                     {isTimerRunning ? <PauseCircle className="mr-2 h-4 w-4"/> : <PlayCircle className="mr-2 h-4 w-4"/>}
                     {isTimerRunning ? 'Pausar Timer' : 'Iniciar Timer'}
@@ -318,7 +299,6 @@ export default function SimulationPage() {
                   {stationData.printedMaterials.map((material: PrintedMaterial) => (
                     <Button key={material.id} variant="outline" className="w-full justify-between">
                       {material.title}
-                      {/* Lógica para botão de liberar/bloquear material */}
                       <Badge variant={material.isLocked ? "destructive" : "default"}>{material.isLocked ? "Bloqueado" : "Liberado"}</Badge>
                     </Button>
                   ))}
@@ -329,7 +309,6 @@ export default function SimulationPage() {
                 <CardHeader><CardTitle className="flex items-center"><Users className="mr-2 h-5 w-5"/>Participantes</CardTitle></CardHeader>
                 <CardContent>
                     <p className="text-sm text-muted-foreground">Usuário: {user?.displayName || user?.email}</p>
-                    {/*  Aqui você listaria outros participantes na sessão */}
                     <p className="text-sm text-muted-foreground mt-1">Outro participante: Aguardando...</p>
                 </CardContent>
              </Card>

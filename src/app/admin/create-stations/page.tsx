@@ -71,24 +71,17 @@ const CreateStationFromTemplatePage = () => {
       const storageRef = ref(storage, filePath);
       await uploadString(storageRef, stationJsonString, 'raw', { contentType: 'application/json' });
       
-      // 2. Save to Firestore (document in 'estacoes_clinicas' collection)
-      // We save a summary or the necessary fields for listing and direct access.
-      // For simplicity, saving the whole newStationData, but you might optimize this.
+      // 2. Save to Firestore (document in 'revalidafacio' collection)
       const firestoreStationDoc = {
-        code: stationId, // This will be the document ID and the 'code' for routing
+        code: stationId, 
         title: stationName,
         area: selectedArea,
-        // Add other fields from newStationData that are essential for listing or quick access
-        // For example:
         scenario: {
-          title: newStationData.instrucoesParticipante.descricaoCompletaCaso.substring(0, 100) + "..." // A summary
+          title: newStationData.instrucoesParticipante.descricaoCompletaCaso.substring(0, 100) + "..." 
         },
-        // It's often better to store the full JSON in Storage and only metadata/summary in Firestore
-        // But for now, we'll store the whole object for simplicity, aligning with ChecklistData type
-        ...newStationData // Storing the full station data, can be large.
+        ...newStationData 
       };
-      // The document ID in Firestore will be stationId
-      await setDoc(doc(db, "estacoes_clinicas", stationId), firestoreStationDoc);
+      await setDoc(doc(db, "revalidafacio", stationId), firestoreStationDoc);
       
       toast({
         title: "Estação Gerada e Salva!",
@@ -97,11 +90,10 @@ const CreateStationFromTemplatePage = () => {
       });
       console.log('Estação Gerada:', newStationData);
       console.log('Salva no Firebase Storage em:', filePath);
-      console.log('Salva no Firestore na coleção "estacoes_clinicas" com ID:', stationId);
+      console.log('Salva no Firestore na coleção "revalidafacio" com ID:', stationId);
 
       setStationName('');
       setSelectedArea(undefined);
-      // router.push('/admin'); // Or to a list of generated templates
 
     } catch (error)
      {
