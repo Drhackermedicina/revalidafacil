@@ -57,21 +57,20 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, isSubItem, i
   const linkProps = target ? { target, rel } : {};
   return (
     <li>
-      <Link href={href} passHref legacyBehavior>
-        <a
-          {...linkProps}
-          className={cn(
-            "flex items-center w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm font-medium rounded-md",
-            isCollapsed
-              ? (isSubItem ? "pl-6 justify-start h-9" : "px-0 justify-center h-9 w-9 mx-auto")
-              : (isSubItem ? "pl-10 pr-6 py-2 h-9" : "px-6 py-2 h-9"),
-            labelClassName
-          )}
-          title={isCollapsed && !isSubItem ? label : undefined}
-        >
-          <Icon className={cn("mr-2 h-5 w-5", isCollapsed && !isSubItem && "mr-0", iconClassName)} />
-          {(!isCollapsed || (isSubItem && isCollapsed)) && label}
-        </a>
+      <Link
+        href={href}
+        {...linkProps}
+        className={cn(
+          "flex items-center w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm font-medium rounded-md",
+          isCollapsed
+            ? (isSubItem ? "pl-6 justify-start h-9" : "px-0 justify-center h-9 w-9 mx-auto")
+            : (isSubItem ? "pl-10 pr-6 py-2 h-9" : "px-6 py-2 h-9"),
+          labelClassName
+        )}
+        title={isCollapsed && !isSubItem ? label : undefined}
+      >
+        <Icon className={cn("mr-2 h-5 w-5", isCollapsed && !isSubItem && "mr-0", iconClassName)} />
+        {(!isCollapsed || (isSubItem && isCollapsed)) && label}
       </Link>
     </li>
   );
@@ -331,6 +330,8 @@ export function SidebarNav() {
     </>
   );
 }
+    
+
     
 
     
