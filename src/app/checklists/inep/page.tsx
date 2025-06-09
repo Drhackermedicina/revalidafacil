@@ -6,29 +6,31 @@ import Link from 'next/link';
 import { useState, useMemo, useEffect } from 'react';
 import AppLayout from "@/components/layout/app-layout";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { allStations, type ChecklistData } from '@/lib/station-data'; // Using allStations from local data
+import type { ChecklistData } from '@/lib/station-data'; // Keep type for data structure
 import { BookCopy, Filter, Loader2, ListChecks } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { db } from '@/lib/firebase'; // Firebase db import
+import { collection, getDocs, query, orderBy } from "firebase/firestore"; // Firestore functions
 
 // Helper function to extract INEP exam year from station title or code
-const getIneptExamYear = (station: ChecklistData): string | null => {
-  const titleMatch = station.title.match(/INEP\s*\|\s*([0-9]{4}\.[1-2])/i);
+const getIneptExamYear = (station: Partial<ChecklistData> & { code: string; title: string }): string | null => {
+  if (!station.title && !station.code) return null;
+
+  const titleMatch = station.title?.match(/INEP\s*\|\s*([0-9]{4}\.[1-2])/i);
   if (titleMatch && titleMatch[1]) return titleMatch[1];
 
-  const codeMatch = station.code.match(/([0-9]{4}-[1-2])$/i);
+  const codeMatch = station.code?.match(/([0-9]{4}-[1-2])$/i);
   if (codeMatch && codeMatch[1]) return codeMatch[1].replace('-', '.');
   
-  // Fallback for years without semester
-  const yearOnlyTitleMatch = station.title.match(/INEP\s*\|\s*([0-9]{4})(?!\.)/i);
+  const yearOnlyTitleMatch = station.title?.match(/INEP\s*\|\s*([0-9]{4})(?!\.)/i);
   if (yearOnlyTitleMatch && yearOnlyTitleMatch[1]) return yearOnlyTitleMatch[1];
   
-  const yearOnlyCodeMatch = station.code.match(/([0-9]{4})$/i);
+  const yearOnlyCodeMatch = station.code?.match(/([0-9]{4})$/i);
   if (yearOnlyCodeMatch && yearOnlyCodeMatch[1]) return yearOnlyCodeMatch[1];
 
-  if (station.title.toLowerCase().includes("inep") || station.code.toLowerCase().includes("inep")) {
-    // If it's an INEP station but year parsing failed, categorize as "Outros INEP" or handle as needed
+  if (station.title?.toLowerCase().includes("inep") || station.code?.toLowerCase().includes("inep")) {
     return "Outros INEP"; 
   }
 
@@ -48,7 +50,11 @@ const generatePlaceholderData = (stationCode: string) => {
   return { media, nota };
 };
 
-interface InepStation extends ChecklistData {
+interface InepStationFromFirestore extends Partial<ChecklistData> {
+  id: string; // Firestore document ID
+  code: string; // Station code, should be same as id for consistency or a dedicated field
+  title: string;
+  area?: string; // Area might not always be present or relevant for INEP filter
   inepExamYear: string | null;
   media: string;
   nota: string;
@@ -58,43 +64,98 @@ const predefinedIneepExamYears = ["Todas", "2024.2", "2024.1", "2023.2", "2023.1
 
 export default function InepChecklistsPage() {
   const [selectedExamYear, setSelectedExamYear] = useState<string>("Todas");
-  const [isLoading, setIsLoading] = useState(true); // Simulate loading for consistency
+  const [allFirestoreStations, setAllFirestoreStations] = useState<InepStationFromFirestore[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const processedStations = useMemo(() => {
-    setIsLoading(true);
-    try {
-      const inepStations = allStations
-        .map(station => ({
-          ...station,
-          inepExamYear: getIneptExamYear(station),
-          ...generatePlaceholderData(station.code),
-        }))
-        .filter(station => station.inepExamYear !== null) as InepStation[];
+  useEffect(() => {
+    const fetchStations = async () => {
+      setIsLoading(true);
       setError(null);
-      return inepStations;
-    } catch (err) {
-      console.error("Erro ao processar estações INEP:", err);
-      setError("Não foi possível carregar as estações INEP.");
-      return [];
-    } finally {
-       // Simulate async loading
-      setTimeout(() => setIsLoading(false), 300);
-    }
+      try {
+        const stationsCollectionRef = collection(db, "revalidafacio");
+        const q = query(stationsCollectionRef, orderBy("title")); // Order by title, or another relevant field
+        const querySnapshot = await getDocs(q);
+        
+        const stationsData = querySnapshot.docs.map(doc => {
+          const data = doc.data() as Partial<ChecklistData> & { code?: string; title?: string };
+          const stationCode = data.code || doc.id;
+          const stationTitle = data.title || 'Título Indisponível';
+          
+          return {
+            ...data,
+            id: doc.id,
+            code: stationCode,
+            title: stationTitle,
+            inepExamYear: getIneptExamYear({ code: stationCode, title: stationTitle, area: data.area }),
+            ...generatePlaceholderData(stationCode),
+          };
+        }).filter(station => station.inepExamYear !== null) as InepStationFromFirestore[]; // Filter only INEP stations
+
+        setAllFirestoreStations(stationsData);
+      } catch (err) {
+        console.error("Erro ao buscar estações INEP do Firestore:", err);
+        setError("Não foi possível carregar as estações INEP do Firestore.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStations();
   }, []);
 
   const filteredStations = useMemo(() => {
     if (selectedExamYear === "Todas") {
-      return processedStations;
+      return allFirestoreStations;
     }
-    return processedStations.filter(station => station.inepExamYear === selectedExamYear);
-  }, [selectedExamYear, processedStations]);
+    return allFirestoreStations.filter(station => station.inepExamYear === selectedExamYear);
+  }, [selectedExamYear, allFirestoreStations]);
 
   const availableExamYears = useMemo(() => {
-    const yearsFromStations = new Set(processedStations.map(s => s.inepExamYear).filter(Boolean) as string[]);
-    // Ensure predefined years are available for selection even if no stations exist yet for them.
-    return predefinedIneepExamYears.filter(year => year === "Todas" || yearsFromStations.has(year) || predefinedIneepExamYears.includes(year));
-  }, [processedStations]);
+    const yearsFromStations = new Set(allFirestoreStations.map(s => s.inepExamYear).filter(Boolean) as string[]);
+    const dynamicYears = Array.from(yearsFromStations).sort((a, b) => {
+      // Custom sort: "YYYY.S" desc, then "YYYY" desc, then "Outros INEP"
+      if (a.includes('.') && b.includes('.')) return b.localeCompare(a);
+      if (a.includes('.')) return -1;
+      if (b.includes('.')) return 1;
+      if (a === "Outros INEP") return 1;
+      if (b === "Outros INEP") return -1;
+      return b.localeCompare(a);
+    });
+    
+    // Combine predefined with dynamic, ensuring "Todas" is first and "Outros INEP" last if present
+    const combined = ["Todas", ...dynamicYears];
+    if (yearsFromStations.has("Outros INEP") && !combined.includes("Outros INEP")) {
+        combined.push("Outros INEP");
+    }
+    // Add any predefined years not covered by actual stations, for future-proofing UI
+    predefinedIneepExamYears.forEach(py => {
+        if (py !== "Todas" && py !== "Outros INEP" && !combined.includes(py)) {
+            // Potentially insert in sorted order or just append and re-sort
+        }
+    });
+    // For simplicity, we'll use the dynamic list plus "Todas", and ensure predefined are available if needed.
+    // The current predefined list is already quite comprehensive.
+    const finalYears = new Set(["Todas"]);
+    predefinedIneepExamYears.forEach(y => {
+        if (y === "Todas" || yearsFromStations.has(y)) {
+            finalYears.add(y);
+        }
+    });
+    // Ensure "Outros INEP" is an option if there are stations for it or if it's predefined and might be used.
+    if (yearsFromStations.has("Outros INEP") || predefinedIneepExamYears.includes("Outros INEP")) {
+        finalYears.add("Outros INEP");
+    }
+
+    return Array.from(finalYears).sort((a, b) => {
+        if (a === "Todas") return -1;
+        if (b === "Todas") return 1;
+        if (a === "Outros INEP") return 1;
+        if (b === "Outros INEP") return -1;
+        return b.localeCompare(a); // Sort descending for years
+    });
+
+  }, [allFirestoreStations]);
 
 
   return (
@@ -108,7 +169,7 @@ export default function InepChecklistsPage() {
             </CardTitle>
             <CardDescription>
               Acesse estações práticas de provas anteriores do INEP.
-              Filtre pela prova desejada.
+              Filtre pela prova desejada. Os dados são carregados do Firestore.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -158,7 +219,7 @@ export default function InepChecklistsPage() {
                       <div className={`flex items-center px-4 py-3.5 text-sm ${index < filteredStations.length - 1 ? 'border-b' : ''}`}>
                         <div className="flex-grow flex items-center min-w-0 pr-2">
                           <span className="font-medium text-foreground truncate group-hover:text-primary transition-colors" title={station.title}>
-                            {station.title.replace(/ - INEP \| [0-9]{4}\.[1-2]/i, '').replace(/ - INEP \| [0-9]{4}/i, '')} 
+                            {station.title.replace(/ - INEP \| [0-9]{4}\.[1-2]/i, '').replace(/ - INEP \| [0-9]{4}/i, '').replace(/INEP\s*\|\s*[0-9]{4}\.[1-2]\s*-\s*/i, '').replace(/INEP\s*\|\s*[0-9]{4}\s*-\s*/i, '')} 
                           </span>
                         </div>
                         <div className="w-28 text-center text-xs text-muted-foreground hidden sm:block">
@@ -188,10 +249,10 @@ export default function InepChecklistsPage() {
                   <div className="p-10 text-center">
                     <ListChecks className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                     <p className="text-lg font-semibold text-muted-foreground">
-                      Nenhuma estação INEP encontrada para "{selectedExamYear}" nos dados locais.
+                      Nenhuma estação INEP encontrada para "{selectedExamYear}" no Firestore.
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Verifique o arquivo `src/lib/station-data.ts` ou selecione outra prova.
+                      Verifique se as estações INEP estão na coleção "revalidafacio" do Firestore e se seus títulos/códigos permitem a identificação da prova.
                     </p>
                   </div>
                 )}
@@ -203,4 +264,3 @@ export default function InepChecklistsPage() {
     </AppLayout>
   );
 }
-
