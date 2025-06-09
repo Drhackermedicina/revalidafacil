@@ -105,7 +105,7 @@ export default function PenseChecklistsPage() {
           <CardHeader>
             <CardTitle className="text-2xl font-bold font-headline flex items-center">
               <ListChecks className="mr-3 h-7 w-7 text-primary" />
-              Estações Práticas - REVALIDA FÁCIL (Firestore)
+              ESTAÇÕES PRÁTICAS
             </CardTitle>
             <CardDescription>
               Acesse nossas estações práticas simuladas para treinar suas habilidades para o Revalida.
