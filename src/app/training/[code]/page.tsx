@@ -24,17 +24,12 @@ async function getStationData(code: string): Promise<ChecklistData | undefined> 
 }
 
 export default async function StationTrainingPage({ params }: StationPageProps) {
-  // Address the error: "params should be awaited before using its properties"
-  // Note: params is not a Promise in Next.js 13+, so await is usually not needed here unless specifically used
-  // If you are using an older version or have specific middleware, keep it.
-  // Otherwise, you can simplify to: const stationCode = params.code;
-  const resolvedParams = await params; 
-  const stationCode = resolvedParams.code;
+  const stationCode = params.code; // Correctly access params.code directly
 
   const stationData = await getStationData(stationCode);
 
   if (!stationData) {
-    return ( // <--- ADICIONADO ESTE PARÊNTESE DE ABERTURA AQUI!
+    return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <Card className="w-full max-w-md shadow-lg">
@@ -44,14 +39,14 @@ export default async function StationTrainingPage({ params }: StationPageProps) 
                 </CardHeader>
                 <CardContent className="text-center">
                     <p className="text-muted-foreground">
-                        A estação com o código "{stationCode}" não foi encontrada. 
+                        A estação com o código "{stationCode}" não foi encontrada.
                         Por favor, verifique o código ou volte para a lista de estações.
                     </p>
                 </CardContent>
             </Card>
         </div>
       </AppLayout>
-    ); // <--- ESTE PARÊNTESE DE FECHAMENTO AGORA TEM SEU PAR
+    );
   }
 
   return (
