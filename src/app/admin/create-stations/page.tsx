@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { stationTemplate } from '@/lib/station-data/templates/station_template';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { FilePlus2, Save, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext'; // Importar useAuth
 
 // Firebase imports
 import { getStorage, ref, uploadString } from "firebase/storage";
@@ -31,6 +32,7 @@ const CreateStationFromTemplatePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth(); // Adicionar useAuth
 
   const generateStationId = (area: string, name: string) => {
     const areaSlug = area.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -39,6 +41,25 @@ const CreateStationFromTemplatePage = () => {
   };
 
   const handleGenerateAndSaveStation = async () => {
+    if (authLoading) {
+      toast({
+        title: "Aguarde",
+        description: "Verificando autenticação...",
+        variant: "default",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Acesso Negado",
+        description: "Você precisa estar logado para criar estações.",
+        variant: "destructive",
+      });
+      router.push('/login'); // Opcional: redirecionar para login
+      return;
+    }
+
     if (!stationName || !selectedArea) {
       toast({
         title: "Campos Obrigatórios",
@@ -49,11 +70,13 @@ const CreateStationFromTemplatePage = () => {
     }
 
     setIsLoading(true);
+    console.log('Iniciando geração da estação...');
     let generatedStationId = '';
 
     try {
       const newStationData = JSON.parse(JSON.stringify(stationTemplate));
       generatedStationId = generateStationId(selectedArea, stationName);
+      console.log('Station ID gerado:', generatedStationId);
 
       // Populate the template with form data
       newStationData.id = generatedStationId; 
@@ -68,8 +91,11 @@ const CreateStationFromTemplatePage = () => {
       const stationJsonString = JSON.stringify(newStationData, null, 2);
       const areaSlug = selectedArea.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       const filePath = `estacoes_modelos_geradas/${areaSlug}/${generatedStationId}.json`;
+      
+      console.log(`Tentando fazer upload para Storage: ${filePath}`);
       const storageRef = ref(storage, filePath);
       await uploadString(storageRef, stationJsonString, 'raw', { contentType: 'application/json' });
+      console.log(`Upload para Storage bem-sucedido: ${filePath}`);
       
       const firestoreStationDoc = {
         code: generatedStationId, 
@@ -94,7 +120,10 @@ const CreateStationFromTemplatePage = () => {
         flashcards: [],
         // ...newStationData // Spread other fields from the template if needed, but ensure it matches editor structure
       };
+
+      console.log(`Tentando salvar no Firestore: coleção 'revalidafacio', ID '${generatedStationId}'`);
       await setDoc(doc(db, "revalidafacio", generatedStationId), firestoreStationDoc);
+      console.log(`Salvo no Firestore com sucesso: revalidafacio/${generatedStationId}`);
       
       toast({
         title: "Estação Gerada!",
@@ -102,24 +131,36 @@ const CreateStationFromTemplatePage = () => {
         variant: "default",
       });
       
-      // Redirect to the station editor page with the new station's ID
       router.push(`/admin/station-editor?stationId=${generatedStationId}`);
 
-      // No longer clearing fields here as we redirect
-      // setStationName('');
-      // setSelectedArea(undefined);
-
     } catch (error) {
-      console.error('Erro ao gerar ou salvar estação:', error);
+      console.error('Erro detalhado ao gerar ou salvar estação:', error);
+      let description = "Ocorreu um problema ao salvar o modelo da estação.";
+      if (error instanceof Error) {
+        description = error.message;
+      } else if (typeof error === 'string') {
+        description = error;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        description = String((error as {message: string}).message);
+      }
+      
       toast({
         title: "Erro ao Salvar",
-        description: (error as Error).message || "Ocorreu um problema ao salvar o modelo da estação.",
+        description: description,
         variant: "destructive",
       });
-      setIsLoading(false); // Only set isLoading to false on error, as redirect handles success
+      setIsLoading(false);
     }
-    // setIsLoading(false); // Removed from here, handled in error or by redirect
   };
+
+  if (authLoading) {
+    return (
+      <div className="container mx-auto p-4 flex justify-center items-center h-screen">
+        <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+        Carregando...
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -164,7 +205,7 @@ const CreateStationFromTemplatePage = () => {
         <CardFooter>
           <Button 
             onClick={handleGenerateAndSaveStation} 
-            disabled={isLoading || !stationName || !selectedArea}
+            disabled={isLoading || !stationName || !selectedArea || !user}
             className="w-full"
           >
             {isLoading ? (
