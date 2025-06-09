@@ -1,216 +1,172 @@
+
 "use client";
 
 import { useState } from 'react';
-// Caminhos de importação corrigidos para usar o alias de caminho absoluto
+import { useRouter } from 'next/navigation';
 import { stationTemplate } from '@/lib/station-data/templates/station_template';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { FilePlus2, Save } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-// Dados predefinidos para alguns exemplos de diagnósticos
-const diagnosisData: { [key: string]: any } = {
-  'Infarto Agudo do Miocárdio': {
-    id: 'IAM',
-    especialidade: 'CLÍNICA MÉDICA',
-    palavrasChave: ['Dor torácica', 'IAM', 'ECG', 'Troponina', 'Angina'],
-    nivelDificuldade: 'Difícil',
-    cenarioAtendimento: {
-      nivelAtencao: 'Urgência/Emergência',
-      tipoAtendimento: 'Pronto Atendimento',
-      infraestrutura: ['Eletrocardiógrafo', 'Laboratório de análises clínicas (resultados fornecidos)', 'Leito de observação', 'Materiais para acesso venoso'],
-    },
-    descricaoCaso: 'Paciente masculino, 55 anos, procura atendimento com queixa de dor torácica em aperto há 2 horas, irradiando para braço esquerdo.',
-    tarefasPrincipais: [
-      'Realizar a anamnese direcionada para dor torácica.',
-      'Realizar o exame físico geral e cardiovascular.',
-      'Solicitar ECG e enzimas cardíacas.',
-      'Formular hipóteses diagnósticas (principalmente SCA).',
-      'Verbalizar o diagnóstico mais provável.',
-      'Elaborar e comunicar a conduta terapêutica inicial para SCA.',
-    ],
-    dadosPacienteSimulado: {
-      motivoConsulta: 'Estou com uma dor forte no peito que não passa.',
-      sintomasPrincipais: [
-        {
-          nome: 'Dor Torácica',
-          inicio: 'Começou de repente, há umas duas horas.',
-          localizacao: 'Bem aqui no meio do peito.',
-          irradiacao: 'Sinto que vai para o meu braço esquerdo e pescoço.',
-          qualidadeTipo: 'É uma dor tipo aperto, uma pressão forte.',
-          intensidade: 'Agora está um 8. Começou mais forte, um 9.',
-          duracao: 'Desde que começou, não parou mais.',
-          fatoresMelhora: 'Nada que eu fiz melhorou.',
-          fatoresPiora: 'Quando eu tento respirar fundo, parece que piora.',
-          evolucao: 'Começou forte e continua forte.',
-        }
-      ],
-      sintomasAcompanhantes: {
-        dispneia: 'Sim, estou com falta de ar.',
-        nauseasVomitos: 'Senti um pouco de enjoo, mas não vomitei.',
-        sudorese: 'Sim, estou suando frio.',
-        palpitacoes: 'Não senti palpitações.',
-      },
-      antecedentesPessoais: {
-        doencasPrevias: 'Tenho pressão alta e diabetes.',
-        medicamentosUsoContinuo: 'Uso Losartana 50mg de manhã e Metformina 850mg duas vezes ao dia.',
-        alergias: 'Tenho alergia a dipirona.',
-      },
-      habitosVida: {
-        tabagismo: 'Fumo um maço de cigarros por dia há 20 anos.',
-      },
-      historiaFamiliar: 'Meu pai morreu de infarto com 50 anos.',
-    },
-    impressosDisponiveis: [
-      {
-        id: 'estX_examefisico_geral',
-        conteudo: 'Estado Geral: Regular, consciente, orientado. PA: 160x100 mmHg. FC: 95 bpm. FR: 22 irpm. Tax: 36.5ºC. SatO2: 92% (ar ambiente).',
-      },
-      {
-        id: 'estX_imagem_ecg',
-        conteudo: 'ECG: Supradesnivelamento do segmento ST em paredes inferior e lateral.',
-      },
-      {
-        id: 'estX_lab_enzimas',
-        conteudo: 'Troponina I: 2.5 ng/mL (Ref: < 0.04). CK-MB: 80 U/L (Ref: < 25).',
-      }
-    ],
-    itensAvaliacao: [
-      { dominio: 'ANAMNESE', descricao: 'Investigação da dor torácica (4/7 características)', pontos: 1.0 },
-      { dominio: 'ANAMNESE', descricao: 'Investigação de sinais de alarme para SCA', pontos: 1.0 },
-      { dominio: 'EXAME FÍSICO', descricao: 'Verbaliza solicitação de Sinais Vitais', pontos: 0.25 },
-      { dominio: 'DIAGNÓSTICO', descricao: 'Solicita ECG e enzimas cardíacas', pontos: 0.75 },
-      { dominio: 'DIAGNÓSTICO', descricao: 'Interpretação correta do ECG e enzimas', pontos: 0.75 },
-      { dominio: 'DIAGNÓSTICO', descricao: 'Verbaliza diagnóstico de IAM', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNICAÇÃO', descricao: 'Comunica conduta inicial para IAM (antiagregação, anticoagulação, nitrato, morfina)', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNICAÇÃO', descricao: 'Orienta sobre sinais de alarme para retorno', pontos: 1.0 },
-    ],
-  },
-  'Dengue Clássica': {
-    id: 'DENGUE',
-    especialidade: 'CLÍNICA MÉDICA',
-    palavrasChave: ['Dengue', 'Febre', 'Mialgia', 'Artralgia', 'Exantema', 'Prova do laço'],
-    nivelDificuldade: 'Fácil',
-    cenarioAtendimento: {
-      nivelAtencao: 'Atenção primária à saúde',
-      tipoAtendimento: 'Ambulatorial',
-      infraestrutura: ['Consultório médico', 'Sala de procedimentos (para prova do laço)', 'Laboratório de análises clínicas (resultados fornecidos)'],
-    },
-    descricaoCaso: 'Paciente feminina, 30 anos, procura atendimento com queixa de febre alta e dores no corpo há 3 dias.',
-    tarefasPrincipais: [
-      'Realizar a anamnese direcionada para sintomas de dengue.',
-      'Realizar o exame físico geral, buscando sinais de alarme.',
-      'Realizar a prova do laço.',
-      'Solicitar exames complementares pertinentes.',
-      'Formular hipóteses diagnósticas.',
-      'Verbalizar o diagnóstico provável e classificação de risco.',
-      'Elaborar e comunicar a conduta terapêutica inicial.',
-      'Orientar sobre sinais de alarme e retorno.',
-    ],
-    dadosPacienteSimulado: {
-      motivoConsulta: 'Estou me sentindo muito mal, com febre e dores no corpo.',
-      sintomasPrincipais: [
-        {
-          nome: 'Febre',
-          inicio: 'Há 3 dias.',
-          localizacao: 'Geral',
-          irradiacao: 'Não se aplica.',
-          qualidadeTipo: 'Alta, medida em casa, não sei o valor exato.',
-          intensidade: 'Intensa.',
-          duracao: 'Constante, não cedeu com antitérmicos comuns.',
-          fatoresMelhora: 'Nenhum.',
-          fatoresPiora: 'Nenhum.',
-          evolucao: 'Começou alta e continua alta.',
-        },
-        {
-          nome: 'Dores no corpo',
-          inicio: 'Junto com a febre.',
-          localizacao: 'Principalmente músculos e articulações.',
-          irradiacao: 'Não.',
-          qualidadeTipo: 'É uma dor forte, tipo cansaço.',
-          intensidade: 'Moderada a forte.',
-          duracao: 'Constante.',
-          fatoresMelhora: 'Um pouco com repouso, mas volta.',
-          fatoresPiora: 'Movimentação.',
-          evolucao: 'Melhora um pouco com repouso.',
-        }
-      ],
-      sintomasAcompanhantes: {
-        cefaleia: 'Sim, uma dor de cabeça atrás dos olhos.',
-        dorRetroOrbitaria: 'Sim.',
-        exantema: 'Começou a aparecer umas pintinhas vermelhas no corpo hoje.',
-        prurido: 'Sim, onde tem as pintinhas.',
-        nauseasVomitos: 'Senti um pouco de enjoo hoje de manhã.',
-      },
-      antecedentesPessoais: {},
-    },
-    impressosDisponiveis: [
-      {
-        id: 'estX_examefisico_geral_dengue',
-        conteudo: 'Estado Geral: Regular, consciente, orientada, hidratada, corada, acianótica, anictérica. PA: 110x70 mmHg. FC: 85 bpm. FR: 18 irpm. Tax: 38.9ºC. SatO2: 98% (ar ambiente).',
-      },
-      {
-        id: 'estX_lab_hemograma_dengue',
-        conteudo: 'Hemograma: Hemoglobina: 13.5 g/dL (Ref: 12-16). Hematocrito: 40% (Ref: 36-46). Leucocitos Totais: 3.200/mm³ (Ref: 4.000-11.000). Plaquetas: 90.000/mm³ (Ref: 150.000-450.000).',
-      },
-      {
-        id: 'estX_teste_provadolaco_dengue',
-        conteudo: 'Prova do Laço: Positiva (>20 petéquias em 2,5 cm²).',
-      },
-    ],
-    itensAvaliacao: [
-      { dominio: 'ANAMNESE', descricao: 'Investigação de febre e dores no corpo.', pontos: 1.0 },
-      { dominio: 'ANAMNESE', descricao: 'Investigação de outros sintomas de dengue (cefaleia, dor retro-orbitária, exantema, etc.).', pontos: 1.0 },
-      { dominio: 'ANAMNESE', descricao: 'Investigação sobre exposição em área endêmica / viagens recentes.', pontos: 0.5 },
-      { dominio: 'EXAME FÍSICO', descricao: 'Verbaliza solicitação de Sinais Vitais.', pontos: 0.25 },
-      { dominio: 'EXAME FÍSICO', descricao: 'Realiza ou verbaliza a realização da prova do laço.', pontos: 0.75 },
-      { dominio: 'DIAGNÓSTICO', descricao: 'Solicita Hemograma e Sorologia para Dengue (se disponível).', pontos: 0.75 },
-      { dominio: 'DIAGNÓSTICO', descricao: 'Interpretação correta do Hemograma (leucopenia, plaquetopenia) e Prova do Laço.', pontos: 0.75 },
-      { dominio: 'DIAGNÓSTICO', descricao: 'Verbaliza diagnóstico de Dengue Clássica e classifica o risco (Grupo A ou B).', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNicação', descricao: 'Comunica conduta inicial (hidratação oral, paracetamol para dor/febre).', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNicação', descricao: 'Orienta a NÃO utilizar AAS e AINEs.', pontos: 0.75 },
-      { dominio: 'CONDUTA E COMUNicação', descricao: 'Orienta sobre sinais de alarme para retorno (dor abdominal, vômitos persistentes, sangramentos, etc.).', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNicação', descricao: 'Verbaliza a necessidade de notificação compulsória (SINAN).', pontos: 0.5 },
-    ],
-  },
-  // Adicione mais diagnósticos aqui seguindo a mesma estrutura
-};
+// Firebase Storage imports
+import { getStorage, ref, uploadString } from "firebase/storage";
+import { storage } from '@/lib/firebase'; // Ensure storage is exported from your firebase config
 
-const CreateStationPage = () => {
-  const [diagnostico, setDiagnostico] = useState('');
+const medicalAreas = [
+  "Clínica Médica",
+  "Cirurgia",
+  "G.O", // Ginecologia e Obstetrícia
+  "Pediatria",
+  "Preventiva", // Medicina Preventiva e Social / Saúde Coletiva
+];
 
-  const handleGerarEstacao = () => {
-    const data = diagnosisData[diagnostico];
-    if (data) {
-      // Faz uma cópia profunda do template para não modificar o original
+const CreateStationFromTemplatePage = () => {
+  const [stationName, setStationName] = useState('');
+  const [selectedArea, setSelectedArea] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const generateStationId = (area: string, name: string) => {
+    const areaSlug = area.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const nameSlug = name.toLowerCase().replace(/[^a-z0-9áéíóúàèìòùâêîôûãõç]+/gi, '-').replace(/^-+|-+$/g, '');
+    return `${areaSlug}-${nameSlug}`;
+  };
+
+  const handleGenerateAndSaveStation = async () => {
+    if (!stationName || !selectedArea) {
+      toast({
+        title: "Campos Obrigatórios",
+        description: "Por favor, preencha o nome da estação e selecione a área.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // 1. Create a deep copy of the template
       const newStation = JSON.parse(JSON.stringify(stationTemplate));
 
-      // Mescla os dados do diagnóstico no template, priorizando os dados do diagnóstico
-      Object.assign(newStation, data);
+      // 2. Populate the template with form data
+      const stationId = generateStationId(selectedArea, stationName);
+      newStation.id = stationId;
+      newStation.especialidade = selectedArea;
+      
+      // Add/Update a title field for easier identification, if not already in template
+      // For example, directly in the root or within instrucoesParticipante
+      newStation.nomeEstacao = stationName; // Custom field for display name
+      newStation.instrucoesParticipante.descricaoCompletaCaso = `Paciente com quadro clínico sugestivo de ${stationName}. Detalhes a serem preenchidos.`;
+      newStation.palavrasChave = [stationName, selectedArea, "modelo", ...newStation.palavrasChave.slice(0,2)];
+
+
+      // 3. Convert to JSON string for saving
+      const stationJsonString = JSON.stringify(newStation, null, 2);
+
+      // 4. Define Firebase Storage path
+      const areaSlug = selectedArea.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const filePath = `estacoes_modelos_geradas/${areaSlug}/${stationId}.json`;
+      const storageRef = ref(storage, filePath);
+
+      // 5. Upload to Firebase Storage
+      await uploadString(storageRef, stationJsonString, 'raw', { contentType: 'application/json' });
+      
+      toast({
+        title: "Estação Gerada e Salva!",
+        description: `Modelo para "${stationName}" salvo em: ${filePath}`,
+        variant: "default",
+      });
       console.log('Estação Gerada:', newStation);
-      // TODO: Implementar a exibição ou salvamento da estação gerada
-    } else {
-      console.error(`Dados para o diagnóstico "${diagnostico}" não encontrados.`);
+      console.log('Salva no Firebase Storage em:', filePath);
+
+      // Optionally reset form or navigate
+      setStationName('');
+      setSelectedArea(undefined);
+      // router.push('/admin'); // Or to a list of generated templates
+
+    } catch (error) {
+      console.error('Erro ao gerar ou salvar estação:', error);
+      toast({
+        title: "Erro ao Salvar",
+        description: (error as Error).message || "Ocorreu um problema ao salvar o modelo da estação.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Criar Estação</h1>
-      <div className="mb-4">
-        <label htmlFor="diagnostico" className="block text-sm font-medium text-gray-700">
-          Nome do Diagnóstico/Estação
-        </label>
-        <input
-          type="text"
-          id="diagnostico"
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          value={diagnostico}
-          onChange={(e) => setDiagnostico(e.target.value)}
-        />
-      </div>
-      <Button onClick={handleGerarEstacao}>
-        Gerar Estação
-      </Button>
+      <Card className="max-w-2xl mx-auto shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center text-2xl font-headline">
+            <FilePlus2 className="mr-3 h-7 w-7 text-primary" />
+            Criar Modelo de Estação
+          </CardTitle>
+          <CardDescription>
+            Preencha os campos abaixo para gerar um novo modelo de estação clínica baseado no gabarito padrão.
+            O arquivo JSON será salvo no Firebase Storage.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="stationName">Nome da Doença/Estação</Label>
+            <Input
+              id="stationName"
+              placeholder="Ex: Infarto Agudo do Miocárdio, Dengue Clássica"
+              value={stationName}
+              onChange={(e) => setStationName(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="medicalArea">Área da Medicina</Label>
+            <Select value={selectedArea} onValueChange={setSelectedArea} disabled={isLoading}>
+              <SelectTrigger id="medicalArea">
+                <SelectValue placeholder="Selecione a área médica" />
+              </SelectTrigger>
+              <SelectContent>
+                {medicalAreas.map((area) => (
+                  <SelectItem key={area} value={area}>
+                    {area}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button 
+            onClick={handleGenerateAndSaveStation} 
+            disabled={isLoading || !stationName || !selectedArea}
+            className="w-full"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Gerando e Salvando...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Gerar e Salvar Estação
+              </>
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
 
-export default CreateStationPage;
+// Renomeando o export default para evitar conflito se houver outro com mesmo nome no escopo global da página.
+export default CreateStationFromTemplatePage;
+
+// Loader2 icon for loading state (if not already imported, add to lucide-react imports)
+import { Loader2 } from 'lucide-react';
