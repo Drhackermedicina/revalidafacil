@@ -32,7 +32,8 @@ import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data';
 import { goEditorTemplate } from "@/lib/station-data/editor-templates/go-template";
-import { pediatricsEditorTemplate } from "@/lib/station-data/editor-templates/pediatrics-template"; // Importar o template de Pediatria
+import { pediatricsEditorTemplate } from "@/lib/station-data/editor-templates/pediatrics-template";
+import { preventiveEditorTemplate } from "@/lib/station-data/editor-templates/preventive-template"; // Importar o template de Preventiva
 
 // Zod schema for station fields
 const stationFormSchema = z.object({
@@ -92,6 +93,8 @@ export default function StationEditorPage() {
       templateToApply = goEditorTemplate;
     } else if (selectedArea === "Pediatria") {
       templateToApply = pediatricsEditorTemplate;
+    } else if (selectedArea === "Preventiva") {
+      templateToApply = preventiveEditorTemplate;
     }
 
     if (templateToApply) {
@@ -202,7 +205,7 @@ export default function StationEditorPage() {
             </CardTitle>
             <CardDescription>
               Crie ou modifique estações para treinamento de habilidades clínicas.
-              Preencha os campos abaixo para definir uma nova estação. Selecionar "G.O" ou "Pediatria" em Área Médica preencherá um modelo.
+              Preencha os campos abaixo para definir uma nova estação. Selecionar "G.O", "Pediatria" ou "Preventiva" em Área Médica preencherá um modelo.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -450,5 +453,6 @@ export default function StationEditorPage() {
     
 
     
+
 
 
