@@ -107,9 +107,9 @@ function StationEditorContent() {
             scenarioTitle: stationData.scenario?.title || "",
             scenarioDescription: stationData.scenario?.description || "",
             actorInstructions: stationData.actorInstructions?.content || "",
-            candidateTasksDescription: stationData.tasks?.items?.join('\n') || "",
+            candidateTasksDescription: stationData.tasks?.items?.join('\\n') || "",
             printedMaterialsDescription: stationData.printedMaterials?.[0]?.content || "",
-            pepItemsDescription: stationData.checklistItems?.map(item => item.description).join('\n') || "",
+            pepItemsDescription: stationData.checklistItems?.map(item => item.description).join('\\n') || "",
           });
           toast({
             title: "Estação Carregada",
@@ -192,7 +192,7 @@ function StationEditorContent() {
 
       const checklistItems: ChecklistItem[] = [];
       if (data.pepItemsDescription && data.pepItemsDescription.trim() !== "") {
-        const pepDescriptions = data.pepItemsDescription.split('\n').filter(line => line.trim() !== "");
+        const pepDescriptions = data.pepItemsDescription.split('\\n').filter(line => line.trim() !== "");
         pepDescriptions.forEach((desc, index) => {
           checklistItems.push({
             id: `editor-pep-${data.code}-${index + 1}`,
@@ -205,7 +205,7 @@ function StationEditorContent() {
       }
       
       const taskItems = data.candidateTasksDescription
-        ? data.candidateTasksDescription.split('\n').map(task => task.trim()).filter(task => task)
+        ? data.candidateTasksDescription.split('\\n').map(task => task.trim()).filter(task => task)
         : ["Realizar anamnese", "Realizar exame físico", "Definir diagnóstico e conduta"];
 
       const stationDoc: Partial<ChecklistData> & { code: string; title: string; area: string; editorVersion?: number; lastUpdatedAt?: string; } = {
@@ -533,3 +533,4 @@ export default function StationEditorPage() {
     </Suspense>
   );
 }
+
