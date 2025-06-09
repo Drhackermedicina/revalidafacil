@@ -50,7 +50,7 @@ export default function SimulationPage() {
       const fetchStationData = async () => {
         setStatusMessage('Carregando dados da estação...');
         try {
-          const stationRef = doc(db, 'revalidafacio', stationId); // <- NOME DA COLEÇÃO ATUALIZADO
+          const stationRef = doc(db, 'revalidafacio', stationId);
           const docSnap = await getDoc(stationRef);
 
           if (docSnap.exists()) {
@@ -61,8 +61,8 @@ export default function SimulationPage() {
             setStationData(null);
           }
         } catch (err) {
-          setError('Falha ao buscar dados da estação.');
-          console.error(err);
+          console.error("Erro detalhado ao buscar estação:", err); // Log de erro mais detalhado
+          setError('Falha ao buscar dados da estação. Verifique o console para mais detalhes.');
           setStationData(null);
         }
       };

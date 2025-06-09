@@ -110,11 +110,11 @@ const NavAccordionItem: React.FC<{
 
 const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = ({ isCollapsed = false, isAdmin = false }) => {
   const pathname = usePathname();
-  const getOpenAccordionValue = () => {
-    if (pathname.startsWith("/checklists")) return "checklists"; // Updated to cover both /checklists/pense and /checklists/inep
-    if (pathname.startsWith("/history")) return "history";
-    if (isAdmin && pathname.startsWith("/admin")) return "admin";
-    return undefined;
+  const getOpenAccordionValue = (): string[] | undefined => {
+    if (pathname.startsWith("/checklists")) return ["checklists"];
+    if (pathname.startsWith("/history")) return ["history"];
+    if (isAdmin && pathname.startsWith("/admin")) return ["admin"];
+    return undefined; // Or return [] if you always want an array
   };
 
   return (
@@ -206,10 +206,10 @@ export function SidebarNav() {
   }, [user, isAuthLoading]);
 
 
-  const getOpenAccordionValue = () => {
-    if (pathname.startsWith("/checklists")) return "checklists";
-    if (pathname.startsWith("/history")) return "history";
-    if (isAdmin && pathname.startsWith("/admin")) return "admin";
+  const getOpenAccordionValue = (): string[] | undefined => {
+    if (pathname.startsWith("/checklists")) return ["checklists"];
+    if (pathname.startsWith("/history")) return ["history"];
+    if (isAdmin && pathname.startsWith("/admin")) return ["admin"];
     return undefined;
   };
 

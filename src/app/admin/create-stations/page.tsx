@@ -3,8 +3,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { stationTemplate } from '@/lib/station-data/templates/station_template';
-import { Button } from '@/components/ui/button';
+import { stationTemplate } from '/home/runner/work/revalida-project/revalida-project/src/lib/station-data/templates/station_template.ts';
+import { Button } from '/home/runner/work/revalida-project/revalida-project/src/components/ui/button.tsx';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
