@@ -1,9 +1,11 @@
+
 "use client";
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Importe useRouter do Next.js
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"; // Importe as funções do Firebase Auth
-import { firebaseApp } from "@/lib/firebase"; // Importe sua instância do Firebase
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { firebaseApp } from "@/lib/firebase";
 import { Book, User, Lock, Mail, Home, MessageSquare, BriefcaseMedical, TrendingUp, Compass, Newspaper, ArrowRight, Check, XCircle, PlayCircle } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext'; // Importar useAuth
 
 // Componente do Modal de Mensagem: Usado para exibir informações ao usuário
 const MessageModal = ({ message, onClose }) => {
@@ -205,7 +207,7 @@ const HomePage = ({ onNavigate, onShowMessage }) => (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {/* Testemunho 1 */}
         <div className="bg-green-50 p-6 rounded-xl shadow-md flex items-center space-x-4">
-          <img src="https://placehold.co/80x80/d1fae5/065f46?text=João" alt="Foto de Perfil de João" className="w-20 h-20 rounded-full object-cover border-4 border-green-200" />
+          <img src="https://placehold.co/80x80/d1fae5/065f46?text=João" alt="Foto de Perfil de João" className="w-20 h-20 rounded-full object-cover border-4 border-green-200" data-ai-hint="profile person" />
           <div>
             <p className="italic text-gray-700 mb-2">"O '<span className="font-bold">Revalida Fácil</span>' foi essencial na minha preparação. Os simulados são incrivelmente realistas!"</p>
             <p className="font-semibold text-green-700">- João Silva, Aprovado no Revalida 2023</p>
@@ -213,7 +215,7 @@ const HomePage = ({ onNavigate, onShowMessage }) => (
         </div>
         {/* Testemunho 2 */}
         <div className="bg-green-50 p-6 rounded-xl shadow-md flex items-center space-x-4">
-          <img src="https://placehold.co/80x80/d1fae5/065f46?text=Maria" alt="Foto de Perfil de Maria" className="w-20 h-20 rounded-full object-cover border-4 border-green-200" />
+          <img src="https://placehold.co/80x80/d1fae5/065f46?text=Maria" alt="Foto de Perfil de Maria" className="w-20 h-20 rounded-full object-cover border-4 border-green-200" data-ai-hint="profile person" />
           <div>
             <p className="italic text-gray-700 mb-2">"As questões comentadas e os resumos do '<span className="font-bold">Revalida Fácil</span>' me pouparam muito tempo. Recomendo a todos!"</p>
             <p className="font-semibold text-green-700">- Maria Souza, Candidata Revalida</p>
@@ -286,26 +288,21 @@ const LoginPage = ({ onNavigate, onShowMessage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Adicionar estado de carregamento
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const router = useRouter(); // Inicialize o useRouter
-
-  // Função para lidar com o envio do formulário de login (simulado)
-  const handleSubmit = async (e) => { // Tornar a função assíncrona
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Limpa erros anteriores
-
-    setIsLoading(true); // Inicia o estado de carregamento
-
+    setError('');
+    setIsLoading(true);
     try {
-      const auth = getAuth(firebaseApp); // Obtenha a instância de autenticação
-      await signInWithEmailAndPassword(auth, email, password); // Chame a função de login do Firebase
-
-      // Login bem-sucedido, redirecionar para o dashboard
-      router.push('/dashboard'); // Use router.push para navegar
-
+      const auth = getAuth(firebaseApp);
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/dashboard');
     } catch (error) {
-      setError('Email ou senha incorretos.'); // Mensagem de erro
+      setError('Email ou senha incorretos.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -318,14 +315,12 @@ const LoginPage = ({ onNavigate, onShowMessage }) => {
           <p className="text-gray-500 mt-2">Bem-vindo(a) de volta!</p>
         </div>
 
-        {/* Exibição de mensagens de erro */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm" role="alert">
             {error}
           </div>
         )}
 
-        {/* Formulário de Login */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -373,10 +368,10 @@ const LoginPage = ({ onNavigate, onShowMessage }) => {
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105"
+            disabled={isLoading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105 disabled:bg-indigo-400"
           >
-            {isLoading ? 'Entrando...' : 'Entrar'} {/* Texto do botão muda durante o carregamento */}
-
+            {isLoading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
@@ -392,7 +387,6 @@ const LoginPage = ({ onNavigate, onShowMessage }) => {
           </p>
         </div>
 
-        {/* Opção de Login Social (Google) */}
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -424,8 +418,8 @@ const RegisterPage = ({ onNavigate, onShowMessage }) => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Adicionado estado de loading
 
-  // Função para verificar a força da senha
   const checkPasswordStrength = (pass) => {
     let strength = '';
     if (pass.length < 6) {
@@ -438,24 +432,28 @@ const RegisterPage = ({ onNavigate, onShowMessage }) => {
     setPasswordStrength(strength);
   };
 
-  // Função para lidar com o envio do formulário de cadastro (simulado)
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true); // Ativar loading
 
-    // Validação das senhas
     if (password !== confirmPassword) {
       setError('As senhas não coincidem.');
+      setIsLoading(false); // Desativar loading
       return;
     }
-    // Validação da aceitação dos termos
     if (!agreeTerms) {
       setError('Você deve concordar com os Termos de Uso e Política de Privacidade.');
+      setIsLoading(false); // Desativar loading
       return;
     }
 
-    onShowMessage('Cadastro bem-sucedido! (Simulado)');
-    onNavigate('login'); // Redireciona para o login após o cadastro
+    // Simulação de cadastro
+    setTimeout(() => {
+      onShowMessage('Cadastro bem-sucedido! (Simulado)');
+      onNavigate('login');
+      setIsLoading(false); // Desativar loading
+    }, 1000);
   };
 
   return (
@@ -467,14 +465,12 @@ const RegisterPage = ({ onNavigate, onShowMessage }) => {
           <p className="text-gray-500 mt-2">Junte-se à comunidade Revalida Fácil!</p>
         </div>
 
-        {/* Exibição de mensagens de erro */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm" role="alert">
             {error}
           </div>
         )}
 
-        {/* Formulário de Cadastro */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
@@ -534,7 +530,6 @@ const RegisterPage = ({ onNavigate, onShowMessage }) => {
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
               />
             </div>
-            {/* Feedback da força da senha */}
             {password && (
               <p className={`mt-1 text-xs ${passwordStrength === 'Forte' ? 'text-green-600' : passwordStrength === 'Média' ? 'text-yellow-600' : 'text-red-600'}`}>
                 Força da senha: {passwordStrength}
@@ -559,7 +554,6 @@ const RegisterPage = ({ onNavigate, onShowMessage }) => {
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
               />
             </div>
-            {/* Mensagem de senhas que não coincidem */}
             {password && confirmPassword && password !== confirmPassword && (
               <p className="mt-1 text-xs text-red-600">As senhas não coincidem.</p>
             )}
@@ -584,9 +578,10 @@ const RegisterPage = ({ onNavigate, onShowMessage }) => {
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105"
+            disabled={isLoading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 disabled:bg-blue-400"
           >
-            Cadastrar
+            {isLoading ? 'Cadastrando...' : 'Cadastrar'}
           </button>
         </form>
 
@@ -608,36 +603,52 @@ const RegisterPage = ({ onNavigate, onShowMessage }) => {
 
 // Componente Principal da Aplicação: Gerencia a navegação entre as páginas
 export default function App() {
-  // Estado para controlar qual página está sendo exibida (home, login, register, videoDemo)
+  const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
+
   const [currentPage, setCurrentPage] = useState('home');
-  // Estado para controlar a mensagem a ser exibida no modal
   const [modalMessage, setModalMessage] = useState(null);
 
-  // Função para alterar a página atual
+  useEffect(() => {
+    if (isAuthLoading) {
+      return; // Aguarda o estado de autenticação ser determinado
+    }
+    if (user) {
+      // Se o usuário estiver autenticado, redireciona para o dashboard
+      router.push('/dashboard');
+    }
+    // Array de dependências garante que o efeito rode quando o estado de autenticação mudar
+  }, [user, isAuthLoading, router]);
+
+  // Enquanto a autenticação estiver carregando, ou se o usuário estiver logado (e o redirecionamento estiver prestes a acontecer),
+  // renderiza nada ou um indicador de carregamento para evitar piscar o conteúdo da página inicial.
+  if (isAuthLoading || user) {
+    // return <div>Carregando...</div>; // Opcional: Um indicador de carregamento global
+    return null; 
+  }
+
   const handleNavigate = (page) => {
     setCurrentPage(page);
   };
 
-  // Função para definir a mensagem e exibir o modal
   const handleShowMessage = (message) => {
     setModalMessage(message);
   };
 
-  // Função para fechar o modal, limpando a mensagem
   const handleCloseMessage = () => {
     setModalMessage(null);
   };
 
+  // Se o usuário não estiver logado e a autenticação não estiver carregando, renderiza o conteúdo da página inicial
   return (
     <div>
-      {/* Renderiza o componente da página atual com base no estado 'currentPage' */}
       {currentPage === 'home' && <HomePage onNavigate={handleNavigate} onShowMessage={handleShowMessage} />}
       {currentPage === 'login' && <LoginPage onNavigate={handleNavigate} onShowMessage={handleShowMessage} />}
       {currentPage === 'register' && <RegisterPage onNavigate={handleNavigate} onShowMessage={handleShowMessage} />}
       {currentPage === 'videoDemo' && <VideoDemoPage onNavigate={handleNavigate} />}
-
-      {/* Renderiza o Modal de Mensagem se houver uma 'modalMessage' */}
       <MessageModal message={modalMessage} onClose={handleCloseMessage} />
     </div>
   );
 }
+
+    

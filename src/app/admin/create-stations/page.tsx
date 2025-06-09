@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from 'react';
-// Removido import de Button com caminho absoluto
-import { stationTemplate } from '../../../../../lib/station-data/templates/station_template';
-import { Button } from '../../../../components/ui/button'; // Mantido import de Button com caminho relativo
+// Caminhos de importação corrigidos para usar o alias de caminho absoluto
+import { stationTemplate } from '@/lib/station-data/templates/station_template';
+import { Button } from '@/components/ui/button';
 
-// Predefined data for some example diagnoses
+// Dados predefinidos para alguns exemplos de diagnósticos
 const diagnosisData: { [key: string]: any } = {
   'Infarto Agudo do Miocárdio': {
     id: 'IAM',
@@ -72,7 +72,6 @@ const diagnosisData: { [key: string]: any } = {
         conteudo: 'Troponina I: 2.5 ng/mL (Ref: < 0.04). CK-MB: 80 U/L (Ref: < 25).',
       }
     ],
-    // Simplified checklist for this example
     itensAvaliacao: [
       { dominio: 'ANAMNESE', descricao: 'Investigação da dor torácica (4/7 características)', pontos: 1.0 },
       { dominio: 'ANAMNESE', descricao: 'Investigação de sinais de alarme para SCA', pontos: 1.0 },
@@ -165,32 +164,28 @@ const diagnosisData: { [key: string]: any } = {
       { dominio: 'DIAGNÓSTICO', descricao: 'Solicita Hemograma e Sorologia para Dengue (se disponível).', pontos: 0.75 },
       { dominio: 'DIAGNÓSTICO', descricao: 'Interpretação correta do Hemograma (leucopenia, plaquetopenia) e Prova do Laço.', pontos: 0.75 },
       { dominio: 'DIAGNÓSTICO', descricao: 'Verbaliza diagnóstico de Dengue Clássica e classifica o risco (Grupo A ou B).', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNICAÇÃO', descricao: 'Comunica conduta inicial (hidratação oral, paracetamol para dor/febre).', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNICAÇÃO', descricao: 'Orienta a NÃO utilizar AAS e AINEs.', pontos: 0.75 },
-      { dominio: 'CONDUTA E COMUNICAÇÃO', descricao: 'Orienta sobre sinais de alarme para retorno (dor abdominal, vômitos persistentes, sangramentos, etc.).', pontos: 1.0 },
-      { dominio: 'CONDUTA E COMUNICAÇÃO', descricao: 'Verbaliza a necessidade de notificação compulsória (SINAN).', pontos: 0.5 },
+      { dominio: 'CONDUTA E COMUNicação', descricao: 'Comunica conduta inicial (hidratação oral, paracetamol para dor/febre).', pontos: 1.0 },
+      { dominio: 'CONDUTA E COMUNicação', descricao: 'Orienta a NÃO utilizar AAS e AINEs.', pontos: 0.75 },
+      { dominio: 'CONDUTA E COMUNicação', descricao: 'Orienta sobre sinais de alarme para retorno (dor abdominal, vômitos persistentes, sangramentos, etc.).', pontos: 1.0 },
+      { dominio: 'CONDUTA E COMUNicação', descricao: 'Verbaliza a necessidade de notificação compulsória (SINAN).', pontos: 0.5 },
     ],
   },
-  // Add more diagnoses here following the same structure
+  // Adicione mais diagnósticos aqui seguindo a mesma estrutura
 };
 
 const CreateStationPage = () => {
   const [diagnostico, setDiagnostico] = useState('');
 
-
-  const handleGerarEstacao = () => { // Function to generate the station based on the input diagnosis
+  const handleGerarEstacao = () => {
     const data = diagnosisData[diagnostico];
     if (data) {
-      // Deep copy template to avoid modifying the original
-      // This ensures that we start with a fresh template each time
+      // Faz uma cópia profunda do template para não modificar o original
       const newStation = JSON.parse(JSON.stringify(stationTemplate));
 
-      // Merge diagnosis data into the template, prioritizing diagnosis data
-      Object.assign(newStation, data); // Merge data into the copied template
-      console.log('Estação Gerada:', newStation); // Log the generated station object
-      // TODO: Implement display or saving of the generated station (e.g., in a state or pushing to a list)
-      // For example, you might set another state variable here
-      // setGeneratedStation(newStation); // Assuming you have a state variable to hold the generated station
+      // Mescla os dados do diagnóstico no template, priorizando os dados do diagnóstico
+      Object.assign(newStation, data);
+      console.log('Estação Gerada:', newStation);
+      // TODO: Implementar a exibição ou salvamento da estação gerada
     } else {
       console.error(`Dados para o diagnóstico "${diagnostico}" não encontrados.`);
     }
