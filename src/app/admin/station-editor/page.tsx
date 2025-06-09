@@ -107,10 +107,10 @@ export default function StationEditorPage() {
 
     if (templateToApply) {
       form.reset({
-        title: currentValues.title,
-        code: currentValues.code,
-        area: selectedArea,
-        ...templateToApply,
+        title: currentValues.title, // Preserve user-entered title
+        code: currentValues.code,   // Preserve user-entered code
+        area: selectedArea,         // Keep selected area
+        ...templateToApply,         // Apply template for other fields
       });
     } else if (selectedArea) { // Reset fields if an area is selected but no template exists (or for fallback)
       form.reset({
@@ -467,6 +467,3 @@ export default function StationEditorPage() {
     </AppLayout>
   );
 }
-
-
-    

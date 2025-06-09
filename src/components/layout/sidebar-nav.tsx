@@ -23,6 +23,7 @@ import {
   Youtube,
   Settings,
   MessagesSquare, // Ícone para Chatplay
+  BookCopy // Ícone para INEP
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/icons/logo";
@@ -111,7 +112,7 @@ const NavAccordionItem: React.FC<{
 const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = ({ isCollapsed = false, isAdmin = false }) => {
   const pathname = usePathname();
   const getOpenAccordionValue = () => {
-    if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
+    if (pathname.startsWith("/checklists")) return "checklists"; // Updated to cover both /checklists/pense and /checklists/inep
     if (pathname.startsWith("/history")) return "history";
     if (isAdmin && pathname.startsWith("/admin")) return "admin";
     return undefined;
@@ -156,12 +157,12 @@ const SidebarNavContent: React.FC<{isCollapsed?: boolean; isAdmin?: boolean}> = 
                 labelClassName={cn(isCollapsed ? "" : "py-3 text-base font-semibold", isCollapsed ? "" : "text-primary dark:text-blue-400")}
             />
             <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
-              <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed}/>
+              <NavItem href="/checklists/inep" icon={BookCopy} label="INEP" isSubItem isCollapsed={isCollapsed}/>
               <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed}/>
             </NavAccordionItem>
 
             <NavAccordionItem icon={Clock} label={"Histórico"} value="history" isCollapsed={isCollapsed}>
-              <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed}/>
+              <NavItem href="/history/checklist" icon={History} label="Checklist" isSubItem isCollapsed={isCollapsed} />
             </NavAccordionItem>
 
             <NavItem href="/dashboard" icon={UserCircle} label={"Área do Estudante"} isCollapsed={isCollapsed} />
@@ -207,7 +208,7 @@ export function SidebarNav() {
 
 
   const getOpenAccordionValue = () => {
-    if (pathname.startsWith("/estacoes") || pathname.startsWith("/checklists")) return "checklists";
+    if (pathname.startsWith("/checklists")) return "checklists";
     if (pathname.startsWith("/history")) return "history";
     if (isAdmin && pathname.startsWith("/admin")) return "admin";
     return undefined;
@@ -279,7 +280,7 @@ export function SidebarNav() {
                     labelClassName={cn(isCollapsed ? "" : "py-3 text-base font-semibold", isCollapsed ? "" : "text-primary dark:text-blue-400")}
                   />
                   <NavAccordionItem icon={Archive} label={"Estações"} value="checklists" isCollapsed={isCollapsed}>
-                    <NavItem href="/estacoes/inep" icon={BookMarked} label="INEP Provas anteriores" isSubItem isCollapsed={isCollapsed} />
+                    <NavItem href="/checklists/inep" icon={BookCopy} label="INEP" isSubItem isCollapsed={isCollapsed} />
                     <NavItem href="/checklists/pense" icon={ClipboardCheck} label="REVALIDA FÁCIL" isSubItem isCollapsed={isCollapsed} />
                   </NavAccordionItem>
 
@@ -304,6 +305,7 @@ export function SidebarNav() {
                   <NavItem href="/ranking" icon={Trophy} label={"Ranking"} isCollapsed={isCollapsed} />
                   {isAdmin && (
                     <NavAccordionItem icon={Settings} label={"Admin"} value="admin" isCollapsed={isCollapsed}>
+                       <NavItem href="/admin/create-stations" icon={FilePlus2} label="Criação de Estações" isSubItem isCollapsed={isCollapsed}/>
                        <NavItem href="/admin/station-editor" icon={FilePlus2} label="Editor de Estações" isSubItem isCollapsed={isCollapsed}/>
                     </NavAccordionItem>
                   )}
