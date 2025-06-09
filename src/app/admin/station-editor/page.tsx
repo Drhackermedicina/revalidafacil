@@ -31,7 +31,8 @@ import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data';
-import { goEditorTemplate } from "@/lib/station-data/editor-templates/go-template"; // Importar o template
+import { goEditorTemplate } from "@/lib/station-data/editor-templates/go-template";
+import { pediatricsEditorTemplate } from "@/lib/station-data/editor-templates/pediatrics-template"; // Importar o template de Pediatria
 
 // Zod schema for station fields
 const stationFormSchema = z.object({
@@ -61,7 +62,7 @@ const medicalAreas = [
 
 const initialStationValues: StationFormValues = {
   title: "",
-  area: undefined as any, // Será definido ou limpo
+  area: undefined as any, 
   code: "",
   scenarioTitle: "",
   scenarioDescription: "",
@@ -85,19 +86,27 @@ export default function StationEditorPage() {
 
   useEffect(() => {
     const currentValues = form.getValues();
+    let templateToApply = null;
+
     if (selectedArea === "G.O") {
+      templateToApply = goEditorTemplate;
+    } else if (selectedArea === "Pediatria") {
+      templateToApply = pediatricsEditorTemplate;
+    }
+
+    if (templateToApply) {
       form.reset({
-        title: currentValues.title, // Preserva o título se já digitado
-        code: currentValues.code,   // Preserva o código se já digitado
-        area: selectedArea,         // Define a área selecionada
-        ...goEditorTemplate,        // Aplica o template de G.O. para os outros campos
+        title: currentValues.title, 
+        code: currentValues.code,   
+        area: selectedArea,         
+        ...templateToApply,        
       });
-    } else if (selectedArea) { // Se outra área for selecionada (e não for G.O)
+    } else if (selectedArea) { 
       form.reset({
         title: currentValues.title,
         code: currentValues.code,
         area: selectedArea,
-        scenarioTitle: "", // Limpa campos que seriam do template
+        scenarioTitle: "", 
         scenarioDescription: "",
         actorInstructions: "",
         candidateTasksDescription: "",
@@ -105,7 +114,6 @@ export default function StationEditorPage() {
         pepItemsDescription: "",
       });
     }
-    // Não incluir form nas dependências para evitar loop com form.reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedArea]);
 
@@ -128,7 +136,7 @@ export default function StationEditorPage() {
         checklistItems.push({
           id: `editor-pep-${data.code}-1`,
           description: data.pepItemsDescription,
-          points: { inadequate: 0, partial: 0.5, adequate: 1 }, // Pontuação padrão
+          points: { inadequate: 0, partial: 0.5, adequate: 1 }, 
           type: "geral",
           observation: "Item gerado pelo editor de estações.",
         });
@@ -152,7 +160,7 @@ export default function StationEditorPage() {
         },
         tasks: { 
           title: "Tarefas do Candidato (Editor)", 
-          timeLimit: "10 minutos", // Default time limit
+          timeLimit: "10 minutos", 
           items: taskItems 
         },
         printedMaterials: printedMaterials,
@@ -194,7 +202,7 @@ export default function StationEditorPage() {
             </CardTitle>
             <CardDescription>
               Crie ou modifique estações para treinamento de habilidades clínicas.
-              Preencha os campos abaixo para definir uma nova estação. Selecionar "G.O" em Área Médica preencherá um modelo.
+              Preencha os campos abaixo para definir uma nova estação. Selecionar "G.O" ou "Pediatria" em Área Médica preencherá um modelo.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -442,4 +450,5 @@ export default function StationEditorPage() {
     
 
     
+
 
