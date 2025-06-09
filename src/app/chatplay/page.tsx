@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // CORREÇÃO: Removida a importação duplicada de 'MessagesSquare' no final da linha
-import { Swords, CircleSlash, UserPlus, Coffee, Send, Users, MessageSquare, Search, Activity, Scissors, Stethoscope, Baby, ShieldCheck, Shuffle, MessagesSquare } from "lucide-react";
+import { Swords, CircleSlash, UserPlus, Coffee, Send, Users, MessageSquare, Search, Activity, Scissors, Stethoscope, Baby, ShieldCheck, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "@/hooks/use-toast";
@@ -183,7 +183,7 @@ export default function ChatplayPage() {
         <Card className="mb-6 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold font-headline flex items-center">
-              <MessagesSquare className="mr-3 h-7 w-7 text-primary" />
+              <MessageSquare className="mr-3 h-7 w-7 text-primary" />
               Chatplay Revalida Fácil
             </CardTitle>
             <CardDescription>
@@ -405,3 +405,5 @@ export default function ChatplayPage() {
     </AppLayout>
   );
 }
+
+    

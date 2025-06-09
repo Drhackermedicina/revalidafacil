@@ -1,3 +1,4 @@
+
 // src/app/training/[code]/page.tsx
 import AppLayout from "@/components/layout/app-layout";
 import TrainingPageClient from "@/components/training/training-page-client";
@@ -24,7 +25,8 @@ async function getStationData(code: string): Promise<ChecklistData | undefined> 
 }
 
 export default async function StationTrainingPage({ params }: StationPageProps) {
-  const stationCode = params.code; // Correctly access params.code directly
+  // Correctly access params.code directly without await
+  const stationCode = params.code; 
 
   const stationData = await getStationData(stationCode);
 

@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { FilePlus2, UserCog, FileText, ListChecks } from "lucide-react";
+import { FilePlus2, UserCog, FileText, ListChecks, Info } from "lucide-react";
 
 // Zod schema for station fields
 const stationFormSchema = z.object({
@@ -287,5 +287,5 @@ export default function StationEditorPage() {
     </AppLayout>
   );
 }
-// Adicionei um ícone 'Info' que estava faltando na importação do lucide-react
-import { Info } from "lucide-react";
+
+    

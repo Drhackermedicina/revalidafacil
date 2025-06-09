@@ -1,5 +1,5 @@
 
-'use server'; // Embora seja um servidor Node.js, manter a diretiva pode ser útil se partes forem importadas por Server Components/Actions inadvertidamente.
+// Embora seja um servidor Node.js, manter a diretiva pode ser útil se partes forem importadas por Server Components/Actions inadvertidamente.
 
 import http from 'http';
 import { Server as SocketIOServer, type Socket } from 'socket.io';
@@ -167,4 +167,5 @@ signals.forEach(signal => {
 });
 
 export {}; // Garante que o arquivo seja tratado como um módulo
+
     
