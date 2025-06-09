@@ -35,7 +35,7 @@ import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/statio
 import { goEditorTemplate } from "@/lib/station-data/editor-templates/go-template";
 import { pediatricsEditorTemplate } from "@/lib/station-data/editor-templates/pediatrics-template";
 import { preventiveEditorTemplate } from "@/lib/station-data/editor-templates/preventive-template";
-import { surgeryEditorTemplate } from "@/lib/station-data/editor-templates/surgery-template";
+// import { surgeryEditorTemplate } from "@/lib/station-data/editor-templates/surgery-template";
 import { clinicalMedicineEditorTemplate } from "@/lib/station-data/editor-templates/clinical-medicine-template";
 
 
@@ -150,7 +150,7 @@ function StationEditorContent() {
     if (selectedArea === "G.O") templateToApply = goEditorTemplate;
     else if (selectedArea === "Pediatria") templateToApply = pediatricsEditorTemplate;
     else if (selectedArea === "Preventiva") templateToApply = preventiveEditorTemplate;
-    else if (selectedArea === "Cirurgia") templateToApply = surgeryEditorTemplate;
+    // else if (selectedArea === "Cirurgia") templateToApply = surgeryEditorTemplate; // Temporarily commented out
     else if (selectedArea === "Clínica Médica") templateToApply = clinicalMedicineEditorTemplate;
 
     if (templateToApply) {
