@@ -1,7 +1,21 @@
+
 "use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import {
   Activity,
   Award,
@@ -10,11 +24,20 @@ import {
   Lightbulb,
   LightbulbOff,
   Bell,
-  Users // Ícone para Mentoria
+  Users, // Ícone para Mentoria
+  LogOut,
+  User as UserIcon,
+  Settings, // Ícone para configurações de conta (exemplo)
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import type { SVGProps } from 'react';
+import { useAuth } from "@/context/AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 // WhatsApp SVG Icon component (Standard Green WhatsApp Icon)
 const WhatsAppIcon = (props: SVGProps<SVGSVGElement>) => (
@@ -55,51 +78,60 @@ const MeetIcon = (props: SVGProps<SVGSVGElement>) => (
 export function HeaderNav() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { user, isLoading: authLoading } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Skeleton loader to prevent hydration mismatch
-  if (!mounted) {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({
+        title: "Logout Realizado",
+        description: "Você foi desconectado com sucesso.",
+      });
+      router.push('/'); // Redireciona para a página inicial
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      toast({
+        title: "Erro no Logout",
+        description: "Não foi possível desconectar. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getUserInitials = (name?: string | null) => {
+    if (!name) return "";
+    const nameParts = name.split(" ");
+    if (nameParts.length > 1) {
+      return (nameParts[0][0] + (nameParts[nameParts.length - 1][0] || '')).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+
+  // Skeleton loader to prevent hydration mismatch or show loading state
+  if (!mounted || authLoading) {
     return (
       <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-primary to-[hsl(var(--chart-2))] text-primary-foreground">
         <div className="container flex h-16 items-center justify-between space-x-4">
-          {/* Placeholder for Nav Items */}
           <div className="flex flex-1 items-center justify-between">
-            <div className="flex items-center space-x-4 md:space-x-6">
-              <div className="flex items-center space-x-1.5">
-                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-20 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Estatísticas */}
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-16 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Mentoria */}
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-16 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div> {/* Recursos */}
-              </div>
-               <div className="flex items-center space-x-1.5"> {/* Meet Placeholder */}
-                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-10 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-              </div>
-              <div className="flex items-center space-x-1.5"> {/* Report Problem placeholder */}
-                <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-                <div className="w-28 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-              </div>
+            <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4">
+              <div className="w-24 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+              <div className="w-20 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+              <div className="w-20 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
+              <div className="w-12 h-5 bg-primary-foreground/20 animate-pulse rounded-md hidden sm:block"></div>
+              <div className="w-32 h-5 bg-primary-foreground/20 animate-pulse rounded-md hidden md:block"></div>
             </div>
-            {/* Gemini placeholder, separated */}
-            <div className="flex items-center space-x-1.5">
-              <div className="w-5 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-              <div className="w-14 h-4 bg-primary-foreground/20 animate-pulse rounded-md"></div>
-            </div>
+            <div className="w-20 h-5 bg-primary-foreground/20 animate-pulse rounded-md"></div>
           </div>
-
-          {/* Placeholder for Right side: Theme, Bell */}
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-primary-foreground/20 animate-pulse rounded-full"></div> {/* Theme toggle placeholder */}
-            <div className="w-10 h-10 bg-primary-foreground/20 animate-pulse rounded-full"></div> {/* Notification Bell placeholder */}
+          <div className="flex items-center space-x-1">
+            <div className="w-10 h-10 bg-primary-foreground/20 animate-pulse rounded-full"></div>
+            <div className="w-10 h-10 bg-primary-foreground/20 animate-pulse rounded-full"></div>
           </div>
         </div>
       </header>
@@ -113,29 +145,20 @@ export function HeaderNav() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-primary to-[hsl(var(--chart-2))] text-primary-foreground">
       <div className="container flex h-16 items-center justify-between space-x-4">
-        {/* Nav Items */}
         <nav className="flex flex-1 items-center justify-between text-sm">
           <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4">
-            
-            {/* CORRIGIDO: O 'div' foi substituído por um 'Link' para permitir a navegação. */}
-            {/* Lembre-se de criar a página em 'app/estatisticas/page.tsx' */}
-            <Link href="/estatisticas" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
+            <Link href="/dashboard" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
               <Activity className="h-5 w-5" />
               <span className="hidden sm:inline">Estatísticas</span>
             </Link>
-            
             <Link href="/mentorship" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
               <Users className="h-5 w-5" />
               <span className="hidden sm:inline">Mentoria</span>
             </Link>
-            
-            {/* CORRIGIDO: O 'div' também foi substituído por um 'Link' aqui. */}
-            {/* Lembre-se de criar a página em 'app/recursos/page.tsx' */}
             <Link href="/recursos" className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10">
               <Search className="h-5 w-5" />
               <span className="hidden sm:inline">Recursos</span>
             </Link>
-            
             <Link
               href="https://meet.google.com/new"
               target="_blank"
@@ -146,7 +169,7 @@ export function HeaderNav() {
               <span className="hidden sm:inline">Meet</span>
             </Link>
             <Link
-              href="https://wa.me/5545998606685"
+              href="https://wa.me/5545998606685" // Substitua pelo seu número de WhatsApp
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-1.5 hover:text-primary-foreground/80 transition-colors py-2 px-2 rounded-md hover:bg-primary-foreground/10"
@@ -168,7 +191,6 @@ export function HeaderNav() {
           </Link>
         </nav>
 
-        {/* Right side: Theme, Notifications */}
         <div className="flex items-center space-x-1">
           <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Alternar tema" className="hover:bg-primary-foreground/10 focus-visible:ring-primary-foreground/50 text-primary-foreground">
             {theme === "light" ? <Lightbulb className="h-5 w-5" /> : <LightbulbOff className="h-5 w-5" />}
@@ -179,8 +201,49 @@ export function HeaderNav() {
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notificações</span>
           </Button>
+
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 hover:bg-primary-foreground/10">
+                  <Avatar className="h-9 w-9 border-2 border-primary-foreground/50">
+                    <AvatarImage src={user.photoURL || "https://placehold.co/40x40.png?text=U"} alt={user.displayName || "Usuário"} data-ai-hint="profile avatar" />
+                    <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground text-xs font-semibold">
+                      {getUserInitials(user.displayName)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.displayName || "Usuário"}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => router.push('/dashboard')}>
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  <span>Meu Painel</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Configurações</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Desconectar</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </header>
   );
 }
+
+    
