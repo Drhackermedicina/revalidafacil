@@ -1,31 +1,28 @@
+
 // Localização: src/app/register/page.tsx
 "use client";
 
 import React, { useState } from 'react';
 import { Book, Lock, Mail, User } from 'lucide-react';
-import Link from 'next/link'; // Certifique-se de que Link está importado se for usado
-import { useRouter } from 'next/navigation'; // Certifique-se de que useRouter está importado
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { getAuth, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { firebaseApp } from "@/lib/firebase"; // Importe sua instância do Firebase
+import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "@/lib/firebase"; // Importar auth diretamente
 
 // Componente da Página de Cadastro
 export default function RegisterPage() {
-  // Mantenha os estados existentes
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Para desabilitar o botão durante o envio
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // Lógica REAL de cadastro com Firebase
-  // Modifique a função handleSubmit para usar a autenticação do Firebase
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Validação básica
     if (password !== confirmPassword) {
       setError('As senhas não coincidem.');
       return;
@@ -36,29 +33,13 @@ export default function RegisterPage() {
     }
 
     setIsLoading(true);
-
-    // Limpa qualquer erro anterior
     setError(''); 
 
-    // 2. Tenta criar o usuário no Firebase
     try {
-      // Use getAuth com firebaseApp para obter a instância de autenticação
-      const authInstance = getAuth(firebaseApp);
-      const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
-
-      // 3. Salva o nome do usuário no perfil do Firebase
-      // Verifique se userCredential.user não é nulo antes de chamar updateProfile
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, {
         displayName: name,
       });
-
-      // Opcional: Exibir uma mensagem de sucesso antes de redirecionar
-      // setStatusMessage('Usuário registrado com sucesso!');
-
-      // Tempo pequeno para a mensagem ser vista (opcional)
-      // await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 4. Redireciona para a dashboard após o sucesso
       router.push('/dashboard');
 
     } catch (firebaseError: any) {
@@ -67,23 +48,20 @@ export default function RegisterPage() {
         setError('Este endereço de e-mail já está em uso.');
       } else {
         setError('Ocorreu um erro ao criar a conta. Tente novamente.');
-        // Exibe o erro completo no console para depuração
         console.error("Detalhes do erro Firebase:", firebaseError); 
       }
     } finally {
-      setIsLoading(false); // Reabilita o botão
+      setIsLoading(false);
     }
   };
 
-  // Lógica REAL para login/cadastro com Google
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     setError('');
     setIsLoading(true);
 
     try {
-      await signInWithPopup(auth, provider);
-      // Login/Cadastro bem-sucedido!
+      await signInWithPopup(auth, provider); // Usar o 'auth' importado
       router.push('/dashboard');
     } catch (googleError) {
       console.error("Erro com Google:", googleError);
@@ -146,8 +124,21 @@ export default function RegisterPage() {
             {isLoading ? 'Criando conta...' : 'Cadastrar'}
           </button>
         </form>
+        
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300"></div></div>
+            <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Ou entre com</span></div>
+          </div>
+          <div className="mt-6 grid grid-cols-1 gap-3">
+            <button onClick={handleGoogleSignIn} disabled={isLoading} className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-60">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png" alt="Google" className="h-5 w-5 mr-3" data-ai-hint="logo google" />
+              Entrar com Google
+            </button>
+          </div>
+        </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-8 text-center">
           <p className="text-sm text-gray-600">
             Já tem uma conta?{' '}
             <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 hover:underline">
