@@ -4,7 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useState } from "react"; // Adicionado useState
+import { useState } from "react";
 import AppLayout from "@/components/layout/app-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"; // Removido CardFooter não usado aqui diretamente
-import { FilePlus2, UserCog, FileText, ListChecks, Info, Save, Loader2 } from "lucide-react"; // Adicionado Save, Loader2
-import { useToast } from "@/hooks/use-toast"; // Adicionado useToast
-import { db } from "@/lib/firebase"; // Adicionado db
-import { doc, setDoc } from "firebase/firestore"; // Adicionado setDoc, doc
-import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data'; // Adicionado tipos
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { FilePlus2, UserCog, FileText, ListChecks, Info, Save, Loader2, ClipboardList } from "lucide-react"; // Adicionado ClipboardList
+import { useToast } from "@/hooks/use-toast";
+import { db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data';
 
 // Zod schema for station fields
 const stationFormSchema = z.object({
@@ -43,6 +43,7 @@ const stationFormSchema = z.object({
   scenarioTitle: z.string().min(5, { message: "O título do cenário deve ter pelo menos 5 caracteres." }),
   scenarioDescription: z.string().min(20, { message: "A descrição do cenário deve ter pelo menos 20 caracteres." }),
   actorInstructions: z.string().min(20, { message: "As instruções para o ator devem ter pelo menos 20 caracteres." }),
+  candidateTasksDescription: z.string().min(10, { message: "Descreva as tarefas do candidato (pelo menos 10 caracteres)." }).optional(),
   printedMaterialsDescription: z.string().optional().describe("Descrição textual dos materiais impressos, um por linha ou parágrafo."),
   pepItemsDescription: z.string().min(30, { message: "A descrição dos itens do PEP deve ter pelo menos 30 caracteres." }),
 });
@@ -70,6 +71,7 @@ export default function StationEditorPage() {
       scenarioTitle: "",
       scenarioDescription: "",
       actorInstructions: "",
+      candidateTasksDescription: "",
       printedMaterialsDescription: "",
       pepItemsDescription: "",
     },
@@ -85,26 +87,27 @@ export default function StationEditorPage() {
           id: `editor-pm-${data.code}-1`,
           title: "Material Impresso Principal (Editor)",
           content: data.printedMaterialsDescription,
-          isLocked: false, // Default para desbloqueado
+          isLocked: false,
         });
       }
 
       const checklistItems: ChecklistItem[] = [];
       if (data.pepItemsDescription && data.pepItemsDescription.trim() !== "") {
-        // Simplificação: cria um item de checklist geral com a descrição fornecida.
-        // Uma UI mais complexa seria necessária para criar múltiplos itens estruturados.
         checklistItems.push({
           id: `editor-pep-${data.code}-1`,
           description: data.pepItemsDescription,
-          points: { inadequate: 0, partial: 0.5, adequate: 1 }, // Pontos de exemplo
-          type: "geral", // Tipo genérico
+          points: { inadequate: 0, partial: 0.5, adequate: 1 },
+          type: "geral",
           observation: "Item gerado pelo editor de estações.",
         });
       }
+      
+      const taskItems = data.candidateTasksDescription 
+        ? data.candidateTasksDescription.split('\n').map(task => task.trim()).filter(task => task) 
+        : ["Realizar anamnese", "Realizar exame físico", "Definir diagnóstico e conduta"];
 
-      // Mapeando para uma estrutura mais próxima de ChecklistData
       const stationDoc: Partial<ChecklistData> & { code: string; editorVersion?: number } = {
-        code: data.code, // Usado como ID do documento
+        code: data.code,
         title: data.title,
         area: data.area,
         scenario: {
@@ -112,17 +115,19 @@ export default function StationEditorPage() {
           description: data.scenarioDescription,
         },
         actorInstructions: {
-          title: "Instruções para o Ator/Atriz (Editor)", // Título padrão
+          title: "Instruções para o Ator/Atriz (Editor)",
           content: data.actorInstructions,
         },
-        // Tarefas, Referências, Flashcards seriam vazios ou com placeholders
-        tasks: { title: "Tarefas (Editor)", timeLimit: "10 minutos", items: ["Realizar anamnese", "Realizar exame físico", "Definir diagnóstico e conduta"] },
+        tasks: { 
+          title: "Tarefas do Candidato (Editor)", 
+          timeLimit: "10 minutos", // Default time limit
+          items: taskItems 
+        },
         printedMaterials: printedMaterials,
         checklistItems: checklistItems,
         references: [{ text: "Referências a serem adicionadas (Editor)", url: "#" }],
         flashcards: [],
-        editorVersion: 1, // Para identificar que foi criado/editado aqui
-        // Adicionar um timestamp
+        editorVersion: 1,
         lastUpdatedAt: new Date().toISOString(),
       };
 
@@ -133,7 +138,6 @@ export default function StationEditorPage() {
         description: `A estação "${data.title}" foi salva com sucesso no Firestore.`,
         variant: "default",
       });
-      // form.reset(); // Descomente se quiser resetar o formulário após salvar
 
     } catch (error) {
       console.error("Erro ao salvar estação:", error);
@@ -296,6 +300,34 @@ export default function StationEditorPage() {
 
                 <div className="space-y-4 p-4 border rounded-md shadow-sm">
                   <h3 className="text-lg font-medium text-primary flex items-center">
+                    <ClipboardList className="mr-2 h-5 w-5" />
+                    Tarefas do Candidato (Descrição Textual)
+                  </h3>
+                  <FormField
+                    control={form.control}
+                    name="candidateTasksDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Lista de Tarefas</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Liste as tarefas que o candidato deve realizar, uma por linha. Ex:&#10;1. Realizar anamnese completa.&#10;2. Efetuar exame físico direcionado.&#10;3. Solicitar exames complementares."
+                            className="min-h-[120px]"
+                            {...field}
+                            disabled={isLoading}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          As tarefas serão listadas para o candidato. Cada linha será um item da lista.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-4 p-4 border rounded-md shadow-sm">
+                  <h3 className="text-lg font-medium text-primary flex items-center">
                     <FileText className="mr-2 h-5 w-5" />
                     Materiais Impressos Disponíveis (Descrição Textual)
                   </h3>
@@ -351,7 +383,7 @@ export default function StationEditorPage() {
                 </div>
 
                 <div className="p-4 border border-dashed rounded-md text-center text-muted-foreground">
-                  <p>Campos detalhados para Tarefas, Flashcards e Referências podem ser adicionados editando o JSON no Storage ou via template.</p>
+                  <p>Campos detalhados para Flashcards e Referências podem ser adicionados editando o JSON no Storage ou via template.</p>
                 </div>
 
                 <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
@@ -375,5 +407,6 @@ export default function StationEditorPage() {
     </AppLayout>
   );
 }
+    
 
     
