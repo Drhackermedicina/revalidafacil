@@ -11,14 +11,14 @@ const firebaseConfig = {
   // IMPORTANT: Replace "YOUR_API_KEY_HERE_FROM_FIREBASE_CONSOLE" with your actual Firebase project API key.
   // You can find this in your Firebase project settings:
   // Project Settings > General > Web API Key
-  apiKey: "YOUR_API_KEY_HERE_FROM_FIREBASE_CONSOLE",
+  apiKey: "YOUR_API_KEY_HERE_FROM_FIREBASE_CONSOLE", // <<< COLOQUE SUA API KEY AQUI
   authDomain: "revaida-fcil-app.firebaseapp.com",
   projectId: "revaida-fcil-app",
   storageBucket: "revaida-fcil-app.firebasestorage.app",
   // Se você for usar o Firebase Cloud Messaging (FCM) no futuro,
   // substitua "YOUR_MESSAGING_SENDER_ID" pelo valor real do seu projeto.
   // Isso NÃO afeta a autenticação ou o Firestore.
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // Pode manter ou substituir se for usar FCM
   appId: "1:185404830586:web:c0f8ee056cb153de445cc3"
 };
 
