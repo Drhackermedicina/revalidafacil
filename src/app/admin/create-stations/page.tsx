@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import { Button } from '/home/runner/work/revalida-project/revalida-project/src/components/ui/button.tsx';
-import { stationTemplate } from '/home/runner/work/revalida-project/revalida-project/src/lib/station-data/templates/station_template.ts';
+// Removido import de Button com caminho absoluto
+import { stationTemplate } from '../../../../../lib/station-data/templates/station_template';
+import { Button } from '../../../../components/ui/button'; // Mantido import de Button com caminho relativo
 
 // Predefined data for some example diagnoses
 const diagnosisData: { [key: string]: any } = {
@@ -185,7 +186,6 @@ const CreateStationPage = () => {
       const newStation = JSON.parse(JSON.stringify(stationTemplate));
 
       // Merge diagnosis data into the template, prioritizing diagnosis data
-      const newStation = JSON.parse(JSON.stringify(stationTemplate)); // Deep copy template
       Object.assign(newStation, data); // Merge data into the copied template
       console.log('Estação Gerada:', newStation); // Log the generated station object
       // TODO: Implement display or saving of the generated station (e.g., in a state or pushing to a list)

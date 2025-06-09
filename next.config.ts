@@ -33,7 +33,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // NOVO: Adicionado para corrigir o aviso de 'cross-origin' no seu ambiente de nuvem
+  // NOVO: Adicionado para corrigir o aviso de 'cross-origin' no seu ambiente de nuvem,
+  allowedDevOrigins: [
+    'local-origin.dev', // Exemplo de origem local, pode ser removido se não usado
+    '*.local-origin.dev', // Exemplo de padrão para subdomínios locais, pode ser removido se não usado
+    '3000-firebase-studio-1749389259812.cluster-kc2r6y3mtba5mswcmol45orivs.cloudworkstations.dev', // Origem específica do seu ambiente
+    '*.cluster-kc2r6y3mtba5mswcmol444444orivs.cloudworkstations.dev',
+  ] // Vírgula removida aqui
 };
 
 export default nextConfig;
