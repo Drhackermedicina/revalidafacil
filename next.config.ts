@@ -1,3 +1,4 @@
+
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -33,13 +34,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // NOVO: Adicionado para corrigir o aviso de 'cross-origin' no seu ambiente de nuvem,
+  // ATUALIZADO: Ajustado para refletir a URL observada nos logs e remover entradas não utilizadas.
   allowedDevOrigins: [
-    'local-origin.dev', // Exemplo de origem local, pode ser removido se não usado
-    '*.local-origin.dev', // Exemplo de padrão para subdomínios locais, pode ser removido se não usado
-    '3000-firebase-studio-1749389259812.cluster-kc2r6y3mtba5mswcmol45orivs.cloudworkstations.dev', // Origem específica do seu ambiente
-    '*.cluster-kc2r6y3mtba5mswcmol444444orivs.cloudworkstations.dev',
-  ] // Vírgula removida aqui
+    '3000-firebase-studio-1749389259812.cluster-kc2r6y3mtba5mswcmol45orivs.cloudworkstations.dev', // Mantendo a de porta 3000 por precaução
+    '6000-firebase-studio-1749389259812.cluster-kc2r6y3mtba5mswcmol45orivs.cloudworkstations.dev', // Adicionada a de porta 6000
+  ]
 };
 
 export default nextConfig;
