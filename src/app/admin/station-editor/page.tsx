@@ -33,7 +33,10 @@ import { doc, setDoc } from "firebase/firestore";
 import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data';
 import { goEditorTemplate } from "@/lib/station-data/editor-templates/go-template";
 import { pediatricsEditorTemplate } from "@/lib/station-data/editor-templates/pediatrics-template";
-import { preventiveEditorTemplate } from "@/lib/station-data/editor-templates/preventive-template"; // Importar o template de Preventiva
+import { preventiveEditorTemplate } from "@/lib/station-data/editor-templates/preventive-template";
+import { surgeryEditorTemplate } from "@/lib/station-data/editor-templates/surgery-template";
+import { clinicalMedicineEditorTemplate } from "@/lib/station-data/editor-templates/clinical-medicine-template";
+
 
 // Zod schema for station fields
 const stationFormSchema = z.object({
@@ -63,7 +66,7 @@ const medicalAreas = [
 
 const initialStationValues: StationFormValues = {
   title: "",
-  area: undefined as any, 
+  area: undefined as any,
   code: "",
   scenarioTitle: "",
   scenarioDescription: "",
@@ -95,21 +98,26 @@ export default function StationEditorPage() {
       templateToApply = pediatricsEditorTemplate;
     } else if (selectedArea === "Preventiva") {
       templateToApply = preventiveEditorTemplate;
+    } else if (selectedArea === "Cirurgia") {
+      templateToApply = surgeryEditorTemplate;
+    } else if (selectedArea === "Clínica Médica") {
+      templateToApply = clinicalMedicineEditorTemplate;
     }
 
+
     if (templateToApply) {
-      form.reset({
-        title: currentValues.title, 
-        code: currentValues.code,   
-        area: selectedArea,         
-        ...templateToApply,        
-      });
-    } else if (selectedArea) { 
       form.reset({
         title: currentValues.title,
         code: currentValues.code,
         area: selectedArea,
-        scenarioTitle: "", 
+        ...templateToApply,
+      });
+    } else if (selectedArea) { // Reset fields if an area is selected but no template exists (or for fallback)
+      form.reset({
+        title: currentValues.title,
+        code: currentValues.code,
+        area: selectedArea,
+        scenarioTitle: "",
         scenarioDescription: "",
         actorInstructions: "",
         candidateTasksDescription: "",
@@ -118,7 +126,7 @@ export default function StationEditorPage() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedArea]);
+  }, [selectedArea, form.reset]); // form.reset was added to dependency array
 
 
   async function onSubmit(data: StationFormValues) {
@@ -130,26 +138,32 @@ export default function StationEditorPage() {
           id: `editor-pm-${data.code}-1`,
           title: "Material Impresso Principal (Editor)",
           content: data.printedMaterialsDescription,
-          isLocked: false,
+          isLocked: false, // Default to unlocked from editor
         });
       }
 
       const checklistItems: ChecklistItem[] = [];
       if (data.pepItemsDescription && data.pepItemsDescription.trim() !== "") {
-        checklistItems.push({
-          id: `editor-pep-${data.code}-1`,
-          description: data.pepItemsDescription,
-          points: { inadequate: 0, partial: 0.5, adequate: 1 }, 
-          type: "geral",
-          observation: "Item gerado pelo editor de estações.",
+        // Basic parsing of PEP items, assuming one item per line
+        // A more robust solution would involve a structured input method for PEP items
+        const pepDescriptions = data.pepItemsDescription.split('\n').filter(line => line.trim() !== "");
+        pepDescriptions.forEach((desc, index) => {
+          checklistItems.push({
+            id: `editor-pep-${data.code}-${index + 1}`,
+            description: desc,
+            points: { inadequate: 0, partial: 0.5, adequate: 1 }, // Default points
+            type: "geral", // Default type
+            observation: "Item gerado pelo editor de estações.",
+          });
         });
       }
       
-      const taskItems = data.candidateTasksDescription 
-        ? data.candidateTasksDescription.split('\n').map(task => task.trim()).filter(task => task) 
+      const taskItems = data.candidateTasksDescription
+        ? data.candidateTasksDescription.split('\n').map(task => task.trim()).filter(task => task)
         : ["Realizar anamnese", "Realizar exame físico", "Definir diagnóstico e conduta"];
 
-      const stationDoc: Partial<ChecklistData> & { code: string; editorVersion?: number } = {
+
+      const stationDoc: Partial<ChecklistData> & { code: string; title: string; area: string; editorVersion?: number; lastUpdatedAt?: string; } = {
         code: data.code,
         title: data.title,
         area: data.area,
@@ -161,16 +175,16 @@ export default function StationEditorPage() {
           title: "Instruções para o Ator/Atriz (Editor)",
           content: data.actorInstructions,
         },
-        tasks: { 
-          title: "Tarefas do Candidato (Editor)", 
-          timeLimit: "10 minutos", 
-          items: taskItems 
+        tasks: {
+          title: "Tarefas do Candidato (Editor)",
+          timeLimit: "10 minutos", // Default time limit
+          items: taskItems,
         },
         printedMaterials: printedMaterials,
         checklistItems: checklistItems,
-        references: [{ text: "Referências a serem adicionadas (Editor)", url: "#" }],
-        flashcards: [],
-        editorVersion: 1,
+        references: [{ text: "Referências a serem adicionadas (Editor)", url: "#" }], // Placeholder
+        flashcards: [], // Placeholder
+        editorVersion: 1, // Versioning for editor-created stations
         lastUpdatedAt: new Date().toISOString(),
       };
 
@@ -178,9 +192,12 @@ export default function StationEditorPage() {
 
       toast({
         title: "Estação Salva!",
-        description: `A estação "${data.title}" foi salva com sucesso no Firestore.`,
+        description: `A estação "${data.title}" (${data.code}) foi salva com sucesso no Firestore.`,
         variant: "default",
       });
+      
+      // Optionally reset form or redirect
+      // form.reset(initialStationValues); 
 
     } catch (error) {
       console.error("Erro ao salvar estação:", error);
@@ -205,7 +222,7 @@ export default function StationEditorPage() {
             </CardTitle>
             <CardDescription>
               Crie ou modifique estações para treinamento de habilidades clínicas.
-              Preencha os campos abaixo para definir uma nova estação. Selecionar "G.O", "Pediatria" ou "Preventiva" em Área Médica preencherá um modelo.
+              Selecionar uma Área Médica (G.O, Pediatria, Preventiva, Cirurgia, Clínica Médica) preencherá um modelo correspondente.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -450,9 +467,6 @@ export default function StationEditorPage() {
     </AppLayout>
   );
 }
+
+
     
-
-    
-
-
-
