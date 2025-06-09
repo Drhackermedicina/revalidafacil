@@ -4,7 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppLayout from "@/components/layout/app-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,11 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { FilePlus2, UserCog, FileText, ListChecks, Info, Save, Loader2, ClipboardList } from "lucide-react"; // Adicionado ClipboardList
+import { FilePlus2, UserCog, FileText, ListChecks, Info, Save, Loader2, ClipboardList } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import type { ChecklistData, PrintedMaterial, ChecklistItem } from '@/lib/station-data';
+import { goEditorTemplate } from "@/lib/station-data/editor-templates/go-template"; // Importar o template
 
 // Zod schema for station fields
 const stationFormSchema = z.object({
@@ -58,25 +59,56 @@ const medicalAreas = [
   { name: "Preventiva", displayName: "Medicina Preventiva" },
 ];
 
+const initialStationValues: StationFormValues = {
+  title: "",
+  area: undefined as any, // Será definido ou limpo
+  code: "",
+  scenarioTitle: "",
+  scenarioDescription: "",
+  actorInstructions: "",
+  candidateTasksDescription: "",
+  printedMaterialsDescription: "",
+  pepItemsDescription: "",
+};
+
 export default function StationEditorPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<StationFormValues>({
     resolver: zodResolver(stationFormSchema),
-    defaultValues: {
-      title: "",
-      area: undefined,
-      code: "",
-      scenarioTitle: "",
-      scenarioDescription: "",
-      actorInstructions: "",
-      candidateTasksDescription: "",
-      printedMaterialsDescription: "",
-      pepItemsDescription: "",
-    },
+    defaultValues: initialStationValues,
     mode: "onChange",
   });
+
+  const selectedArea = form.watch("area");
+
+  useEffect(() => {
+    const currentValues = form.getValues();
+    if (selectedArea === "G.O") {
+      form.reset({
+        title: currentValues.title, // Preserva o título se já digitado
+        code: currentValues.code,   // Preserva o código se já digitado
+        area: selectedArea,         // Define a área selecionada
+        ...goEditorTemplate,        // Aplica o template de G.O. para os outros campos
+      });
+    } else if (selectedArea) { // Se outra área for selecionada (e não for G.O)
+      form.reset({
+        title: currentValues.title,
+        code: currentValues.code,
+        area: selectedArea,
+        scenarioTitle: "", // Limpa campos que seriam do template
+        scenarioDescription: "",
+        actorInstructions: "",
+        candidateTasksDescription: "",
+        printedMaterialsDescription: "",
+        pepItemsDescription: "",
+      });
+    }
+    // Não incluir form nas dependências para evitar loop com form.reset
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedArea]);
+
 
   async function onSubmit(data: StationFormValues) {
     setIsLoading(true);
@@ -96,7 +128,7 @@ export default function StationEditorPage() {
         checklistItems.push({
           id: `editor-pep-${data.code}-1`,
           description: data.pepItemsDescription,
-          points: { inadequate: 0, partial: 0.5, adequate: 1 },
+          points: { inadequate: 0, partial: 0.5, adequate: 1 }, // Pontuação padrão
           type: "geral",
           observation: "Item gerado pelo editor de estações.",
         });
@@ -162,7 +194,7 @@ export default function StationEditorPage() {
             </CardTitle>
             <CardDescription>
               Crie ou modifique estações para treinamento de habilidades clínicas.
-              Preencha os campos abaixo para definir uma nova estação.
+              Preencha os campos abaixo para definir uma nova estação. Selecionar "G.O" em Área Médica preencherá um modelo.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -198,7 +230,7 @@ export default function StationEditorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Área Médica</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                          <Select onValueChange={field.onChange} value={field.value || ""} disabled={isLoading}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione a área médica" />
@@ -410,3 +442,4 @@ export default function StationEditorPage() {
     
 
     
+
