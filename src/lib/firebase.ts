@@ -1,3 +1,4 @@
+
 // src/lib/firebase.ts
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
@@ -7,7 +8,10 @@ import { getStorage } from 'firebase/storage'; // Importar getStorage
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, the initialization parameters are optional
 const firebaseConfig = {
-  apiKey: "AIzaSyADjhlT58gttZ3GzJH5odgbExlxBg6XikI",
+  // IMPORTANT: Replace "YOUR_API_KEY_HERE_FROM_FIREBASE_CONSOLE" with your actual Firebase project API key.
+  // You can find this in your Firebase project settings:
+  // Project Settings > General > Web API Key
+  apiKey: "YOUR_API_KEY_HERE_FROM_FIREBASE_CONSOLE",
   authDomain: "revaida-fcil-app.firebaseapp.com",
   projectId: "revaida-fcil-app",
   storageBucket: "revaida-fcil-app.firebasestorage.app",
