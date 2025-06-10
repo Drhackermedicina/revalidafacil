@@ -1,0 +1,29 @@
+
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs", // Servidor Node.js geralmente usa CommonJS
+    "outDir": "dist",     // Diretório de saída para os arquivos JS compilados
+    "target": "es2020",   // Versão do ECMAScript para o Node.js
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noEmit": false, // Precisamos que ele emita os arquivos JS
+    "isolatedModules": false // Permite compilar arquivos individualmente se necessário
+  },
+  "include": [
+    "src/server/**/*.ts" // Apenas compilar arquivos dentro de src/server
+  ],
+  "exclude": [
+    "node_modules",
+    "src/app", // Excluir o frontend Next.js deste tsconfig
+    "src/components",
+    "src/context",
+    "src/hooks",
+    "src/lib", // Se lib for usado apenas pelo frontend, senão ajuste
+    "src/ai" // Se ai for usado apenas pelo frontend/genkit dev, senão ajuste
+  ]
+}
+
+    

@@ -1,9 +1,15 @@
+
 build:
-  baseDirectory: .
+  baseDirectory: . # O diretório base onde `npm run build` será executado
 hooks:
-  build: npm run build
+  build: npm run compile:server && npm run build # Compila o servidor primeiro, depois o Next.js
 
 runConfig:
+  # O Firebase App Hosting definirá a PORT automaticamente.
+  # O comando de start será `npm run start` do package.json,
+  # que agora aponta para o seu servidor customizado Node.js.
+  # Se você precisar de um comando específico, pode definir aqui:
+  # command: ["node", "dist/server/index.js"]
   minInstances: 0
   # maxInstances: 100
   # concurrency: 80
@@ -24,3 +30,5 @@ runConfig:
   # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
   # - variable: MY_SECRET
   #   secret: mySecretRef
+
+    
