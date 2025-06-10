@@ -2,36 +2,32 @@
 // src/server/index.ts
 import http from 'http';
 import { Server as SocketIOServer, type Socket } from 'socket.io';
-import next from 'next'; // Importar Next.js
+import next from 'next';
 
-// A porta em que o servidor Socket.IO irá escutar.
-// Em produção no App Hosting/Cloud Run, a variável PORT será fornecida pelo ambiente.
-const PORT = parseInt(process.env.PORT || '3000', 10); // Default para App Hosting é 3000
+const PORT = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
-const hostname = 'localhost'; // Ou o hostname apropriado em produção
+const hostname = 'localhost';
 
-// Criar a aplicação Next.js
 const nextApp = next({ dev, hostname, port: PORT });
 const nextHandler = nextApp.getRequestHandler();
 
-interface UserSessionDetails {
-  userId: string;
-  role: 'candidate' | 'actor' | 'observer';
+interface ChatUserServerData {
+  id: string; // socket.id
+  authUserId: string;
   nickname: string;
-  socketId: string;
-  stationId: string;
+  avatarUrl?: string;
+  status: 'looking' | 'training' | 'busy' | 'inactive';
 }
 
-const activeSessions: Record<string, { stationId: string; users: Map<string, UserSessionDetails> }> = {};
+// Store users connected to the chat namespace, not specific to a session yet.
+const chatUsers = new Map<string, ChatUserServerData>();
 
-// Preparar o Next.js e então iniciar o servidor HTTP
+// Stores active WebRTC call pairings: { callerSocketId: calleeSocketId }
+const activeWebRTCPairs = new Map<string, string>();
+
+
 nextApp.prepare().then(() => {
   const httpServer = http.createServer((req, res) => {
-    // Passar requisições para o manipulador do Next.js
-    // Isso permitirá que o Next.js sirva suas páginas e API routes
-    // Se for uma rota que o Next.js não manipula, você pode adicionar lógica customizada aqui
-    // antes ou depois de chamar nextHandler(req, res)
-    // Para health checks, por exemplo:
     if (req.url === '/health' && req.method === 'GET') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }));
@@ -50,84 +46,128 @@ nextApp.prepare().then(() => {
   console.log(`[Socket Server] Configurado. Next.js preparado.`);
 
   io.on('connection', (socket: Socket) => {
-    const { sessionId, userId, role, stationId, nickname } = socket.handshake.auth;
+    const { nickname, authUserId, avatarUrl } = socket.handshake.auth;
 
-    console.log(`[Socket Server] Nova tentativa de conexão de socket: ${socket.id}. Handshake auth:`, socket.handshake.auth);
-
-    if (!sessionId || !userId || !role || !stationId) {
-      console.error(`[Socket Server] Falha na autenticação do handshake para socket ${socket.id}: Dados ausentes.`, { sessionId, userId, role, stationId });
-      socket.emit('sessionError', { message: 'Dados da sessão inválidos ou ausentes no handshake. Conexão recusada.' });
+    if (!nickname || !authUserId) {
+      console.error(`[Socket Server] Falha na autenticação do handshake para socket ${socket.id}: Nickname ou authUserId ausente.`);
+      socket.emit('authError', { message: 'Nickname e UserID são obrigatórios.' });
       socket.disconnect(true);
       return;
     }
+    
+    const userData: ChatUserServerData = {
+      id: socket.id,
+      authUserId,
+      nickname,
+      avatarUrl,
+      status: 'looking', // Default status
+    };
+    chatUsers.set(socket.id, userData);
+    console.log(`[Socket Server] Usuário "${nickname}" (AuthID: ${authUserId}, SocketID: ${socket.id}) conectado ao chat.`);
 
-    console.log(`[Socket Server] Socket ${socket.id} (Usuário: ${userId}, Nick: "${nickname}", Papel: ${role}) autenticado para sessão ${sessionId}, Estação: ${stationId}`);
+    // Notify all clients about the updated user list
+    io.emit('update-user-list', Array.from(chatUsers.values()));
 
-    socket.join(sessionId);
-
-    if (!activeSessions[sessionId]) {
-      activeSessions[sessionId] = { stationId, users: new Map() };
-      console.log(`[Socket Server] Nova sessão criada: ${sessionId} para estação ${stationId}`);
-    }
-
-    const userDetails: UserSessionDetails = { userId, role, nickname: nickname || 'Anônimo', socketId: socket.id, stationId };
-    activeSessions[sessionId].users.set(socket.id, userDetails);
-
-    console.log(`[Socket Server] Usuário ${nickname} (${userId}) como ${role} entrou na sessão ${sessionId}. Total de usuários: ${activeSessions[sessionId].users.size}`);
-
-    socket.to(sessionId).emit('userJoined', { ...userDetails, usersInSession: Array.from(activeSessions[sessionId].users.values()) });
-
-    socket.emit('sessionJoined', {
-      sessionId,
-      stationId,
-      yourRole: role,
-      yourNickname: nickname,
-      usersInSession: Array.from(activeSessions[sessionId].users.values())
-    });
-
-    socket.on('timerControl', (data: { action: 'start' | 'pause' | 'reset', duration?: number }) => {
-      if (activeSessions[sessionId]?.users.get(socket.id)?.role === 'actor' || activeSessions[sessionId]?.users.get(socket.id)?.role === 'observer') {
-        console.log(`[Socket Server] Evento timerControl recebido da sessão ${sessionId}:`, data);
-        io.to(sessionId).emit('timerUpdateFromServer', { message: `Timer action ${data.action} recebido do servidor.` }); // Placeholder
+    socket.on('send-message', (data: { text: string }) => {
+      const sender = chatUsers.get(socket.id);
+      if (sender) {
+        const message = {
+          id: Date.now().toString(),
+          userId: sender.authUserId,
+          nickname: sender.nickname,
+          text: data.text,
+          timestamp: new Date(),
+        };
+        console.log(`[Socket Server] Mensagem de "${sender.nickname}": ${data.text}`);
+        io.emit('new-message', message); // Broadcast to all chat users
       }
     });
 
-    socket.on('candidateAction', (data: any) => {
-      console.log(`[Socket Server] candidateAction da sessão ${sessionId}:`, data);
-      socket.to(sessionId).emit('candidateActionForwarded', { fromUserId: userId, fromNickname: nickname, action: data });
+    // WebRTC Signaling
+    socket.on('audio-call-request', ({ to, offerSdp }) => {
+        const requester = chatUsers.get(socket.id);
+        const targetUser = chatUsers.get(to);
+        if (requester && targetUser) {
+            console.log(`[Socket Server] ${requester.nickname} requisitando chamada para ${targetUser.nickname}`);
+            io.to(to).emit('audio-call-request', { fromId: socket.id, fromNickname: requester.nickname, offerSdp });
+        } else {
+            console.warn(`[Socket Server] Usuário alvo ${to} não encontrado para audio-call-request`);
+        }
     });
 
-    socket.on('togglePrintedMaterial', (data: { materialId: string; isRevealed: boolean }) => {
-       if (activeSessions[sessionId]?.users.get(socket.id)?.role === 'actor') {
-          console.log(`[Socket Server] togglePrintedMaterial da sessão ${sessionId}:`, data);
-          io.to(sessionId).emit('printedMaterialUpdated', data);
-       }
+    socket.on('audio-call-accepted', ({ to, answerSdp }) => {
+        const accepter = chatUsers.get(socket.id);
+        const originalCaller = chatUsers.get(to);
+         if (accepter && originalCaller) {
+            console.log(`[Socket Server] ${accepter.nickname} aceitou chamada de ${originalCaller.nickname}`);
+            activeWebRTCPairs.set(socket.id, to);
+            activeWebRTCPairs.set(to, socket.id); // Pair them
+            io.to(to).emit('audio-call-accepted', { fromId: socket.id, fromNickname: accepter.nickname, answerSdp });
+        }
+    });
+    
+    // Fallback for direct offer/answer if call-request/accepted is not used for SDP exchange
+    socket.on('audio-offer', ({ to, offerSdp }) => {
+        const sender = chatUsers.get(socket.id);
+        console.log(`[Socket Server] ${sender?.nickname} enviando offer para ${chatUsers.get(to)?.nickname}`);
+        io.to(to).emit('audio-offer-received', { fromId: socket.id, offerSdp });
     });
 
-    socket.on('updateChecklistItem', (data: { itemId: string; evaluation: string; score: number }) => {
-      if (activeSessions[sessionId]?.users.get(socket.id)?.role === 'actor' || activeSessions[sessionId]?.users.get(socket.id)?.role === 'observer') {
-        console.log(`[Socket Server] updateChecklistItem da sessão ${sessionId}:`, data);
-        io.to(sessionId).emit('checklistItemUpdatedByServer', data);
-      }
+    socket.on('audio-answer', ({ to, answerSdp }) => {
+        const sender = chatUsers.get(socket.id);
+        console.log(`[Socket Server] ${sender?.nickname} enviando answer para ${chatUsers.get(to)?.nickname}`);
+        io.to(to).emit('audio-answer-received', { fromId: socket.id, answerSdp });
     });
+
+    socket.on('ice-candidate', ({ to, candidate }) => {
+        const sender = chatUsers.get(socket.id);
+        // console.log(`[Socket Server] ${sender?.nickname} enviando ICE candidate para ${chatUsers.get(to)?.nickname}`);
+        io.to(to).emit('ice-candidate-received', { fromId: socket.id, candidate });
+    });
+
+    socket.on('end-audio-call', ({ to }) => {
+        const userEndingCall = chatUsers.get(socket.id);
+        const otherUserInCall = chatUsers.get(to);
+
+        if (userEndingCall && otherUserInCall) {
+            console.log(`[Socket Server] ${userEndingCall.nickname} encerrando chamada com ${otherUserInCall.nickname}`);
+            io.to(to).emit('call-ended', { fromId: socket.id, fromNickname: userEndingCall.nickname });
+            
+            // Clear pairing
+            activeWebRTCPairs.delete(socket.id);
+            activeWebRTCPairs.delete(to);
+        } else if (to) { // If "to" is provided, still try to notify that user
+             io.to(to).emit('call-ended', { fromId: socket.id, fromNickname: userEndingCall?.nickname || "Alguém" });
+        }
+    });
+
 
     socket.on('disconnect', (reason: string) => {
-      console.log(`[Socket Server] Socket ${socket.id} (Usuário: ${userId}, Nick: "${nickname}") desconectado da sessão ${sessionId}. Razão: ${reason}`);
-      if (activeSessions[sessionId]) {
-        activeSessions[sessionId].users.delete(socket.id);
-        console.log(`[Socket Server] Usuário removido da sessão ${sessionId}. Usuários restantes: ${activeSessions[sessionId].users.size}`);
-        socket.to(sessionId).emit('userLeft', { userId, nickname, usersInSession: Array.from(activeSessions[sessionId].users.values()) });
-        if (activeSessions[sessionId].users.size === 0) {
-          console.log(`[Socket Server] Sessão ${sessionId} está vazia e será removida.`);
-          delete activeSessions[sessionId];
+      const departingUser = chatUsers.get(socket.id);
+      if (departingUser) {
+        console.log(`[Socket Server] Usuário "${departingUser.nickname}" (SocketID: ${socket.id}) desconectado. Razão: ${reason}`);
+        
+        // Check if this user was in an active call and notify the other party
+        const pairedSocketId = activeWebRTCPairs.get(socket.id);
+        if (pairedSocketId) {
+            const otherUser = chatUsers.get(pairedSocketId);
+            if (otherUser) {
+                 io.to(pairedSocketId).emit('call-ended', { fromId: socket.id, fromNickname: departingUser.nickname, reason: 'disconnect' });
+            }
+            activeWebRTCPairs.delete(socket.id);
+            activeWebRTCPairs.delete(pairedSocketId);
         }
+
+        chatUsers.delete(socket.id);
+        io.emit('update-user-list', Array.from(chatUsers.values()));
+      } else {
+        console.log(`[Socket Server] Socket ${socket.id} desconectado. Razão: ${reason}. Usuário não encontrado no chatUsers.`);
       }
     });
   });
 
   httpServer.listen(PORT, () => {
     console.log(`[Socket Server] Servidor Next.js e Socket.IO rodando na porta ${PORT}`);
-    console.log(`[Socket Server] Certifique-se que NEXT_PUBLIC_BACKEND_URL no cliente aponta para esta instância se o Socket.IO estiver em um subdomínio ou caminho diferente.`);
   }).on('error', (err: any) => {
     if (err.code === 'EADDRINUSE') {
       console.error(`[Socket Server] Erro: A porta ${PORT} já está em uso.`);
@@ -157,5 +197,3 @@ nextApp.prepare().then(() => {
 });
 
 export {};
-
-    
