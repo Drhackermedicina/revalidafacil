@@ -11,25 +11,25 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Swords, CircleSlash, UserPlus, Coffee, Send, Users, MessageSquare, Search, Activity, Scissors, Stethoscope, Baby, ShieldCheck, Shuffle, Phone, PhoneCall, PhoneOff, Mic, MicOff, AlertTriangle } from "lucide-react";
+import { Swords, CircleSlash, UserPlus, Coffee, Send, Users, MessageSquare, Search, Activity, Scissors, Stethoscope, Baby, ShieldCheck, Shuffle, PhoneCall, PhoneOff, Mic, MicOff, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "@/hooks/use-toast";
-import socket from '@/lib/socket'; // Importar socket
+import socket from '@/lib/socket'; 
 
 type UserStatus = "training" | "busy" | "looking" | "inactive";
 
 interface ChatUser {
-  id: string; // Deveria ser o socket.id do usuário no chat
+  id: string; 
   nickname: string;
-  authUserId?: string; // UID do Firebase
+  authUserId?: string; 
   avatarUrl?: string;
   status: UserStatus;
 }
 
 interface ChatMessage {
   id: string;
-  userId: string; // Pode ser authUserId ou socket.id
+  userId: string; 
   nickname: string;
   text: string;
   timestamp: Date;
@@ -48,13 +48,6 @@ const statusTooltips: Record<UserStatus, string> = {
   looking: "Procurando parceiro",
   inactive: "Inativo",
 };
-
-const initialMockUsers: ChatUser[] = [
-  { id: 'mock1', authUserId: 'authMock1', nickname: 'Dr. Estranho', status: 'looking', avatarUrl: 'https://placehold.co/40x40.png?text=DE' },
-  { id: 'mock2', authUserId: 'authMock2', nickname: 'Enfermeira Joy', status: 'training', avatarUrl: 'https://placehold.co/40x40.png?text=EJ' },
-  { id: 'mock3', authUserId: 'authMock3', nickname: 'CardioMaster', status: 'busy', avatarUrl: 'https://placehold.co/40x40.png?text=CM' },
-];
-
 
 interface AreaOption {
   value: string;
@@ -94,7 +87,7 @@ export default function ChatplayPage() {
   const [showNicknameModal, setShowNicknameModal] = useState(false);
   const [tempNickname, setTempNickname] = useState('');
   
-  const [users, setUsers] = useState<ChatUser[]>(initialMockUsers);
+  const [users, setUsers] = useState<ChatUser[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
 
@@ -103,7 +96,6 @@ export default function ChatplayPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | undefined>(difficulties[0].value);
   const [selectedQuantity, setSelectedQuantity] = useState<string | undefined>(stationQuantities[0].value);
 
-  // WebRTC State
   const peerConnection = useRef<RTCPeerConnection | null>(null);
   const localStream = useRef<MediaStream | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);
@@ -115,6 +107,15 @@ export default function ChatplayPage() {
   const [incomingCall, setIncomingCall] = useState<{ fromId: string, fromNickname: string, offer: RTCSessionDescriptionInit } | null>(null);
   const [targetUserForCall, setTargetUserForCall] = useState<ChatUser | null>(null);
   const [hasMicPermission, setHasMicPermission] = useState(false);
+
+  const getInitials = (name: string) => {
+    if (!name) return '??';
+    const parts = name.split(" ");
+    if (parts.length > 1) {
+      return (parts[0][0] + (parts[parts.length - 1][0] || '')).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
 
   const connectToSocket = useCallback(() => {
     if (!socket.connected && nickname && authUser?.uid) {
@@ -133,10 +134,12 @@ export default function ChatplayPage() {
     }
     return () => {
       if (socket.connected) {
+        // Clean up call if socket disconnects abruptly
+        if(isCallActive) handleEndCall(false); 
         socket.disconnect();
       }
     };
-  }, [nickname, authUser, connectToSocket]);
+  }, [nickname, authUser, connectToSocket, isCallActive]);
 
 
   useEffect(() => {
@@ -147,14 +150,14 @@ export default function ChatplayPage() {
         setTempNickname(authUser.displayName || '');
         setShowNicknameModal(true);
     } else if (!authLoading && !authUser){
+        // If not logged in and no stored nickname, force modal
         setShowNicknameModal(true);
     }
   }, [authUser, authLoading]);
 
-
   const initializePeerConnection = useCallback(() => {
     if (peerConnection.current) {
-        peerConnection.current.close(); // Close existing connection if any
+        peerConnection.current.close();
     }
     const pc = new RTCPeerConnection({ iceServers: [{ urls: STUN_SERVER }] });
 
@@ -169,6 +172,7 @@ export default function ChatplayPage() {
         remoteStream.current = event.streams[0];
         if (remoteAudioRef.current) {
           remoteAudioRef.current.srcObject = remoteStream.current;
+          remoteAudioRef.current.play().catch(e => console.warn("Remote audio play error", e));
         }
       }
     };
@@ -182,34 +186,37 @@ export default function ChatplayPage() {
 
 
   const getMicrophonePermission = useCallback(async () => {
+    if (hasMicPermission && localStream.current) return localStream.current; // Already have permission and stream
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       localStream.current = stream;
       if (localAudioRef.current) {
         localAudioRef.current.srcObject = stream;
-        // localAudioRef.current.muted = true; // Mute local audio playback to prevent echo
+        // localAudioRef.current.muted = true; // Mute local playback
+        localAudioRef.current.play().catch(e => console.warn("Local audio play error", e));
       }
       setHasMicPermission(true);
+      toast({ title: "Microfone Habilitado!", description: "Você pode iniciar chamadas."});
       return stream;
     } catch (error) {
       console.error('Error accessing microphone:', error);
       toast({
         title: "Microfone Necessário",
-        description: "Por favor, permita o acesso ao microfone para usar o chat de áudio.",
+        description: "Permita o acesso ao microfone para usar o chat de áudio.",
         variant: "destructive",
       });
       setHasMicPermission(false);
       return null;
     }
-  }, [toast]);
+  }, [toast, hasMicPermission]);
 
 
-  // Socket event listeners
   useEffect(() => {
     if (!socket || !nickname) return;
 
     socket.on('update-user-list', (userList: ChatUser[]) => {
-      setUsers(userList.map(u => ({...u, id: u.id || u.authUserId! }))); // Ensure id is present
+      setUsers(userList.map(u => ({...u, id: u.id || u.authUserId! })));
     });
 
     socket.on('new-message', (message: ChatMessage) => {
@@ -217,74 +224,50 @@ export default function ChatplayPage() {
     });
 
     socket.on('audio-call-request', async ({ fromId, fromNickname, offerSdp }) => {
-        console.log(`Recebendo audio-call-request de ${fromNickname} (${fromId})`);
-        const userMakingCall = users.find(u => u.id === fromId);
+        console.log(`[Client] Recebendo audio-call-request de ${fromNickname} (${fromId})`);
+        const userMakingCall = users.find(u => u.id === fromId || u.authUserId === fromId);
         if(userMakingCall) {
-             setTargetUserForCall(userMakingCall); // Set target for response
+             setTargetUserForCall(userMakingCall); 
         }
         setIncomingCall({ fromId, fromNickname, offer: offerSdp });
     });
     
-    socket.on('audio-call-accepted', async ({ fromId, answerSdp }) => {
-        console.log(`Chamada aceita por ${fromId}. Configurando descrição remota com a resposta.`);
+    socket.on('audio-call-accepted', async ({ fromId, fromNickname, answerSdp }) => {
+        console.log(`[Client] Chamada aceita por ${fromNickname}. Configurando remote description.`);
         if (peerConnection.current && answerSdp) {
             try {
                 await peerConnection.current.setRemoteDescription(new RTCSessionDescription(answerSdp));
                 setIsCallActive(true);
-                toast({ title: "Chamada Conectada!", description: `Você está em uma chamada com ${users.find(u=>u.id === fromId)?.nickname}`});
+                toast({ title: "Chamada Conectada!", description: `Você está em uma chamada com ${fromNickname}`});
             } catch (error) {
-                 console.error("Erro ao definir remote description (answer):", error);
+                 console.error("[Client] Erro ao definir remote description (answer):", error);
+                 toast({title: "Erro de Conexão", description: "Falha ao processar resposta da chamada.", variant: "destructive"});
             }
         }
-    });
-
-    socket.on('audio-offer-received', async ({ fromId, offerSdp }) => {
-        // This is essentially the same as 'audio-call-request' if offer is sent with initial request
-        // Or it's used if the call request is just a ping and offer comes after accept
-        console.log(`Recebendo audio-offer-received de ${fromId}`);
-        const userMakingCall = users.find(u => u.id === fromId);
-        if(userMakingCall) {
-             setTargetUserForCall(userMakingCall);
-        }
-        setIncomingCall({ fromId, fromNickname: userMakingCall?.nickname || 'Alguém', offer: offerSdp });
     });
     
-    socket.on('audio-answer-received', async ({ fromId, answerSdp }) => {
-        console.log(`audio-answer-received de ${fromId}`);
-        if (peerConnection.current && answerSdp) {
-            try {
-                await peerConnection.current.setRemoteDescription(new RTCSessionDescription(answerSdp));
-                setIsCallActive(true);
-                toast({ title: "Chamada Conectada!", description: `Você está em uma chamada com ${users.find(u=>u.id === fromId)?.nickname}`});
-            } catch (e) {
-                 console.error("Failed to set remote description on answer", e);
-            }
-        }
-    });
-
-    socket.on('ice-candidate-received', async ({ fromId, candidate }) => {
+    socket.on('ice-candidate-received', async ({ candidate }) => {
+        // console.log("[Client] Recebido ICE candidate:", candidate);
         if (peerConnection.current && candidate) {
             try {
                 await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
             } catch (e) {
-                console.error('Error adding received ICE candidate', e);
+                console.error('[Client] Erro ao adicionar ICE candidate recebido:', e);
             }
         }
     });
 
-    socket.on('call-ended', ({ fromId }) => {
-        toast({ title: "Chamada Encerrada", description: `A chamada com ${users.find(u=>u.id === fromId)?.nickname} foi encerrada.` });
-        handleEndCall(false); // false to not emit another 'end-call'
+    socket.on('call-ended', ({ fromNickname, reason }) => {
+        const reasonMessage = reason === 'disconnect' ? `${fromNickname} desconectou.` : `A chamada com ${fromNickname} foi encerrada.`
+        toast({ title: "Chamada Encerrada", description: reasonMessage });
+        handleEndCall(false); 
     });
     
-    // Cleanup on component unmount
     return () => {
       socket.off('update-user-list');
       socket.off('new-message');
       socket.off('audio-call-request');
       socket.off('audio-call-accepted');
-      socket.off('audio-offer-received');
-      socket.off('audio-answer-received');
       socket.off('ice-candidate-received');
       socket.off('call-ended');
     };
@@ -297,7 +280,9 @@ export default function ChatplayPage() {
       setNickname(finalNickname);
       localStorage.setItem('chatplayNickname', finalNickname);
       setShowNicknameModal(false);
-      connectToSocket();
+      // connectToSocket will be called by useEffect
+    } else {
+      toast({title: "Apelido Inválido", description: "Por favor, insira um apelido.", variant:"destructive"});
     }
   };
 
@@ -305,22 +290,10 @@ export default function ChatplayPage() {
     if (currentMessage.trim() && nickname && socket.connected) {
       const messageData = {
         text: currentMessage.trim(),
-        // userId and nickname will be added by the server based on socket
       };
       socket.emit('send-message', messageData);
-      // Optimistic update (optional, server should confirm with 'new-message')
-      // setMessages(prev => [...prev, { id: Date.now().toString(), userId: authUser?.uid || 'guest', nickname, text: currentMessage.trim(), timestamp: new Date() }]);
       setCurrentMessage('');
     }
-  };
-
-  const getInitials = (name: string) => {
-    if (!name) return '??';
-    const parts = name.split(" ");
-    if (parts.length > 1) {
-      return (parts[0][0] + (parts[parts.length - 1][0] || '')).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
   };
 
   const handleStartPartnerSearch = () => {
@@ -329,29 +302,27 @@ export default function ChatplayPage() {
       description: `Procurando parceiro para área ${selectedArea}, dificuldade ${selectedDifficulty}, ${selectedQuantity} estação(ões).`,
     });
     setShowPartnerSearchModal(false);
+    // TODO: Implement actual partner search logic via socket
   };
 
-  // WebRTC Call Handling
   const handleInitiateCall = async (targetUser: ChatUser) => {
-    if (!hasMicPermission) {
-        const stream = await getMicrophonePermission();
-        if(!stream) return;
-    }
-    if (!localStream.current) {
-        toast({ title: "Erro de Microfone", description: "Não foi possível acessar seu microfone.", variant: "destructive" });
+    if (isCallActive) {
+        toast({ title: "Chamada em Andamento", description: "Você já está em uma chamada.", variant: "default" });
         return;
     }
+    const stream = await getMicrophonePermission();
+    if(!stream) return;
     
     setTargetUserForCall(targetUser);
-    initializePeerConnection(); // Initialize or re-initialize
+    initializePeerConnection(); 
 
     if (peerConnection.current && localStream.current) {
-        // Add local stream tracks to peer connection BEFORE creating offer
-        localStream.current.getTracks().forEach(track => {
-            if (localStream.current) { // Check again due to async nature
-                 peerConnection.current?.addTrack(track, localStream.current);
-            }
-        });
+        // Ensure tracks are added if PC was re-initialized
+        if(peerConnection.current.getSenders().length === 0) {
+            localStream.current.getTracks().forEach(track => {
+                peerConnection.current?.addTrack(track, localStream.current!);
+            });
+        }
 
         try {
             const offer = await peerConnection.current.createOffer();
@@ -359,7 +330,7 @@ export default function ChatplayPage() {
             socket.emit('audio-call-request', { to: targetUser.id, offerSdp: offer });
             toast({ title: "Chamando...", description: `Ligando para ${targetUser.nickname}` });
         } catch (error) {
-            console.error("Error creating offer:", error);
+            console.error("[Client] Erro ao criar offer:", error);
             toast({ title: "Erro ao Ligar", description: "Não foi possível iniciar a chamada.", variant: "destructive"});
         }
     }
@@ -368,30 +339,22 @@ export default function ChatplayPage() {
   const handleAcceptCall = async () => {
     if (!incomingCall) return;
 
-    if (!hasMicPermission) {
-        const stream = await getMicrophonePermission();
-        if(!stream) {
-            setIncomingCall(null); // Clear incoming call if mic permission denied
-            return;
-        }
-    }
-     if (!localStream.current) {
-        toast({ title: "Erro de Microfone", description: "Não foi possível acessar seu microfone para aceitar a chamada.", variant: "destructive" });
+    const stream = await getMicrophonePermission();
+    if(!stream) {
         setIncomingCall(null);
         return;
     }
 
     const caller = users.find(u => u.id === incomingCall.fromId);
-    setTargetUserForCall(caller || null); // Set target for ICE candidates etc.
-    initializePeerConnection(); // Initialize or re-initialize
+    setTargetUserForCall(caller || { id: incomingCall.fromId, nickname: incomingCall.fromNickname, status: 'busy'}); // Set target for ICE candidates etc.
+    initializePeerConnection(); 
 
     if (peerConnection.current && localStream.current) {
-        // Add local stream tracks
-        localStream.current.getTracks().forEach(track => {
-             if (localStream.current) {
-                peerConnection.current?.addTrack(track, localStream.current);
-            }
-        });
+        if(peerConnection.current.getSenders().length === 0) {
+            localStream.current.getTracks().forEach(track => {
+                 peerConnection.current?.addTrack(track, localStream.current!);
+            });
+        }
         try {
             await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incomingCall.offer));
             const answer = await peerConnection.current.createAnswer();
@@ -400,7 +363,7 @@ export default function ChatplayPage() {
             setIsCallActive(true);
             toast({ title: "Chamada Aceita!", description:`Em chamada com ${incomingCall.fromNickname}`});
         } catch (error) {
-            console.error("Error handling incoming call:", error);
+            console.error("[Client] Erro ao lidar com chamada recebida:", error);
             toast({ title: "Erro ao Atender", description: "Não foi possível atender a chamada.", variant: "destructive"});
         }
     }
@@ -409,13 +372,15 @@ export default function ChatplayPage() {
 
   const handleRejectCall = () => {
     if (incomingCall) {
-      socket.emit('call-rejected', { to: incomingCall.fromId }); // Inform other user (optional)
+      // Optionally, inform the other user the call was rejected
+      // socket.emit('call-rejected', { to: incomingCall.fromId });
+      toast({ title: "Chamada Recusada"});
     }
     setIncomingCall(null);
   };
 
-  const handleEndCall = (emitEvent = true) => {
-    if (emitEvent && targetUserForCall?.id) {
+  const handleEndCall = useCallback((emitEvent = true) => {
+    if (emitEvent && targetUserForCall?.id && socket.connected) {
       socket.emit('end-audio-call', { to: targetUserForCall.id });
     }
     
@@ -437,9 +402,10 @@ export default function ChatplayPage() {
     setIsCallActive(false);
     setTargetUserForCall(null);
     setIncomingCall(null);
-    setHasMicPermission(false); // Reset mic permission status for next call
-    toast({title: "Chamada Encerrada"});
-  };
+    // Do not reset hasMicPermission here, user might want to make another call.
+    // It will be reset if they leave and come back or refresh.
+    if (emitEvent) toast({title: "Chamada Encerrada"});
+  }, [targetUserForCall, socket, toast]);
 
   const handleToggleMute = () => {
     if (localStream.current) {
@@ -447,15 +413,16 @@ export default function ChatplayPage() {
         track.enabled = !track.enabled;
       });
       setIsMuted(prev => !prev);
+      toast({title: isMuted ? "Microfone Ativado" : "Microfone Desativado"});
     }
   };
 
-  // Request microphone permission on mount if not already granted
   useEffect(() => {
-    if (nickname && !hasMicPermission) { // Try to get permission if nickname is set
+    // Attempt to get microphone permission early if nickname is set
+    if (nickname && !hasMicPermission && !authLoading) {
       getMicrophonePermission();
     }
-  }, [nickname, hasMicPermission, getMicrophonePermission]);
+  }, [nickname, hasMicPermission, getMicrophonePermission, authLoading]);
 
 
   return (
@@ -469,6 +436,7 @@ export default function ChatplayPage() {
             </CardTitle>
             <CardDescription>
               Conecte-se, forme duplas e discuta casos. {nickname ? `Você está como: ${nickname}` : "Defina um apelido para começar."}
+               {!hasMicPermission && nickname && " (Microfone não habilitado)"}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -477,14 +445,14 @@ export default function ChatplayPage() {
           <Card className="md:col-span-1 lg:col-span-1 flex flex-col overflow-hidden shadow-md">
             <CardHeader className="py-3 px-4 border-b">
               <CardTitle className="text-lg flex items-center">
-                <Users className="mr-2 h-5 w-5" /> Usuários Online ({users.filter(u => u.id !== socket.id).length})
+                <Users className="mr-2 h-5 w-5" /> Usuários Online ({users.filter(u => u.id !== socket.id && u.nickname).length})
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 flex-grow overflow-hidden">
               <ScrollArea className="h-full">
                 <div className="p-3 space-y-2">
                   {users.filter(u => u.id !== socket.id && u.nickname).map(user => {
-                    const StatusIcon = statusIcons[user.status];
+                    const StatusIcon = statusIcons[user.status] || Coffee;
                     return (
                       <div key={user.id} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
                         <div className="flex items-center space-x-2 overflow-hidden">
@@ -500,7 +468,7 @@ export default function ChatplayPage() {
                             size="icon" 
                             className="h-7 w-7"
                             onClick={() => handleInitiateCall(user)}
-                            disabled={isCallActive || !nickname || !hasMicPermission}
+                            disabled={isCallActive || !nickname || !hasMicPermission || incomingCall !== null}
                             title={`Ligar para ${user.nickname}`}
                           >
                             <PhoneCall className="h-4 w-4" />
@@ -538,7 +506,7 @@ export default function ChatplayPage() {
                         </div>
                     </Card>
                 )}
-                {!hasMicPermission && nickname && (
+                {!hasMicPermission && nickname && !isCallActive && (
                     <Button variant="outline" size="sm" className="w-full mt-1" onClick={getMicrophonePermission}>
                         <Mic className="mr-2 h-4 w-4 text-orange-500"/> Habilitar Microfone
                     </Button>
@@ -593,23 +561,22 @@ export default function ChatplayPage() {
           </Card>
         </div>
 
-        {/* Hidden audio elements for WebRTC streams */}
         <audio ref={localAudioRef} autoPlay muted playsInline className="hidden"></audio>
         <audio ref={remoteAudioRef} autoPlay playsInline className="hidden"></audio>
 
-        {/* Nickname Modal */}
         <Dialog open={showNicknameModal} onOpenChange={(isOpen) => {
             if (!nickname && !isOpen) {
-                 setShowNicknameModal(true); // Prevent closing if nickname not set
+                 // Prevent closing if nickname not set, unless auth is also loading (to avoid locking user)
+                 if(!authLoading) setShowNicknameModal(true); 
             } else {
                  setShowNicknameModal(isOpen);
             }
         }}>
-          <DialogContent className="sm:max-w-[425px]" onPointerDownOutside={(e) => { if(!nickname) e.preventDefault()}} onEscapeKeyDown={(e) => {if(!nickname) e.preventDefault()}}>
+          <DialogContent className="sm:max-w-[425px]" onPointerDownOutside={(e) => { if(!nickname && !authLoading) e.preventDefault()}} onEscapeKeyDown={(e) => {if(!nickname && !authLoading) e.preventDefault()}}>
             <DialogHeader>
               <DialogTitle>Bem-vindo ao Chatplay!</DialogTitle>
               <DialogDescription>
-                Escolha um apelido para ser exibido no chat.
+                {authUser ? "Confirme ou altere seu apelido para o chat." : "Escolha um apelido para ser exibido no chat."}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -623,6 +590,7 @@ export default function ChatplayPage() {
                   onChange={(e) => setTempNickname(e.target.value)}
                   className="col-span-3"
                   placeholder="Seu apelido aqui"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSetNickname()}
                 />
               </div>
             </div>
@@ -632,25 +600,23 @@ export default function ChatplayPage() {
           </DialogContent>
         </Dialog>
 
-        {/* Incoming Call Modal */}
-        {incomingCall && (
+        {incomingCall && !isCallActive && (
           <Dialog open={!!incomingCall} onOpenChange={() => !isCallActive && setIncomingCall(null)}>
-            <DialogContent>
+            <DialogContent onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
               <DialogHeader>
                 <DialogTitle className="flex items-center"><PhoneCall className="mr-2 h-5 w-5 text-green-500"/>Chamada Recebida</DialogTitle>
                 <DialogDescription>
-                  {incomingCall.fromNickname} está te ligando.
+                  {incomingCall.fromNickname || "Alguém"} está te ligando.
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter className="mt-4">
-                <Button variant="outline" onClick={handleRejectCall}>Recusar</Button>
-                <Button onClick={handleAcceptCall} className="bg-green-500 hover:bg-green-600">Atender</Button>
+              <DialogFooter className="mt-4 sm:justify-between">
+                <Button variant="destructive" onClick={handleRejectCall} className="w-full sm:w-auto">Recusar</Button>
+                <Button onClick={handleAcceptCall} className="bg-green-500 hover:bg-green-600 w-full sm:w-auto mt-2 sm:mt-0">Atender</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         )}
 
-        {/* Partner Search Modal */}
         <Dialog open={showPartnerSearchModal} onOpenChange={setShowPartnerSearchModal}>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
@@ -725,3 +691,5 @@ export default function ChatplayPage() {
     </AppLayout>
   );
 }
+
+    
