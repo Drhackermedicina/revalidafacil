@@ -1,8 +1,8 @@
 
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Book, User, Lock, Mail, Home, MessageSquare, BriefcaseMedical, TrendingUp, Compass, Newspaper, ArrowRight, Check, XCircle, PlayCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -205,19 +205,19 @@ const HomePage = ({ onShowVideoDemo, onShowMessage }: { onShowVideoDemo: () => v
           <Newspaper className="h-10 w-10 text-blue-500 mb-3" />
           <h3 className="text-xl font-semibold mb-2 text-indigo-700">Guia Completo para o Edital Revalida 2024</h3>
           <p className="text-gray-600 text-sm">Fique por dentro das últimas atualizações e dicas para o edital.</p>
-          <a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Em breve: Artigo sobre o Edital Revalida 2024!")}} className="text-indigo-600 hover:underline mt-3 block">Ler Mais &rarr;</a>
+          <button onClick={() => onShowMessage("Em breve: Artigo sobre o Edital Revalida 2024!")} className="text-indigo-600 hover:underline mt-3 block text-left">Ler Mais &rarr;</button>
         </div>
         <div className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
           <Newspaper className="h-10 w-10 text-blue-500 mb-3" />
           <h3 className="text-xl font-semibold mb-2 text-indigo-700">5 Estratégias de Estudo para Otimizar Seu Tempo</h3>
           <p className="text-gray-600 text-sm">Maximize sua eficiência com estas técnicas comprovadas.</p>
-          <a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Em breve: Artigo sobre Estratégias de Estudo!")}} className="text-indigo-600 hover:underline mt-3 block">Ler Mais &rarr;</a>
+          <button onClick={() => onShowMessage("Em breve: Artigo sobre Estratégias de Estudo!")} className="text-indigo-600 hover:underline mt-3 block text-left">Ler Mais &rarr;</button>
         </div>
         <div className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
           <Newspaper className="h-10 w-10 text-blue-500 mb-3" />
           <h3 className="text-xl font-semibold mb-2 text-indigo-700">Entenda a Importância da Saúde Mental na Preparação</h3>
           <p className="text-gray-600 text-sm">Dicas para manter o equilíbrio durante sua jornada.</p>
-          <a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Em breve: Artigo sobre Saúde Mental na Preparação!")}} className="text-indigo-600 hover:underline mt-3 block">Ler Mais &rarr;</a>
+          <button onClick={() => onShowMessage("Em breve: Artigo sobre Saúde Mental na Preparação!")} className="text-indigo-600 hover:underline mt-3 block text-left">Ler Mais &rarr;</button>
         </div>
       </div>
     </section>
@@ -231,17 +231,17 @@ const HomePage = ({ onShowVideoDemo, onShowMessage }: { onShowVideoDemo: () => v
         <div>
           <h3 className="text-lg font-bold mb-4">Links Rápidos</h3>
           <ul className="space-y-2 text-sm">
-            <li><a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Página 'Sobre Nós' em desenvolvimento.")}} className="text-gray-400 hover:text-white transition-colors duration-200">Sobre Nós</a></li>
-            <li><a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Página de 'Recursos' em desenvolvimento.")}} className="text-gray-400 hover:text-white transition-colors duration-200">Recursos</a></li>
-            <li><a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Nosso 'Blog' está em desenvolvimento.")}} className="text-gray-400 hover:text-white transition-colors duration-200">Blog</a></li>
-            <li><a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Página de 'Contato' em desenvolvimento.")}} className="text-gray-400 hover:text-white transition-colors duration-200">Contato</a></li>
+            <li><button onClick={() => onShowMessage("Página 'Sobre Nós' em desenvolvimento.")} className="text-gray-400 hover:text-white transition-colors duration-200 text-left">Sobre Nós</button></li>
+            <li><button onClick={() => onShowMessage("Página de 'Recursos' em desenvolvimento.")} className="text-gray-400 hover:text-white transition-colors duration-200 text-left">Recursos</button></li>
+            <li><button onClick={() => onShowMessage("Nosso 'Blog' está em desenvolvimento.")} className="text-gray-400 hover:text-white transition-colors duration-200 text-left">Blog</button></li>
+            <li><button onClick={() => onShowMessage("Página de 'Contato' em desenvolvimento.")} className="text-gray-400 hover:text-white transition-colors duration-200 text-left">Contato</button></li>
           </ul>
         </div>
         <div>
           <h3 className="text-lg font-bold mb-4">Legal</h3>
           <ul className="space-y-2 text-sm">
-            <li><a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Página de 'Termos de Uso' em desenvolvimento.")}} className="text-gray-400 hover:text-white transition-colors duration-200">Termos de Uso</a></li>
-            <li><a href="#" onClick={(e) => {e.preventDefault(); onShowMessage("Página de 'Política de Privacidade' em desenvolvimento.")}} className="text-gray-400 hover:text-white transition-colors duration-200">Política de Privacidade</a></li>
+            <li><button onClick={() => onShowMessage("Página de 'Termos de Uso' em desenvolvimento.")} className="text-gray-400 hover:text-white transition-colors duration-200 text-left">Termos de Uso</button></li>
+            <li><button onClick={() => onShowMessage("Página de 'Política de Privacidade' em desenvolvimento.")} className="text-gray-400 hover:text-white transition-colors duration-200 text-left">Política de Privacidade</button></li>
           </ul>
         </div>
       </div>
@@ -300,3 +300,5 @@ export default function App() {
     </div>
   );
 }
+
+    
